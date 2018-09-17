@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+
+        <style>
+            body {
+                min-width: 480px;
+                background-color: #f2f2f2;
+                margin:0px;
+
+            }
+            ul {
+                list-style-type:none;
+                
+            }
+
+            .topBar {
+                height: 30px;
+               
+                background-color: #932439;
+                font-size: 18px;
+                color:white;
+                font-weight:bold;
+                font-family:verdana,sans-serif;
+                padding: 0px;
+                padding-left:6%;
+                padding-right:6%;
+                margin: 0px;
+            }
+            .topBar > ul {
+                height:30px;
+		        float:right;
+		        padding:0px;
+		        margin:0px;
+            }
+            .topBar > ul > li {
+                height:30px;
+                text-align:center;
+                float:left;
+               
+                margin:0px;
+                
+            }
+            .topBar > ul > li > a{
+                height:27px;
+                display:block;
+                padding:3px 15px 0px 15px;
+                margin:0px;
+                text-align:center;
+            }
+            a:link, a:visited {
+		        color:white;
+		
+		        text-decoration:none;
+		        font-weight:bold;
+	        }
+            a:hover {
+                background-color:#66010e;
+            }
+        </style>
+    </head>
+    <body  align="center">
+        <div align="center" class="topBar">
+            <ul>
+                <li>
+                    <a href="~/index.cshtml">HOME</a>
+                </li>
+                <li>
+                    <a>Log In</a>
+                </li>
+                <li>
+                    <a>Log Out</a>
+                </li>
+                <li>
+                    <a>Register</a>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
