@@ -17,7 +17,7 @@ Name,  Student Id,  Email,  Github Username
 
 6. Kevin Lo,  40032509,  lo_kevin@outlook.com,  lokevin88
 
-7. Li Sun,  40017648,  vincent.sun870530@gmail.com,  ?
+7. Li Sun,  40017648,  vincent.sun870530@gmail.com,  vincentsun870530
 
 8. Jessica Allaire,  40015912,  jessica.allaire.96@hotmail.com,  tirafire
 
