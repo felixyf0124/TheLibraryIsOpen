@@ -31,6 +31,7 @@ namespace TheLibraryIsOpen
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
+            services.AddSingleton(typeof(DbQuery));
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}

@@ -34,6 +34,13 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @*TODO: If user is signed in, don't show the following 2*@
+                    <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
+                    <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
+                    @*TODO: If user is not signed in, don't show the following*@
+                    <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
+                </ul>
             </div>
         </div>
     </nav>
