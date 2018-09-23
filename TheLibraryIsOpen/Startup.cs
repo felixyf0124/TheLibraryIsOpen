@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TheLibraryIsOpen.Controllers.StorageManagement;
+using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen
 {
@@ -30,6 +33,12 @@ namespace TheLibraryIsOpen
 				options.CheckConsentNeeded = context => true;
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
+
+            services.AddDefaultIdentity<Client>()
+                .AddUserStore<ClientStore>();
+
+            services.AddTransient<ClientManager>();
+            services.AddTransient<ClientStore>();
 
             services.AddSingleton(typeof(DbQuery));
 

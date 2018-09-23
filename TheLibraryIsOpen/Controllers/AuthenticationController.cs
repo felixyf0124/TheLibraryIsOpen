@@ -1,22 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Models.Authentication;
+using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Controllers
 {
     public class AuthenticationController : Controller
     {
         private readonly DbQuery _db; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
+        private readonly UserManager<Client> _cm;
 
-        public AuthenticationController(DbQuery db) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
+        public AuthenticationController(DbQuery db, ClientManager cm) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
         {
             _db = db;
+            _cm = cm;
         }
 
+        [AllowAnonymous]
         public ActionResult Login()
         {
             return View();
@@ -24,10 +34,15 @@ namespace TheLibraryIsOpen.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(IFormCollection collection)
+        public async Task<ActionResult> LoginAsync(LoginViewModel model)
         {
             try
             {
+                Client c = await _cm.FindAsync(model.Email, model.Password);
+                if (c != null)
+                {
+                    await SignInAsync(c, true);
+                }
                 // TODO: Add insert logic here
 
                 return RedirectToAction("Index", "Home");
@@ -43,28 +58,34 @@ namespace TheLibraryIsOpen.Controllers
         {
             return View();
         }
-        
-        public ActionResult Logout()
+
+        public async Task<ActionResult> LogoutAsync()
         {
-            return View();
+            await HttpContext.SignOutAsync(DefaultAuthenticationTypes.ExternalCookie);
+            return Login();
         }
-        
+
+        [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        public async Task<ActionResult> RegisterAsync(RegisterViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                     throw new Exception();
-
-                //TODO: add client to db.
-                //authenticate client via cookie or whatever
+                var x = await _cm.CreateAsync(model.ToClient());
+                if (!x.Succeeded)
+                {
+                    throw new Exception();
+                }
+                var client = await _cm.FindByEmailAsync(model.Email);
+                await SignInAsync(client, true);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -73,21 +94,35 @@ namespace TheLibraryIsOpen.Controllers
                 return View();
             }
         }
-        
-        public ActionResult Edit(int id)
+
+        public async Task<ActionResult> EditAsync(int id)
         {
-            return View();
+            Client c = await _cm.FindByIdAsync(id.ToString());
+            EditViewModel edit = new EditViewModel {
+                Email = c.EmailAddress,
+                FName = c.FirstName,
+                LName = c.LastName,
+                PhoneNumber = c.PhoneNo,
+                IsAdmin = c.IsAdmin
+            };
+            return View(edit);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, EditViewModel edit)
+        public async Task<ActionResult> EditAsync(int id, EditViewModel edit)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Edit), id);
+                Client c = await _cm.FindByIdAsync(id.ToString());
+                c.EmailAddress = edit.Email;
+                c.FirstName = edit.FName;
+                c.LastName = edit.LName;
+                c.PhoneNo = edit.PhoneNumber;
+                c.UserName = edit.Email;
+                c.IsAdmin = edit.IsAdmin;
+                await _cm.UpdateAsync(c);
+                return RedirectToAction(nameof(EditAsync), id);
             }
             catch
             {
@@ -114,6 +149,15 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return View();
             }
+        }
+
+        private async Task SignInAsync(Client user, bool isPersistent)
+        {
+            await HttpContext.SignOutAsync(DefaultAuthenticationTypes.ExternalCookie);
+            var identity = await _cm.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+            var claimsPrincipal = System.Threading.Thread.CurrentPrincipal as ClaimsPrincipal;
+            claimsPrincipal.AddIdentity(identity);
+            await HttpContext.SignInAsync(claimsPrincipal, new AuthenticationProperties() { IsPersistent = isPersistent });
         }
     }
 }

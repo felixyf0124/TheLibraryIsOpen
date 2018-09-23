@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Models.Authentication
 {
@@ -25,6 +26,11 @@ namespace TheLibraryIsOpen.Models.Authentication
 
         [DataType(DataType.PhoneNumber),DisplayName("Phone Number")]
         public string PhoneNumber { get; set; }
+
+        public Client ToClient()
+        {
+            return new Client(FName, LName, Email, Address, PhoneNumber, Password, false);
+        }
 
     }
 }
