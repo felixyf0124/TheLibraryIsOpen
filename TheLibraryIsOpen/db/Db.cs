@@ -26,13 +26,11 @@ namespace TheLibraryIsOpen.Database
         private string uid;
         private string password;
 
-        // constructor
         public Db()
         {
             Initialize();
         }
 
-        // initialize db from private function
         private void Initialize()
         {
             server = "35.236.241.114";
@@ -46,7 +44,6 @@ namespace TheLibraryIsOpen.Database
             connection = new MySqlConnection(connectionString);
         }
 
-        // Open the connection to the db
         private bool OpenConnection()
         {
             try
@@ -61,6 +58,7 @@ namespace TheLibraryIsOpen.Database
                 //The two most common error numbers when connecting are as follows:
                 //0: Cannot connect to server.
                 //1045: Invalid user name and/or password.
+
                 // TODO log error
                 throw;
             }
