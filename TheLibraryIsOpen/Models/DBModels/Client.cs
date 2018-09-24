@@ -23,7 +23,8 @@
             IsAdmin = isAdmin;
         }
         // another construcor who  assigns client id is added as requested.
-        public Client(int cId, string firstName, string lastName, string emailAddress, string homeAddress, string phoneNo, string password, bool isAdmin = false) :this(firstName, lastName, emailAddress, homeAddress, phoneNo, password, isAdmin)
+        public Client(int cId, string firstName, string lastName, string emailAddress, string homeAddress, string phoneNo, string password, bool isAdmin = false) :
+            this(firstName, lastName, emailAddress, homeAddress, phoneNo, password, isAdmin)
         {
             clientId = cId;
         }
