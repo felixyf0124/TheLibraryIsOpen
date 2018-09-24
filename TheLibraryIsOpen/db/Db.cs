@@ -1,11 +1,22 @@
 /*
-    The DdQuery class contains methods for performing sql queries on the db.
+    The Db class contains methods for performing sql queries on the db.
     Inspired from https://www.codeproject.com/Articles/43438/Connect-C-to-MySQL
+    The database table looks like so:
+    Table:      users
+    Columns:    clientID int(12) 
+                firstName varchar(255) 
+                lastName varchar(255) 
+                emailAddress varchar(255) 
+                homeAddress varchar(255) 
+                phoneNumber varchar(255) 
+                password varchar(255) 
+                isAdmin tinyint(1)
  */
 using MySql.Data.MySqlClient;
-using TheLibraryIsOpen;
+using TheLibraryIsOpen.Models.DBModels;
+using System.Collections.Generic;
 
-namespace Database
+namespace TheLibraryIsOpen.Database
 {
     public class Db
     {
@@ -15,16 +26,18 @@ namespace Database
         private string uid;
         private string password;
 
+        // constructor
         public Db()
         {
             Initialize();
         }
 
+        // initialize db from private function
         private void Initialize()
         {
             server = "35.236.241.114";
             database = "library";
-            uid = "library343";
+            uid = "root";
             password = "library343";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
@@ -33,6 +46,7 @@ namespace Database
             connection = new MySqlConnection(connectionString);
         }
 
+        // Open the connection to the db
         private bool OpenConnection()
         {
             try
@@ -47,17 +61,8 @@ namespace Database
                 //The two most common error numbers when connecting are as follows:
                 //0: Cannot connect to server.
                 //1045: Invalid user name and/or password.
-                switch (ex.Number)
-                {
-                    case 0:
-                        // TODO show message cannot connect to server
-                        break;
-
-                    case 1045:
-                        // TODO show message invalid user/pass
-                        break;
-                }
-                return false;
+                // TODO log error
+                throw;
             }
         }
 
@@ -70,14 +75,64 @@ namespace Database
             }
             catch (MySqlException ex)
             {
-                // TODO MessageBox.Show(ex);
-                return false;
+                // TODO log error
+                throw;
             }
         }
 
-        // This method opens connection, runs query and closes connection
-        private void query(string query)
+        //Select statement
+        public List<Client> GetAllClients()
         {
+            //Create a list of unknown size to store the result
+            List<Client> list = new List<Client>();
+            string query = "SELECT * FROM users";
+
+            //Open connection
+            if (this.OpenConnection() == true)
+            {
+                //Create Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Create a data reader and Execute the command
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                //Read the data, create client object and store in list
+                while (dr.Read())
+                {
+                    int clientID = (int)dr["clientID"];
+                    string firstName = dr["firstName"] + "";
+                    string lastName = dr["lastName"] + "";
+                    string emailAddress = dr["emailAddress"] + "";
+                    string homeAddress = dr["homeAddress"] + "";
+                    string phoneNumber = dr["phoneNumber"] + "";
+                    string password = dr["password"] + "";
+                    bool isAdmin = (bool)dr["isAdmin"];
+
+                    Client client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
+
+                    list.Add(client);
+                }
+
+                //close Data Reader
+                dr.Close();
+
+                //close Connection
+                this.CloseConnection();
+
+                //return list to be displayed
+                return list;
+            }
+            else
+            {
+                return list;
+            }
+        }
+
+        // TODO how are we storing the password, because I can't access it?
+        public void CreateClient(Client client)
+        {
+
+            string query = $"INSERT INTO users VALUES({client.clientId}, {client.FirstName}, {client.LastName}, {client.EmailAddress}, {client.HomeAddress}, {client.PhoneNo}, null, {client.IsAdmin})";
+
             //open connection
             if (this.OpenConnection() == true)
             {
@@ -89,26 +144,43 @@ namespace Database
 
                 //close connection
                 this.CloseConnection();
-            } else {
-                System.Console.WriteLine("db does not connect");
             }
-        }
-
-        // Methods related to different queries
-        // change signature to include client
-        public void CreateClient(Client client)
-        {
-            // TODO generate string to call query function
         }
 
         public void DeleteClient(Client client)
         {
-            // TODO generate string to call query function
+            string query = $"DELETE FROM users WHERE (clientID = {client.clientId})";
+
+            //open connection
+            if (this.OpenConnection() == true)
+            {
+                //create command and assign the query and connection from the constructor
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                //Execute command
+                cmd.ExecuteNonQuery();
+
+                //close connection
+                this.CloseConnection();
+            }
         }
 
-        public void ModifiyClient(Client client)
+        public void UpdateClient(Client client)
         {
-            // TODO generate string to call query function
+            string query = $"UPDATE users SET firstName = {client.FirstName}, lastName = {client.LastName}, emailAddress = {client.EmailAddress}, homeAddress = {client.HomeAddress}, phoneNumber = {client.PhoneNo}, isAdmin = {client.IsAdmin} WHERE clientID = {client.clientId}";
+
+            //open connection
+            if (this.OpenConnection() == true)
+            {
+                //create command and assign the query and connection from the constructor
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                //Execute command
+                cmd.ExecuteNonQuery();
+
+                //close connection
+                this.CloseConnection();
+            }
         }
     }
 }
