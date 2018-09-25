@@ -24,11 +24,16 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
+                    if (_db.GetClientByEmail(user.EmailAddress) != null)
+                        return IdentityResult.Failed(new IdentityError { Description = "email already exists" });
                     _db.CreateClient(user);
                     return IdentityResult.Success;
                 });
             }
-            throw new ArgumentNullException("user");
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "user was null" });
+            });
         }
 
         public Task<IdentityResult> DeleteAsync(Client user, CancellationToken cancellationToken)
@@ -41,7 +46,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     return IdentityResult.Success;
                 });
             }
-            throw new ArgumentNullException("user");
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "user was null" });
+            });
         }
 
         public void Dispose()
@@ -73,7 +81,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetClientById(int.Parse(user.Id)).EmailAddress.Normalize();
+                return _db.GetClientById(int.Parse(user.Id))?.EmailAddress?.Normalize() ?? null;
             });
             throw new ArgumentNullException("user");
         }
@@ -82,7 +90,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetClientByEmail(user.EmailAddress).Id;
+                return _db.GetClientByEmail(user.EmailAddress)?.Id ?? null;
             });
             throw new ArgumentNullException("user");
         }
@@ -91,7 +99,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetClientById(int.Parse(user.Id)).EmailAddress;
+                return _db.GetClientById(int.Parse(user.Id))?.EmailAddress ?? null;
             });
             throw new ArgumentNullException("user");
         }
@@ -124,7 +132,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     return IdentityResult.Success;
                 });
             }
-            throw new ArgumentNullException("user");
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "user was null" });
+            });
         }
     }
 }

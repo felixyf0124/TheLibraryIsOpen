@@ -81,11 +81,13 @@ namespace TheLibraryIsOpen.Controllers
             var x = await _cm.CreateAsync(model.ToClient());
             if (!x.Succeeded)
             {
-                throw new Exception();
+                throw new Exception(x.Errors.First().Description);
             }
-            var client = await _cm.FindByEmailAsync(model.Email);
-            await SignInAsync(client, true);
-
+            else
+            {
+                var client = await _cm.FindByEmailAsync(model.Email);
+                await SignInAsync(client, true);
+            }
             return RedirectToAction("Index", "Home");
 
         }
