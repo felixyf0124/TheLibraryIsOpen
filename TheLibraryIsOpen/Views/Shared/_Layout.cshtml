@@ -1,7 +1,7 @@
 ﻿@using TheLibraryIsOpen.Controllers.StorageManagement
 @inject ClientSignInManager SignInManager
 @{
-    bool signedIn = SignInManager.IsSignedIn(User);
+    bool signedIn = User.Identity.IsAuthenticated;
 }
 <!DOCTYPE html>
 <html>

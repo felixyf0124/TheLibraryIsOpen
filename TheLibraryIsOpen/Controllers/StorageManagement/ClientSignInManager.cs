@@ -16,7 +16,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class ClientSignInManager : SignInManager<Client>
     {
-        public ClientSignInManager(ClientManager userManager, IHttpContextAccessor contextAccessor, IUserClaimsPrincipalFactory<Client> claimsFactory, IOptions<IdentityOptions> optionsAccessor, ILogger<SignInManager<Client>> logger, IAuthenticationSchemeProvider schemes) :
+        public ClientSignInManager(ClientManager userManager, IHttpContextAccessor contextAccessor, IUserClaimsPrincipalFactory<Client> claimsFactory, IOptions<IdentityOptions> optionsAccessor, ILogger<ClientSignInManager> logger, IAuthenticationSchemeProvider schemes) :
             base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
         {
         }

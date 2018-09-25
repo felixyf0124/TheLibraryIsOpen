@@ -32,7 +32,7 @@ namespace TheLibraryIsOpen.Controllers
         [AllowAnonymous]
         public ActionResult Login()
         {
-            return View(new LoginViewModel());
+            return View();
         }
 
         [HttpPost]
@@ -154,7 +154,10 @@ namespace TheLibraryIsOpen.Controllers
 
             var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.EmailAddress)
+                    new Claim(ClaimTypes.Name, user.EmailAddress),
+                    new Claim(ClaimTypes.Email, user.EmailAddress),
+                    new Claim("Id", user.Id),
+
                 };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -162,7 +165,7 @@ namespace TheLibraryIsOpen.Controllers
 
             var authProperties = new AuthenticationProperties
             {
-                //AllowRefresh = <bool>,
+                AllowRefresh = true,
                 // Refreshing the authentication session should be allowed.
 
                 //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
