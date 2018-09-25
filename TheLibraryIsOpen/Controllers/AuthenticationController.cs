@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
+using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.Authentication;
 using TheLibraryIsOpen.Models.DBModels;
 
@@ -17,54 +19,52 @@ namespace TheLibraryIsOpen.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private readonly DbQuery _db; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
-        private readonly UserManager<Client> _cm;
+        private readonly Db _db; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
+        private readonly ClientManager _cm;
 
-        public AuthenticationController(DbQuery db, ClientManager cm) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
+        public AuthenticationController(Db db, ClientManager cm) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
         {
             _db = db;
             _cm = cm;
         }
 
+        [HttpGet]
         [AllowAnonymous]
         public ActionResult Login()
         {
-            return View();
+            return View(new LoginViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> LoginAsync(LoginViewModel model)
+        [AllowAnonymous]
+        public async Task<ActionResult> Login(LoginViewModel model)
         {
-            try
+            Client c = await _cm.FindAsync(model.Email, model.Password);
+            if (c != null)
             {
-                Client c = await _cm.FindAsync(model.Email, model.Password);
-                if (c != null)
-                {
-                    await SignInAsync(c, true);
-                }
-                // TODO: Add insert logic here
+                await SignInAsync(c, true);
+            }
+            // TODO: Add insert logic here
 
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index", "Home");
         }
 
 
+        [HttpGet]
         public ActionResult Index()
         {
             return View();
         }
 
-        public async Task<ActionResult> LogoutAsync()
+        [HttpGet]
+        public async Task<ActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(DefaultAuthenticationTypes.ExternalCookie);
-            return Login();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction(nameof(Login));
         }
 
+        [HttpGet]
         [AllowAnonymous]
         public ActionResult Register()
         {
@@ -73,32 +73,29 @@ namespace TheLibraryIsOpen.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> RegisterAsync(RegisterViewModel model)
+        [AllowAnonymous]
+        public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            try
+            if (!ModelState.IsValid)
+                throw new Exception();
+            var x = await _cm.CreateAsync(model.ToClient());
+            if (!x.Succeeded)
             {
-                if (!ModelState.IsValid)
-                    throw new Exception();
-                var x = await _cm.CreateAsync(model.ToClient());
-                if (!x.Succeeded)
-                {
-                    throw new Exception();
-                }
-                var client = await _cm.FindByEmailAsync(model.Email);
-                await SignInAsync(client, true);
+                throw new Exception();
+            }
+            var client = await _cm.FindByEmailAsync(model.Email);
+            await SignInAsync(client, true);
 
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index", "Home");
+
         }
 
-        public async Task<ActionResult> EditAsync(int id)
+        [HttpGet]
+        public async Task<ActionResult> Edit(int id)
         {
             Client c = await _cm.FindByIdAsync(id.ToString());
-            EditViewModel edit = new EditViewModel {
+            EditViewModel edit = new EditViewModel
+            {
                 Email = c.EmailAddress,
                 FName = c.FirstName,
                 LName = c.LastName,
@@ -110,7 +107,7 @@ namespace TheLibraryIsOpen.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, EditViewModel edit)
+        public async Task<ActionResult> Edit(int id, EditViewModel edit)
         {
             try
             {
@@ -122,7 +119,7 @@ namespace TheLibraryIsOpen.Controllers
                 c.UserName = edit.Email;
                 c.IsAdmin = edit.IsAdmin;
                 await _cm.UpdateAsync(c);
-                return RedirectToAction(nameof(EditAsync), id);
+                return RedirectToAction(nameof(Edit), id);
             }
             catch
             {
@@ -153,11 +150,45 @@ namespace TheLibraryIsOpen.Controllers
 
         private async Task SignInAsync(Client user, bool isPersistent)
         {
-            await HttpContext.SignOutAsync(DefaultAuthenticationTypes.ExternalCookie);
-            var identity = await _cm.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-            var claimsPrincipal = System.Threading.Thread.CurrentPrincipal as ClaimsPrincipal;
-            claimsPrincipal.AddIdentity(identity);
-            await HttpContext.SignInAsync(claimsPrincipal, new AuthenticationProperties() { IsPersistent = isPersistent });
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.EmailAddress)
+                };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                //AllowRefresh = <bool>,
+                // Refreshing the authentication session should be allowed.
+
+                //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                // The time at which the authentication ticket expires. A 
+                // value set here overrides the ExpireTimeSpan option of 
+                // CookieAuthenticationOptions set with AddCookie.
+
+                IsPersistent = true,
+                // Whether the authentication session is persisted across 
+                // multiple requests. Required when setting the 
+                // ExpireTimeSpan option of CookieAuthenticationOptions 
+                // set with AddCookie. Also required when setting 
+                // ExpiresUtc.
+
+                //IssuedUtc = <DateTimeOffset>,
+                // The time at which the authentication ticket was issued.
+
+                //RedirectUri = <string>
+                // The full path or absolute URI to be used as an http 
+                // redirect response value.
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
     }
 }

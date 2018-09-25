@@ -17,7 +17,7 @@ namespace TheLibraryIsOpen.Models.DBModels
         public string EmailAddress { get; set; }
         public string HomeAddress { get; set; }
         public string PhoneNo { get; set; }
-        private string Password;
+        public string Password { get; set; }
         public bool IsAdmin { get; set; }
 
         //required for implementing IUser
@@ -51,11 +51,6 @@ namespace TheLibraryIsOpen.Models.DBModels
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
             return userIdentity;
-        }
-
-        public void SetPassword(string pw)
-        {
-            Password = pw;
         }
 
         //verify if the password entered matches

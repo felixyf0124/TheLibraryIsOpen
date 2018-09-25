@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using TheLibraryIsOpen.Controllers.StorageManagement
+@inject ClientSignInManager SignInManager
+@{
+    bool signedIn = SignInManager.IsSignedIn(User);
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -35,11 +40,15 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    @*TODO: If user is signed in, don't show the following 2*@
-                    <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
-                    <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
-                    @*TODO: If user is not signed in, don't show the following*@
-                    <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
+                    @if (!signedIn)
+                    {
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
+                    }
                 </ul>
             </div>
         </div>

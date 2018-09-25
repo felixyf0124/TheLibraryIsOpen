@@ -1,40 +1,44 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class ClientStore : IUserStore<Client>
     {
-        private readonly DbQuery _db;
+        private readonly Db _db;
 
-        public ClientStore(DbQuery db)
+        public ClientStore(Db db)
         {
             _db = db;
         }
 
-        public Task CreateAsync(Client user)
+        public Task<IdentityResult> CreateAsync(Client user, CancellationToken cancellationToken)
         {
             if (user != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    //_db.CreateClient(user);
+                    _db.CreateClient(user);
+                    return IdentityResult.Success;
                 });
             }
             throw new ArgumentNullException("user");
         }
 
-        public Task DeleteAsync(Client user)
+        public Task<IdentityResult> DeleteAsync(Client user, CancellationToken cancellationToken)
         {
             if (user != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteClient(int.Parse(user.Id));
+                    _db.DeleteClient(user);
+                    return IdentityResult.Success;
                 });
             }
             throw new ArgumentNullException("user");
@@ -43,39 +47,84 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public void Dispose()
         { }
 
-        public Task<Client> FindByIdAsync(string userId)
+        public Task<Client> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(() =>
             {
-                return new Client("", "", "", "", "", "");
-                //return _db.GetClientByID(userId);
+                return _db.GetClientById(int.Parse(userId));
             });
             throw new ArgumentNullException("userId");
         }
+
         //input is email
-        public Task<Client> FindByNameAsync(string email)
+        public Task<Client> FindByNameAsync(string email, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrEmpty(email))
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    return new Client("", "", "", "", "", "");
-                    //return _db.GetClientByEmail(email);
+                    return _db.GetClientByEmail(email);
                 });
             }
             throw new ArgumentNullException("userName");
         }
 
-        public Task UpdateAsync(Client user)
+        public Task<string> GetNormalizedUserNameAsync(Client user, CancellationToken cancellationToken)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetClientById(int.Parse(user.Id)).EmailAddress.Normalize();
+            });
+            throw new ArgumentNullException("user");
+        }
+
+        public Task<string> GetUserIdAsync(Client user, CancellationToken cancellationToken)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetClientByEmail(user.EmailAddress).Id;
+            });
+            throw new ArgumentNullException("user");
+        }
+
+        public Task<string> GetUserNameAsync(Client user, CancellationToken cancellationToken)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetClientById(int.Parse(user.Id)).EmailAddress;
+            });
+            throw new ArgumentNullException("user");
+        }
+
+        public Task SetNormalizedUserNameAsync(Client user, string normalizedName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetUserNameAsync(Client user, string userName, CancellationToken cancellationToken)
         {
             if (user != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    //return _db.UpdateClient(user);
+                    user.EmailAddress = userName;
+                    _db.UpdateClient(user);
                 });
             }
-            throw new ArgumentNullException("userName");
+            throw new ArgumentNullException("user");
+        }
+
+        public Task<IdentityResult> UpdateAsync(Client user, CancellationToken cancellationToken)
+        {
+            if (user != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    _db.UpdateClient(user);
+                    return IdentityResult.Success;
+                });
+            }
+            throw new ArgumentNullException("user");
         }
     }
 }
