@@ -34,6 +34,13 @@ namespace TheLibraryIsOpen.Controllers
 			return View();
 		}
 
+        public IActionResult ListOfClients()
+        {
+            ViewData["Message"] = "The list of clients of TheLibraryIsOpen";
+
+            return View();
+        }
+
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
