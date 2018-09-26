@@ -37,7 +37,6 @@ namespace TheLibraryIsOpen.Controllers
 
         public IActionResult ListOfClients()
         {
-            ViewData["Message"] = "The list of clients of TheLibraryIsOpen";
 
             /*
             var databaseFunctions = new TheLibraryIsOpen.Database.Db();
