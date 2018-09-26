@@ -1,6 +1,9 @@
 ﻿@using TheLibraryIsOpen.Controllers.StorageManagement
 @{
     bool signedIn = User.Identity.IsAuthenticated;
+    // need to get it
+    bool isAdmin = true;
+    string name = "UserA";
 }
 <!DOCTYPE html>
 <html>
@@ -37,16 +40,29 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    //for test
+                    @if (isAdmin)
+                    {
                     <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li>
+                    }
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (!signedIn)
                     {
                         <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
-                        <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li> 
                     }
                     else
                     {
+                         @if (isAdmin)
+                        {
+                        <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">Welcome Admins</a></li>
+                        }
+                          else
+                        {
+                        <li><a asp-area="" asp-controller="" asp-action="">Welcome @name</a></li>
+                        }
+
                         <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
                     }
                 </ul>
