@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -37,6 +38,15 @@ namespace TheLibraryIsOpen.Controllers
         public IActionResult ListOfClients()
         {
             ViewData["Message"] = "The list of clients of TheLibraryIsOpen";
+
+            /*
+            var databaseFunctions = new TheLibraryIsOpen.Database.Db();
+            List<Client> allClientsDataList = new List<Client>();
+            allClientsDataList = databaseFunctions.GetAllClients();
+
+            //To get the number of clients in the list returned
+            var numberOfClients = allClientsDataList.Count();
+            */
 
             return View();
         }
