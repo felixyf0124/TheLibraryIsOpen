@@ -59,14 +59,14 @@
     <div class="col-md-6">
         <h2 class="text-center"><strong>I already have an account.</strong></h2>
         <div style="height:18px;"></div>
-        <p class="text-center"><a href="#" class="btn btn-primary btn-lg btn-block" role="button" 
+        <p class="text-center"><a asp-controller="Authentication" asp-action="Login" class="btn btn-primary btn-lg btn-block" role="button" 
                                   style="width:66%; margin-left:auto;margin-right:auto;"><strong>Log In</strong></a></p>
     </div>
     <div class="col-md-6">
         <h2 class="text-center"><strong>I don't have an account.</strong></h2>
         <div style="height:18px;"></div>
         <p class="text-center">
-            <a href="#" class="btn btn-primary btn-lg btn-block" role="button" data-toggle="tooltip"
+            <a asp-controller="Authentication" asp-action="Register" class="btn btn-primary btn-lg btn-block" role="button" data-toggle="tooltip"
                data-placement="right" title="Free!" style="width:66%; margin-left:auto;margin-right:auto;">
                 <strong>Register</strong>
             </a>
