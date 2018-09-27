@@ -1,9 +1,20 @@
-﻿@{
+﻿
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientStore clientStore
+@{
     ViewData["Title"] = "List Of Clients";
 
+    //Retrieve all the clients from the database
+    List<Client> allClientsList = new List<Client>();
+    allClientsList = clientStore.GetAllClientsDataAsync().Result;
+
     //For displaying a message of the number of client found in the database
-    string message = ((int)ViewData["count"]).ToString();
-    if((int)ViewData["count"] < 2)
+    int numberOfClients = allClientsList.Count();
+    string message = numberOfClients.ToString();
+
+    //Display a different message depending on the number of clients
+    if(numberOfClients < 2)
     {
         message += " client";
     }
@@ -19,7 +30,7 @@
 <h2>@ViewData["Title"]</h2>
 <h3>@message</h3>
 
-@if ((int)ViewData["count"] != 0)
+@if (numberOfClients != 0)
 {
 <table>
     <tr>
@@ -39,12 +50,17 @@
             <td>TestAdmin</td>
         </tr>*@
 
-    @foreach (var client in @ViewData["allClients"] as List<TheLibraryIsOpen.Models.DBModels.Client>)
+    <!--Display all the clients information into the table-->
+    @foreach (var client in allClientsList as List<TheLibraryIsOpen.Models.DBModels.Client>)
     {
         <!--For displaying a different background color if isAdmin is true-->
         if (client.IsAdmin == true)
         {
             style = "background-color: #99ccff";
+        }
+        else
+        {
+            style = "background-color: #ffffff";
         }
         <tr style="@style">
             <td>@client.FirstName &nbsp; @client.LastName</td>
