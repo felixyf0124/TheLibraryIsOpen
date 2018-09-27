@@ -42,7 +42,7 @@
     @foreach (var client in @ViewData["allClients"] as List<TheLibraryIsOpen.Models.DBModels.Client>)
     {
         <!--For displaying a different background color if isAdmin is true-->
-        @if (client.IsAdmin == true)
+        if (client.IsAdmin == true)
         {
             style = "background-color: #99ccff";
         }

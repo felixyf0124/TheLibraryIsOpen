@@ -38,22 +38,22 @@ namespace TheLibraryIsOpen.Controllers
         public IActionResult ListOfClients()
         {
 
-            //This part of the code to be tested with database
-            /*
+            //Retrive data from Database
+            
             var databaseFunctions = new TheLibraryIsOpen.Database.Db();
             List<Client> allClientsList = new List<Client>();
             allClientsList = databaseFunctions.GetAllClients();
-            */
-            //////////////////////////////////////////////////
+            
 
-            // Hard coded data for testing (without database)
-            List<Client> allClientsList = new List<Client>();
+            // Hard coded data for testing (without database) for testing
+            /*List<Client> allClientsList = new List<Client>();
             //Client client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
             allClientsList.Add(new Client(01, "Test", "Test", "test@email.com", "1 road", "(514)111-1111", "1234", false));
             allClientsList.Add(new Client(02, "Name", "Name", "name@email.com", "2 road", "(514)121-1111", "1234", false));
             allClientsList.Add(new Client(03, "Fake", "Fake", "fake@email.com", "3 road", "(514)113-1111", "1234", false));
             allClientsList.Add(new Client(04, "Joe", "Doe", "joedoe@email.com", "4 road", "(514)111-4111", "1234", true));
             /////////////////////////////////////////////////
+            */
 
             ViewData["count"] = allClientsList.Count();
             ViewData["allClients"] = allClientsList;
