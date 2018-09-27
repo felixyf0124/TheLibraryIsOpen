@@ -1,9 +1,26 @@
 ﻿@{
     ViewData["Title"] = "List Of Clients";
-    ViewData["Message"] = "The list of clients of TheLibraryIsOpen";
+
+    //For displaying a message of the number of client found in the database
+    string message = ((int)ViewData["count"]).ToString();
+    if((int)ViewData["count"] < 2)
+    {
+        message += " client";
+    }
+    else
+    {
+        message += " clients";
+    }
+    message += " found from TheLibraryIsOpen database";
+
+    //For displaying a different background color if isAdmin is true
+    var style = " ";
 }
 <h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+<h3>@message</h3>
+
+@if ((int)ViewData["count"] != 0)
+{
 <table>
     <tr>
         <th>Name</th>
@@ -12,29 +29,50 @@
         <th>Phone Number</th>
         <th>Administrator</th>
     </tr>
-    <tr>
-        <td>TestName</td>
-        <td>TestEmail</td>
-        <td>TestHome</td>
-        <td>TestPhone</td>
-        <td>TestAdmin</td>
-    </tr>
+
+    @*Hard coded data for testing
+        <tr>
+            <td>TestName</td>
+            <td>TestEmail</td>
+            <td>TestHome</td>
+            <td>TestPhone</td>
+            <td>TestAdmin</td>
+        </tr>*@
+
+    @foreach (var client in @ViewData["allClients"] as List<TheLibraryIsOpen.Models.DBModels.Client>)
+    {
+        <!--For displaying a different background color if isAdmin is true-->
+        @if (client.IsAdmin == true)
+        {
+            style = "background-color: #99ccff";
+        }
+        <tr style="@style">
+            <td>@client.FirstName &nbsp; @client.LastName</td>
+            <td>@client.EmailAddress</td>
+            <td>@client.HomeAddress</td>
+            <td>@client.PhoneNo</td>
+            <td>@client.IsAdmin</td>
+        </tr>
+    }
 </table>
+}
+
 <style>
     table {
         border-collapse: collapse;
         width: 90%;
         margin-left: 5%;
         margin-right: 5%;
+        margin-top: 4%;
     }
 
     td, th {
-        border: 1px solid #dddddd;
+        border: 1px solid #C0C0C0;
         text-align: left;
         padding: 1%;
     }
 
     th {
-        background-color: #dddddd;
+        background-color: #D3D3D3;
     }
 </style>
