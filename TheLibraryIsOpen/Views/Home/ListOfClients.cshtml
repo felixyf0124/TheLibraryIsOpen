@@ -6,11 +6,10 @@
     ViewData["Title"] = "List Of Clients";
 
     //Retrieve all the clients from the database
-    List<Client> allClientsList = new List<Client>();
-    allClientsList = clientStore.GetAllClientsDataAsync().Result;
+    List<Client> allClientsList = await  clientStore.GetAllClientsDataAsync();
 
     //For displaying a message of the number of client found in the database
-    int numberOfClients = allClientsList.Count();
+    int numberOfClients = allClientsList.Count;
     string message = numberOfClients.ToString();
 
     //Display a different message depending on the number of clients
