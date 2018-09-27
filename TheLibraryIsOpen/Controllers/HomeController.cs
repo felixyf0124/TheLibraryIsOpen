@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -33,6 +34,11 @@ namespace TheLibraryIsOpen.Controllers
 		{
 			return View();
 		}
+
+        public IActionResult ListOfClients()
+        {
+            return View();
+        }
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()

@@ -35,5 +35,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return await Store.CreateAsync(user, new System.Threading.CancellationToken(false));
         }
+
     }
 }

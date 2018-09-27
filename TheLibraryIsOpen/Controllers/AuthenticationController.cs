@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.Authentication;
@@ -21,17 +22,21 @@ namespace TheLibraryIsOpen.Controllers
     {
         private readonly Db _db; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
         private readonly ClientManager _cm;
+        //private Client client;
 
         public AuthenticationController(Db db, ClientManager cm) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
         {
             _db = db;
             _cm = cm;
+            //client = new Client();
         }
 
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Login()
         {
+           // Console.WriteLine(client.IsAdmin + "1111");
+            
             return View();
         }
 
@@ -41,11 +46,15 @@ namespace TheLibraryIsOpen.Controllers
         public async Task<ActionResult> Login(LoginViewModel model)
         {
             Client c = await _cm.FindAsync(model.Email, model.Password);
+            //client  = c;
             if (c != null)
             {
                 await SignInAsync(c, true);
             }
             // TODO: Add insert logic here
+
+            //ViewData["client"] = client;
+           // Console.WriteLine(client + "3333");
 
             return RedirectToAction("Index", "Home");
         }

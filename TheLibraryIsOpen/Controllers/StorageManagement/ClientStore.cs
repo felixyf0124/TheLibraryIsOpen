@@ -137,5 +137,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return IdentityResult.Failed(new IdentityError { Description = "user was null" });
             });
         }
+
+        public Task<List<Client>> GetAllClientsDataAsync() 
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllClients();
+            });
+        }
     }
 }
