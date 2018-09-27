@@ -1,8 +1,12 @@
 ﻿@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Controllers
+@using TheLibraryIsOpen.Models.DBModels;
 @{
     bool signedIn = User.Identity.IsAuthenticated;
     // need to get it
+    var data = ViewData["Client"];
     bool isAdmin = true;
+    Console.WriteLine(data+"2222222222222222222");
     string name = "UserA";
 }
 <!DOCTYPE html>
