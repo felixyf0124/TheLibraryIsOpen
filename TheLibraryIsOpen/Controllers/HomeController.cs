@@ -15,6 +15,12 @@ namespace TheLibraryIsOpen.Controllers
 {
 	public class HomeController : Controller
 	{
+        private readonly ClientStore _cs;
+
+        public HomeController(ClientStore cs)
+        {
+            _cs = cs;
+        }
 	    
         public IActionResult Index()
 		{
@@ -42,11 +48,8 @@ namespace TheLibraryIsOpen.Controllers
 
         public async Task<ActionResult> ListOfClients()
         {
-            ClientStore cs = new ClientStore(new Db());
             string clientEmail = User.Identity.Name;
-            //Client client = await cs.FindByNameAsync(clientEmail);
-
-            bool isAdmin = await cs.IsItAdminAsync(clientEmail);
+            bool isAdmin = await _cs.IsItAdminAsync(clientEmail);
             if (isAdmin)
             {
                 return View();

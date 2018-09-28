@@ -148,9 +148,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<bool> IsItAdminAsync(string clientEmail)
         {
-            Client client = _db.GetClientByEmail(clientEmail);
             return Task.Factory.StartNew(() =>
             {
+                Client client = _db.GetClientByEmail(clientEmail);
                 if (client.IsAdmin == true)
                 {
                     return true;
