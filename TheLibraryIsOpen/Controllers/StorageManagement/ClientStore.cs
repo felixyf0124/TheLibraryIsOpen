@@ -106,7 +106,15 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task SetNormalizedUserNameAsync(Client user, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (user != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    user.EmailAddress = normalizedName;
+                    _db.UpdateClient(user);
+                });
+            }
+            throw new ArgumentNullException("user");
         }
 
         public Task SetUserNameAsync(Client user, string userName, CancellationToken cancellationToken)
@@ -116,6 +124,19 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     user.EmailAddress = userName;
+                    _db.UpdateClient(user);
+                });
+            }
+            throw new ArgumentNullException("user");
+        }
+
+        public Task SetIsAdminAsync(Client user, Boolean isAdmin, CancellationToken cancellationToken)
+        {
+            if (user != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    user.IsAdmin = isAdmin;
                     _db.UpdateClient(user);
                 });
             }

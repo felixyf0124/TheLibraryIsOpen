@@ -134,7 +134,7 @@ namespace TheLibraryIsOpen.Controllers
             }
             catch
             {
-                return View();
+                return RedirectToAction("Home","ListOfClients");
             }
         }
 
