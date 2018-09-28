@@ -145,5 +145,21 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return _db.GetAllClients();
             });
         }
+
+        public Task<bool> IsItAdminAsync(string clientEmail)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                Client client = _db.GetClientByEmail(clientEmail);
+                if (client.IsAdmin == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+        }
     }
 }
