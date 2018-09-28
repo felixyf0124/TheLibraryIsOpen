@@ -47,6 +47,10 @@
         {
             style = "background-color: #99ccff";
         }
+        else
+        {
+            style = "background-color: #ffffff";
+        }
     <tr style="@style">
         <td>@client.FirstName &nbsp; @client.LastName</td>
         <td>@client.EmailAddress</td>
@@ -54,11 +58,9 @@
         <td>@client.PhoneNo</td>
         <td>@client.IsAdmin</td>
         <td>
-           
                 @if (client.IsAdmin == false) {
                     <a asp-controller="Authentication" asp-action="Edit" asp-route-id="@client.clientId" class="btn btn-success">Assign as Admin</a>
                 }
-    
         </td>
      </tr>
     }
