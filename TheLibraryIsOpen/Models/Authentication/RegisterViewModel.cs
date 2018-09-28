@@ -29,7 +29,7 @@ namespace TheLibraryIsOpen.Models.Authentication
 
         public Client ToClient()
         {
-            return new Client(FName, LName, Email, Address, PhoneNumber, Password, true);
+            return new Client(FName, LName, Email, Address, PhoneNumber, Password, false);
         }
 
     }

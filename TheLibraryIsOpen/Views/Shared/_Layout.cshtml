@@ -6,7 +6,6 @@
     bool signedIn = User.Identity.IsAuthenticated;
     // get clientEmail
     string clientEmail = User.Identity.Name;
-    var databaseFunctions = new TheLibraryIsOpen.Database.Db();
 }
 <!DOCTYPE html>
 <html>
@@ -43,11 +42,6 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    <!--for test-->
-@*                     @if (isAdmin) *@
-@*                     { *@
-@*                         <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li> *@
-@*                     } *@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (!signedIn)
@@ -59,18 +53,15 @@
                     }
                     else
                     {
-                        Client client = databaseFunctions.GetClientByEmail(clientEmail);
+                        Client client = await cm.FindByEmailAsync(clientEmail);
                         bool isAdmin = client.IsAdmin;
-                        //Console.WriteLine(clientEmail + "2222222222222222222");
-                        //Console.WriteLine(client.IsAdmin + "2222222222222222222");
                         if (isAdmin)
                         {
-                            <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">Welcome Admins</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li>
                         }
                         else
                         {
-                            <li><a asp-area="" asp-controller="" asp-action="">Welcome @clientEmail</a></li>
+                            <li>Welcome, @client.FirstName!</li>
                         }
 
                         <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>

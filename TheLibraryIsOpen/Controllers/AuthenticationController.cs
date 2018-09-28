@@ -167,8 +167,7 @@ namespace TheLibraryIsOpen.Controllers
                 {
                     new Claim(ClaimTypes.Name, user.EmailAddress),
                     new Claim(ClaimTypes.Email, user.EmailAddress),
-                    new Claim("Id", user.Id),
-
+                    new Claim("Id", user.Id)
                 };
 
             var claimsIdentity = new ClaimsIdentity(

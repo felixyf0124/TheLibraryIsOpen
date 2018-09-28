@@ -52,17 +52,12 @@ namespace TheLibraryIsOpen.Database
                 connection.Open();
                 return true;
             }
-            catch (MySqlException ex)
-            {
-                //When handling errors, you can your application's response based 
-                //on the error number.
-                //The two most common error numbers when connecting are as follows:
-                //0: Cannot connect to server.
-                //1045: Invalid user name and/or password.
-
-                // TODO log error
-                throw;
-            }
+            //When handling errors, you can your application's response based 
+            //on the error number.
+            //The two most common error numbers when connecting are as follows:
+            //0: Cannot connect to server.
+            //1045: Invalid user name and/or password.
+            catch (MySqlException e) { throw e; }
         }
 
         private bool CloseConnection()
@@ -72,195 +67,225 @@ namespace TheLibraryIsOpen.Database
                 connection.Close();
                 return true;
             }
-            catch (MySqlException ex)
-            {
-                // TODO log error
-                throw;
-            }
+            catch (MySqlException e) { throw e; }
         }
 
-        //Select statement
+        // Returns a list of all clients in the db converted to client object.
         public List<Client> GetAllClients()
         {
             //Create a list of unknown size to store the result
             List<Client> list = new List<Client>();
             string query = "SELECT * FROM users;";
 
-            //Open connection
-            if (this.OpenConnection() == true)
+            lock (this)
             {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
                     MySqlDataReader dr = cmd.ExecuteReader();
-                try {
-                    //Read the data, create client object and store in list
-                    while (dr.Read())
+                    try
                     {
-                        int clientID = (int)dr["clientID"];
-                        string firstName = dr["firstName"] + "";
-                        string lastName = dr["lastName"] + "";
-                        string emailAddress = dr["emailAddress"] + "";
-                        string homeAddress = dr["homeAddress"] + "";
-                        string phoneNumber = dr["phoneNumber"] + "";
-                        string password = dr["password"] + "";
-                        bool isAdmin = (bool)dr["isAdmin"];
+                        //Read the data, create client object and store in list
+                        while (dr.Read())
+                        {
+                            int clientID = (int)dr["clientID"];
+                            string firstName = dr["firstName"] + "";
+                            string lastName = dr["lastName"] + "";
+                            string emailAddress = dr["emailAddress"] + "";
+                            string homeAddress = dr["homeAddress"] + "";
+                            string phoneNumber = dr["phoneNumber"] + "";
+                            string password = dr["password"] + "";
+                            bool isAdmin = (bool)dr["isAdmin"];
 
-                        Client client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
+                            Client client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
 
-                        list.Add(client);
+                            list.Add(client);
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
+                    catch (Exception e) { throw e; }
 
-                //close Data Reader
-                dr.Close();
+                    //close Data Reader
+                    dr.Close();
 
-                //close Connection
-                this.CloseConnection();
+                    //close Connection
+                    this.CloseConnection();
+                }
             }
             return list;
         }
 
+        // Selects a client by id and returns a client object.
         public Client GetClientById(int id)
         {
             string query = $"SELECT * FROM users WHERE clientID = \"{id}\";";
             Client client = null;
-            //Open connection
-            if (OpenConnection() == true)
+
+            lock (this)
             {
-                //Create Command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                //Create a data reader and Execute the command
-                MySqlDataReader dr = cmd.ExecuteReader();
-
-                try
+                //Open connection
+                if (OpenConnection() == true)
                 {
-                    //Read the data, create client object and store in list
-                    if (dr.Read())
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+
+                    try
                     {
-                        int clientID = (int)dr["clientID"];
-                        string firstName = dr["firstName"] + "";
-                        string lastName = dr["lastName"] + "";
-                        string emailAddress = dr["emailAddress"] + "";
-                        string homeAddress = dr["homeAddress"] + "";
-                        string phoneNumber = dr["phoneNumber"] + "";
-                        string password = dr["password"] + "";
-                        bool isAdmin = (bool)dr["isAdmin"];
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int clientID = (int)dr["clientID"];
+                            string firstName = dr["firstName"] + "";
+                            string lastName = dr["lastName"] + "";
+                            string emailAddress = dr["emailAddress"] + "";
+                            string homeAddress = dr["homeAddress"] + "";
+                            string phoneNumber = dr["phoneNumber"] + "";
+                            string password = dr["password"] + "";
+                            bool isAdmin = (bool)dr["isAdmin"];
 
-                        client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
+                            client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
+                        }
                     }
-                }
-                catch(Exception e) { throw e; }
-                //close Data Reader
-                dr.Close();
+                    catch (Exception e) { throw e; }
 
-                //close Connection
-                this.CloseConnection();
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
             }
             return client;
         }
 
+        // Selects a client by email and returns a client object
         public Client GetClientByEmail(string emailAddres)
         {
             string query = $"SELECT * FROM users WHERE emailAddress = \"{emailAddres}\";";
             Client client = null;
-            //Open connection
-            if (OpenConnection() == true)
+
+            lock (this)
             {
-                //Create Command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                //Create a data reader and Execute the command
-                MySqlDataReader dr = cmd.ExecuteReader();
-                try
+                //Open connection
+                if (OpenConnection() == true)
                 {
-                    //Read the data, create client object and store in list
-                    if (dr.Read())
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
                     {
-                        int clientID = (int)dr["clientID"];
-                        string firstName = dr["firstName"] + "";
-                        string lastName = dr["lastName"] + "";
-                        string emailAddress = dr["emailAddress"] + "";
-                        string homeAddress = dr["homeAddress"] + "";
-                        string phoneNumber = dr["phoneNumber"] + "";
-                        string password = dr["password"] + "";
-                        bool isAdmin = (bool)dr["isAdmin"];
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int clientID = (int)dr["clientID"];
+                            string firstName = dr["firstName"] + "";
+                            string lastName = dr["lastName"] + "";
+                            string emailAddress = dr["emailAddress"] + "";
+                            string homeAddress = dr["homeAddress"] + "";
+                            string phoneNumber = dr["phoneNumber"] + "";
+                            string password = dr["password"] + "";
+                            bool isAdmin = (bool)dr["isAdmin"];
 
-                        client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
+                            client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
+                        }
                     }
-                }catch(Exception e) { throw e; }
-                //close Data Reader
-                dr.Close();
+                    catch (Exception e) { throw e; }
 
-                //close Connection
-                this.CloseConnection();
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
             }
             return client;
         }
 
-        // TODO how are we storing the password, because I can't access it?
+
+        // Inserts a new client into the db
         public void CreateClient(Client client)
         {
 
             string query = $"INSERT INTO users (firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin) VALUES(\"{client.FirstName}\", \"{client.LastName}\", \"{client.EmailAddress}\", \"{client.HomeAddress}\", \"{client.PhoneNo}\", \"{client.Password}\", {client.IsAdmin});";
 
-            //open connection
-            if (this.OpenConnection() == true)
+            lock (this)
             {
-                try
+                //open connection
+                if (this.OpenConnection() == true)
                 {
-                    //create command and assign the query and connection from the constructor
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
 
-                    //Execute command
-                    cmd.ExecuteNonQuery();
-                }catch(Exception e) { throw e; }
-                //close connection
-                this.CloseConnection();
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
             }
         }
 
+        // Deletes a client by id from the db
         public void DeleteClient(Client client)
         {
             string query = $"DELETE FROM users WHERE (clientID = \"{client.clientId}\");";
 
-            //open connection
-            if (this.OpenConnection() == true)
+            lock (this)
             {
-                try
+                //open connection
+                if (this.OpenConnection() == true)
                 {
-                    //create command and assign the query and connection from the constructor
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
 
-                    //Execute command
-                    cmd.ExecuteNonQuery();
-                }catch(Exception e) { throw e; }
-                //close connection
-                this.CloseConnection();
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
             }
         }
 
+        // Updates a client's information in the db by id
         public void UpdateClient(Client client)
         {
             string query = $"UPDATE users SET firstName = \"{client.FirstName}\", lastName = \"{client.LastName}\", emailAddress = \"{client.EmailAddress}\", homeAddress = \"{client.HomeAddress}\", phoneNumber = \"{client.PhoneNo}\", password = \"{client.Password}\", isAdmin = {client.IsAdmin} WHERE clientID = \"{client.clientId}\";";
 
-            //open connection
-            if (this.OpenConnection() == true)
+            lock (this)
             {
-                try
+                //open connection
+                if (this.OpenConnection() == true)
                 {
-                    //create command and assign the query and connection from the constructor
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
 
-                    //Execute command
-                    cmd.ExecuteNonQuery();
-                } catch(Exception e) { throw e; }
-                //close connection
-                this.CloseConnection();
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
             }
         }
+
+  
     }
 }

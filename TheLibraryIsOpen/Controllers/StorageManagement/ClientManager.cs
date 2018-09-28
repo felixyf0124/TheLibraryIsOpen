@@ -31,9 +31,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return null;
         }
 
+
         public override async Task<IdentityResult> CreateAsync(Client user)
         {
             return await Store.CreateAsync(user, new System.Threading.CancellationToken(false));
         }
+
     }
 }

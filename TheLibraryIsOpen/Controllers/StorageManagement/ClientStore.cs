@@ -158,5 +158,29 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return IdentityResult.Failed(new IdentityError { Description = "user was null" });
             });
         }
+
+        public Task<List<Client>> GetAllClientsDataAsync() 
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllClients();
+            });
+        }
+
+        public Task<bool> IsItAdminAsync(string clientEmail)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                Client client = _db.GetClientByEmail(clientEmail);
+                if (client.IsAdmin == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+        }
     }
 }
