@@ -28,6 +28,7 @@
         <th>Home Address</th>
         <th>Phone Number</th>
         <th>Administrator</th>
+        <th></th>
     </tr>
 
     @*Hard coded data for testing
@@ -46,13 +47,20 @@
         {
             style = "background-color: #99ccff";
         }
-        <tr style="@style">
-            <td>@client.FirstName &nbsp; @client.LastName</td>
-            <td>@client.EmailAddress</td>
-            <td>@client.HomeAddress</td>
-            <td>@client.PhoneNo</td>
-            <td>@client.IsAdmin</td>
-        </tr>
+    <tr style="@style">
+        <td>@client.FirstName &nbsp; @client.LastName</td>
+        <td>@client.EmailAddress</td>
+        <td>@client.HomeAddress</td>
+        <td>@client.PhoneNo</td>
+        <td>@client.IsAdmin</td>
+        <td>
+           
+                @if (client.IsAdmin == false) {
+                    <a asp-controller="Authentication" asp-action="Edit" asp-route-id="@client.clientId" class="btn btn-success">Assign as Admin</a>
+                }
+    
+        </td>
+     </tr>
     }
 </table>
 }
