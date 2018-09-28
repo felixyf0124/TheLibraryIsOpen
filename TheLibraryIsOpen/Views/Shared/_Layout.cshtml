@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientManager cm
+@{
+    bool signedIn = User.Identity.IsAuthenticated;
+    // get clientEmail
+    string clientEmail = User.Identity.Name;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -33,6 +42,30 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @if (!signedIn)
+
+                    {
+
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
+                    }
+                    else
+                    {
+                        Client client = await cm.FindByEmailAsync(clientEmail);
+                        bool isAdmin = client.IsAdmin;
+                        if (isAdmin)
+                        {
+                            <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li>
+                        }
+                        else
+                        {
+                            <li>Welcome, @client.FirstName!</li>
+                        }
+
+                        <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
+                    }
                 </ul>
             </div>
         </div>

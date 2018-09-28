@@ -1,0 +1,99 @@
+﻿
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientStore clientStore
+@{
+    ViewData["Title"] = "List Of Clients";
+
+    //Retrieve all the clients from the database
+    List<Client> allClientsList = await  clientStore.GetAllClientsDataAsync();
+
+    //For displaying a message of the number of client found in the database
+    int numberOfClients = allClientsList.Count;
+    string message = numberOfClients.ToString();
+
+    //Display a different message depending on the number of clients
+    if(numberOfClients < 2)
+    {
+        message += " client";
+    }
+    else
+    {
+        message += " clients";
+    }
+    message += " found from TheLibraryIsOpen database";
+
+    //For displaying a different background color if isAdmin is true
+    var style = " ";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@message</h3>
+
+@if (numberOfClients != 0)
+{
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Email Address</th>
+        <th>Home Address</th>
+        <th>Phone Number</th>
+        <th>Administrator</th>
+        <th></th>
+    </tr>
+
+    @*Hard coded data for testing
+        <tr>
+            <td>TestName</td>
+            <td>TestEmail</td>
+            <td>TestHome</td>
+            <td>TestPhone</td>
+            <td>TestAdmin</td>
+        </tr>*@
+
+    <!--Display all the clients information into the table-->
+    @foreach (var client in allClientsList as List<TheLibraryIsOpen.Models.DBModels.Client>)
+    {
+        <!--For displaying a different background color if isAdmin is true-->
+        if (client.IsAdmin == true)
+        {
+            style = "background-color: #99ccff";
+        }
+        else
+        {
+            style = "background-color: #ffffff";
+        }
+    <tr style="@style">
+        <td>@client.FirstName &nbsp; @client.LastName</td>
+        <td>@client.EmailAddress</td>
+        <td>@client.HomeAddress</td>
+        <td>@client.PhoneNo</td>
+        <td>@client.IsAdmin</td>
+        <td>
+                @if (client.IsAdmin == false) {
+                    <a asp-controller="Authentication" asp-action="Edit" asp-route-id="@client.clientId" class="btn btn-success">Assign as Admin</a>
+                }
+        </td>
+     </tr>
+    }
+</table>
+}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 4%;
+    }
+
+    td, th {
+        border: 1px solid #C0C0C0;
+        text-align: left;
+        padding: 1%;
+    }
+
+    th {
+        background-color: #D3D3D3;
+    }
+</style>
