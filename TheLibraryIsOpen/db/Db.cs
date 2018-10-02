@@ -286,6 +286,17 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
+
+        /*
+         * The following part will be methods for music
+         */
+
+        // Inserts a new music into the database
+        public void CreateMusic(Music music)
+        {
+
+        }
+
   
     }
 }
