@@ -11,6 +11,17 @@
                 phoneNumber varchar(255) 
                 password varchar(255) 
                 isAdmin tinyint(1)
+
+    Table:      books
+    Columns:    bookID int(10) UN AI PK 
+                title varchar(255) 
+                author varchar(255) 
+                format varchar(255) 
+                pages varchar(255) 
+                publisher varchar(255) 
+                language varchar(255) 
+                isbn10 varchar(255) 
+                isbn13 varchar(255)
  */
 using MySql.Data.MySqlClient;
 using System;
@@ -534,6 +545,56 @@ namespace TheLibraryIsOpen.Database
             return music;
         }
 
+
+        // Returns a list of all clients in the db converted to client object.
+        public List<Book> GetAllBooks()
+        {
+            //Create a list of unknown size to store the result
+            List<Book> list = new List<Book>();
+            string query = "SELECT * FROM books;";
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";                             
+                            string isbn10 = dr["isbn10"]+"";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId,title, author, format, pages,publisher, year, language,isbn10, isbn13);
+                            //Console.Write(book);
+
+                            list.Add(book);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
 
     }
 }

@@ -47,7 +47,7 @@ namespace TheLibraryIsOpen.Models.DBModels
         {
             return "Magazine:\nTitle:" + Title + "\nIssue Number:" + IssueNumber + "\nIssue Date: " + Date + "\nEditor:" + Editor +
                 "\nCategory:" + Category + "\nPublisher:" + Publisher + "\nCountry:" + Country + "\nLanguage:" + Language +
-                "\nYear:" + Year + "\nPages:" + Pages + "\nISBN:" + Isbn + "\nMagazine ID:" + MagazineId;
+                "\nYear:" + Year + "\nISBN:" + Isbn + "\nMagazine ID:" + MagazineId;
         }
     }
 }
