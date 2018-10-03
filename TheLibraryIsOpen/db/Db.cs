@@ -339,7 +339,7 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new music into the database
         public void CreateMusic(Music music)
         {
-            string query = $"INSERT INTO musics (artist, album, genre, year, isbn) VALUES(\"{music.Artist}\", \"{music.Album}\", \"{music.Genre}\", \"{music.Year}\", \"{music.Isbn});";
+            string query = $"INSERT INTO musics (type, title, artist, label, releaseDate, asin) VALUES(\"{music.Type}\", \"{music.Title}\", \"{music.Artist}\", \"{music.Label}\", \"{music.ReleaseDate}\", \"{music.Asin}\", \"{music.MusicId});";
 
             // Try QuerySend when table for music will be created
             //QuerySend(query);
@@ -368,7 +368,7 @@ namespace TheLibraryIsOpen.Database
         // Update a music's information in the database by MusicId
         public void UpdateMusic(Music music)
         {
-            string query = $"UPDATE music SET artist = \"{music.Artist}\", album = \"{music.Album}\", genre = \"{music.Genre}\", year = \"{music.Year}\", isbn = \"{music.Isbn}\" WHERE clientID = \"{music.MusicId}\";";
+            string query = $"UPDATE music SET type = \"{music.Type}\", title = \"{music.Title}\", artist = \"{music.Artist}\", label = \"{music.Label}\", releaseDate = \"{music.ReleaseDate}\", asin = \"{music.Asin}\" WHERE musicID = \"{music.MusicId}\";";
 
             lock (this)
             {
@@ -441,13 +441,14 @@ namespace TheLibraryIsOpen.Database
                         if (dr.Read())
                         {
                             int musicId = (int)dr["musicId"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
-                            string album = dr["album"] + "";
-                            string genre = dr["genre"] + "";
-                            int year = (int)dr["year"];
-                            int isbn = (int)dr["isbn"];
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
 
-                            music = new Music(musicId, artist, album, genre, year, isbn);
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -483,13 +484,14 @@ namespace TheLibraryIsOpen.Database
                         if (dr.Read())
                         {
                             int musicId = (int)dr["musicId"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
-                            string album = dr["album"] + "";
-                            string genre = dr["genre"] + "";
-                            int year = (int)dr["year"];
-                            int isbn = (int)dr["isbn"];
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
 
-                            music = new Music(musicId, artist, album, genre, year, isbn);
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -558,13 +560,14 @@ namespace TheLibraryIsOpen.Database
                         if (dr.Read())
                         {
                             int musicId = (int)dr["musicId"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
-                            string album = dr["album"] + "";
-                            string genre = dr["genre"] + "";
-                            int year = (int)dr["year"];
-                            int isbn = (int)dr["isbn"];
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
 
-                            music = new Music(musicId, artist, album, genre, year, isbn);
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
                         }
                     }
                     catch (Exception e) { throw e; }
