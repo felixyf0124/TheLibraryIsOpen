@@ -12,16 +12,50 @@
                 password varchar(255) 
                 isAdmin tinyint(1)
 
-    Table:      books
-    Columns:    bookID int(10) UN AI PK 
-                title varchar(255) 
-                author varchar(255) 
-                format varchar(255) 
-                pages varchar(255) 
-                publisher varchar(255) 
-                language varchar(255) 
-                isbn10 varchar(255) 
-                isbn13 varchar(255)
+    Table: books
+    Columns:
+            bookID int(11) AI PK 
+            title varchar(255) 
+            author varchar(255) 
+            format varchar(255) 
+            pages int(11) 
+            publisher varchar(255) 
+            year varchar(255) 
+            language varchar(255) 
+            isbn10 varchar(255) 
+            isbn13 varchar(255)
+
+    Table: magazines
+    Columns:
+            magazineID int(11) AI PK 
+            title varchar(255) 
+            publisher varchar(255) 
+            language varchar(255) 
+            isbn10 varchar(255) 
+            isbn13 varchar(255)
+
+    Table: movies
+    Columns:
+            movieID int(11) AI PK 
+            title varchar(255) 
+            director varchar(255) 
+            producers varchar(255) 
+            actors varchar(255) 
+            language varchar(255) 
+            subtitles varchar(255) 
+            dubbed varchar(255) 
+            releasedate varchar(255) 
+            runtime varchar(255)
+
+    Table: cds
+    Columns:
+            cdID int(11) AI PK 
+            type varchar(255) 
+            title varchar(255) 
+            artist varchar(255) 
+            label varchar(255) 
+            releasedate varchar(255) 
+            asin varchar(255)   
  */
 using MySql.Data.MySqlClient;
 using System;
