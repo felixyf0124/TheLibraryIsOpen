@@ -11,6 +11,51 @@
                 phoneNumber varchar(255) 
                 password varchar(255) 
                 isAdmin tinyint(1)
+
+    Table: books
+    Columns:
+            bookID int(11) AI PK 
+            title varchar(255) 
+            author varchar(255) 
+            format varchar(255) 
+            pages int(11) 
+            publisher varchar(255) 
+            year varchar(255) 
+            language varchar(255) 
+            isbn10 varchar(255) 
+            isbn13 varchar(255)
+
+    Table: magazines
+    Columns:
+            magazineID int(11) AI PK 
+            title varchar(255) 
+            publisher varchar(255) 
+            language varchar(255) 
+            isbn10 varchar(255) 
+            isbn13 varchar(255)
+
+    Table: movies
+    Columns:
+            movieID int(11) AI PK 
+            title varchar(255) 
+            director varchar(255) 
+            producers varchar(255) 
+            actors varchar(255) 
+            language varchar(255) 
+            subtitles varchar(255) 
+            dubbed varchar(255) 
+            releasedate varchar(255) 
+            runtime varchar(255)
+
+    Table: cds
+    Columns:
+            cdID int(11) AI PK 
+            type varchar(255) 
+            title varchar(255) 
+            artist varchar(255) 
+            label varchar(255) 
+            releasedate varchar(255) 
+            asin varchar(255)   
  */
 using MySql.Data.MySqlClient;
 using System;
@@ -286,6 +331,307 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
-  
+
+        /*
+         * The following methods are made for the music table
+         */
+
+        // Inserts a new music into the database
+        public void CreateMusic(Music music)
+        {
+            string query = $"INSERT INTO musics (type, title, artist, label, releaseDate, asin) VALUES(\"{music.Type}\", \"{music.Title}\", \"{music.Artist}\", \"{music.Label}\", \"{music.ReleaseDate}\", \"{music.Asin}\", \"{music.MusicId});";
+
+            // Try QuerySend when table for music will be created
+            //QuerySend(query);
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        // Update a music's information in the database by MusicId
+        public void UpdateMusic(Music music)
+        {
+            string query = $"UPDATE music SET type = \"{music.Type}\", title = \"{music.Title}\", artist = \"{music.Artist}\", label = \"{music.Label}\", releaseDate = \"{music.ReleaseDate}\", asin = \"{music.Asin}\" WHERE musicID = \"{music.MusicId}\";";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        // Delete music by MusicId from the database
+        public void DeleteMusic(Music music)
+        {
+            string query = $"DELETE FROM musics WHERE (MusicId = \"{music.MusicId}\");";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        // Retrieve a music information by id
+        public Music GetMusicById(int id)
+        {
+            string query = $"SELECT * FROM musics WHERE musicId = \" { id } \";";
+
+            // Try QueryRetrieve when music table will be created
+            //return QueryRetrieve(query);
+
+            Music music = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int musicId = (int)dr["musicId"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return music;
+        }
+
+        // Retrieve a music information by ISBN
+        public Music GetMusicByIsbn(int ISBN)
+        {
+            string query = $"SELECT * FROM musics WHERE isbn = \" { ISBN } \";";
+            Music music = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int musicId = (int)dr["musicId"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return music;
+        }
+
+
+        /*
+         * TO BE TESTED
+         * For all types of tables
+         * Method to send query to database for creating, updating and deleting
+         */
+        public void QuerySend (string query) 
+        {
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+
+        /*
+         * TO BE TESTED
+         * For only music table
+         * Method to retrieve music information by id or ISBN
+         */
+        public Music QueryRetrieve (string query)
+        {
+            Music music = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int musicId = (int)dr["musicId"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return music;
+        }
+
+
+        // Returns a list of all clients in the db converted to client object.
+        public List<Book> GetAllBooks()
+        {
+            //Create a list of unknown size to store the result
+            List<Book> list = new List<Book>();
+            string query = "SELECT * FROM books;";
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";                             
+                            string isbn10 = dr["isbn10"]+"";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId,title, author, format, pages,publisher, year, language,isbn10, isbn13);
+                            //Console.Write(book);
+
+                            list.Add(book);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
+
     }
 }

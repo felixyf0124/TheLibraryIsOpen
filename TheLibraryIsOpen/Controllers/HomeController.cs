@@ -27,6 +27,11 @@ namespace TheLibraryIsOpen.Controllers
 			return View();
 		}
 
+        public IActionResult Book()
+        {
+            return View();
+        }
+
 		public IActionResult About()
 		{
 			ViewData["Message"] = "Your application description page.";
@@ -46,7 +51,18 @@ namespace TheLibraryIsOpen.Controllers
 			return View();
 		}
 
-        public async Task<ActionResult> ListOfClients()
+        // for test
+	    public void ListTest()
+	    {
+	        Db _db = new Db();
+	        List<Book> allBooksList = _db.GetAllBooks();
+	        foreach (var book in allBooksList as List<TheLibraryIsOpen.Models.DBModels.Book>)
+	        {
+	            Console.Write(book.ToString());
+	        }
+	    }
+
+	    public async Task<ActionResult> ListOfClients()
         {
             string clientEmail = User.Identity.Name;
             bool isAdmin = await _cs.IsItAdminAsync(clientEmail);
