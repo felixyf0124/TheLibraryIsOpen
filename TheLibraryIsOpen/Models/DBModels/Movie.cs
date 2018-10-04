@@ -11,7 +11,7 @@
         public string Subtitles { get; set; }
         public string Dubbed { get; set; }
         public string ReleaseDate { get; set; }
-        public int RunTime { get; set; }
+        public string RunTime { get; set; }
 
         // Default constructor
         public Movie() { }
@@ -21,7 +21,7 @@
          * The last id just entered from table would be assigned to MovieId for the movie object. So that to avoid same id appears when server gets restarted.
         */
         public Movie(string title, string director, string producers, string actors, string language, string subtitles,
-                    string dubbed, string releaseDate, int runTime)
+                    string dubbed, string releaseDate, string runTime)
         {
             Title = title;
             Director = director;
@@ -36,7 +36,7 @@
 
         // another construcor who  assigns client id is added as requested.
         public Movie(int mvId, string title, string director, string producers, string actors, string language, 
-                     string subtitles, string dubbed, string releaseDate, int runTime)
+                     string subtitles, string dubbed, string releaseDate, string runTime)
         {
             MovieId = mvId;
         }
