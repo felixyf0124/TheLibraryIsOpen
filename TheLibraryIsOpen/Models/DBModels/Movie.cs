@@ -1,4 +1,4 @@
-﻿﻿namespace TheLibraryIsOpen.Models.DBModels
+﻿namespace TheLibraryIsOpen.Models.DBModels
 {
     public class Movie
     {
