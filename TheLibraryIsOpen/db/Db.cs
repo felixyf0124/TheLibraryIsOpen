@@ -20,7 +20,7 @@
             format varchar(255) 
             pages int(11) 
             publisher varchar(255) 
-            year varchar(255) 
+            date varchar(255) 
             language varchar(255) 
             isbn10 varchar(255) 
             isbn13 varchar(255)
@@ -31,6 +31,7 @@
             title varchar(255) 
             publisher varchar(255) 
             language varchar(255) 
+            date varchar(255) 
             isbn10 varchar(255) 
             isbn13 varchar(255)
 
@@ -610,7 +611,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
+                            string year = dr["date"] + "";
                             string language = dr["language"] + "";                             
                             string isbn10 = dr["isbn10"]+"";
                             string isbn13 = dr["isbn13"] + "";
@@ -633,5 +634,87 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+
+        // Return book get from isbn 10
+        public Book GetBooksByIsbn(string isbn)
+        {
+            string query = $"SELECT * FROM books WHERE isbn10 = \"{isbn}\";";
+            Book book = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+
+                    try
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["date"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
+        }
+
+
+        // Inserts a new book into the db
+        public void CreateBook(Book book)
+        {
+
+            string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
+            
+            QuerySend(query);
+        }
+
+        // Update a book information in the database by book ID
+        // We can add other function to update book
+        public void UpdateBookByBookId(Book book, int bookId)
+        {
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{bookId}\");";
+
+            QuerySend(query);
+        }
+
+        // Update a book information in the database by isbn10
+        public void UpdateBookByBookIsbn(Book book, string isbn10)
+        {
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
+
+            QuerySend(query);
+        }
+
+        // Delete a book information in db by isbn10
+        public void DeleteBookByIsbn10(string isbn10)
+        {
+            string query = $"DELETE FROM books WHERE (isbn10 = \"{isbn10}\");";
+
+            QuerySend(query);
+        }
     }
 }
