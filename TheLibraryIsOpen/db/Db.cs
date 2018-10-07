@@ -414,12 +414,52 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
+        public List<Magazine> GetAllMagazines() 
+        {
+            string query = $"SELECT * FROM magazines;";
+
+            List<Magazine> magazines = new List<Magazine>();
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazines.Add(new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13));
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return magazines;
+
+        }
+
         public Magazine GetMagazineById(int id)
         {
             string query = $"SELECT * FROM magazines WHERE magazineId = \" { id } \";";
-
-            // Try QueryRetrieve when music table will be created
-            //return QueryRetrieve(query);
 
             Magazine magazine = null;
             lock (this)
@@ -433,7 +473,7 @@ namespace TheLibraryIsOpen.Database
                     MySqlDataReader dr = cmd.ExecuteReader();
                     try
                     {
-                        //Read the data, create client object and store in list
+                        //Read the data, create magazine object and store in list
                         if (dr.Read())
                         {
                             int magazineId = (int)dr["magazineID"];
@@ -459,7 +499,89 @@ namespace TheLibraryIsOpen.Database
             return magazine;
         }
 
+        public Magazine GetMagazineByIsbn10(string Isbn10)
+        {
+            string query = $"SELECT * FROM magazines WHERE isbn10 = \" { Isbn10 } \";";
 
+            Magazine magazine = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return magazine;
+        }
+
+        public Magazine GetMagazineByIsbn13(string Isbn13)
+        {
+            string query = $"SELECT * FROM magazines WHERE isbn13 = \" { Isbn13 } \";";
+
+            Magazine magazine = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return magazine;
+        }
 
 
 

@@ -73,7 +73,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            var magazine = await _context.Book.FindAsync(id);
+            var magazine = await _context.Magazine.FindAsync(id);
             if (magazine == null)
             {
                 return NotFound();

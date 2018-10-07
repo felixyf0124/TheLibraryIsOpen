@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Magazine\" />
-    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\Magazine\Create.cshtml" />
@@ -30,5 +29,8 @@
     <None Include="Views\Magazine\Delete.cshtml" />
     <None Include="Views\Magazine\Edit.cshtml" />
     <None Include="Views\Magazine\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Data\TheLibraryIsOpenContext.cs" />
   </ItemGroup>
 </Project>
