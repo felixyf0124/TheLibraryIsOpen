@@ -30,7 +30,8 @@
             magazineID int(11) AI PK 
             title varchar(255) 
             publisher varchar(255) 
-            language varchar(255) 
+            language varchar(255)
+            date varchar(255)
             isbn10 varchar(255) 
             isbn13 varchar(255)
 
@@ -330,6 +331,136 @@ namespace TheLibraryIsOpen.Database
                 }
             }
         }
+
+
+        /*
+         *  Magazine Table methods
+         */
+
+        public void CreateMagazine(Magazine magazine)
+        {
+            string query = $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\", \"{magazine.Publisher}\", \"{magazine.Language}\", \"{magazine.Date}\", " +
+                "\"{magazine.Isbn10}\", \"{magazine.Isbn13}\");";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        public void UpdateMagazine(Magazine magazine)
+        {
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", " +
+                "isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE magazineId = \"{magazine.MagazineId}\";";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        public void DeleteMagazine(Magazine magazine)
+        {
+            string query = $"DELETE FROM magazines WHERE (MusicId = \"{magazine.MagazineId}\");";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        public Magazine GetMagazineById(int id)
+        {
+            string query = $"SELECT * FROM magazines WHERE magazineId = \" { id } \";";
+
+            // Try QueryRetrieve when music table will be created
+            //return QueryRetrieve(query);
+
+            Magazine magazine = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return magazine;
+        }
+
+
+
 
 
         /*

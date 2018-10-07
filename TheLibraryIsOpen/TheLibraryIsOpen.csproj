@@ -15,4 +15,20 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Magazine\" />
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Views\Magazine\Create.cshtml" />
+    <Content Remove="Views\Magazine\Delete.cshtml" />
+    <Content Remove="Views\Magazine\Edit.cshtml" />
+    <Content Remove="Views\Magazine\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\Magazine\Create.cshtml" />
+    <None Include="Views\Magazine\Delete.cshtml" />
+    <None Include="Views\Magazine\Edit.cshtml" />
+    <None Include="Views\Magazine\Index.cshtml" />
+  </ItemGroup>
 </Project>
