@@ -114,16 +114,15 @@ namespace TheLibraryIsOpen.Controllers
             }
 
             var magazine = await _cs.FindByIdAsync(id);
+
             if (magazine == null)
             {
                 return NotFound();
             }
             await _cs.DeleteAsync(magazine);
-
             return View(magazine);
         }
 
-        // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
