@@ -19,7 +19,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         //Create Magazine
-        public Task<IdentityResult> CreateAsync(Magazine magazine, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(Magazine magazine)
         {
             if (magazine != null)
             {
@@ -39,7 +39,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
 
         //Delete Magazine
-        public Task<IdentityResult> DeleteAsync(Magazine magazine, CancellationToken cancellationToken)
+        public Task<IdentityResult> DeleteAsync(Magazine magazine)
         {
             if (magazine != null)
             {
@@ -61,7 +61,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         //Find methods (by id, isbn10, isbn13)
 
-        public Task<Magazine> FindByIdAsync(string magazineId, CancellationToken cancellationToken)
+        public Task<Magazine> FindByIdAsync(string magazineId)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -70,7 +70,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("magazineId");
         }
 
-        public Task<Magazine> FindByIsbn10Async(string isbn10, CancellationToken cancellationToken)
+        public Task<Magazine> FindByIsbn10Async(string isbn10)
         {
             if (!string.IsNullOrEmpty(isbn10))
             {
@@ -82,7 +82,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("isbn10");
         }
 
-        public Task<Magazine> FindByIsbn13Async(string isbn13, CancellationToken cancellationToken)
+        public Task<Magazine> FindByIsbn13Async(string isbn13)
         {
             if (!string.IsNullOrEmpty(isbn13))
             {
@@ -97,7 +97,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         //Update Methods (per attribute, general)
 
-        public Task SetTitleAsync(Magazine magazine, string title, CancellationToken cancellationToken)
+        public Task SetTitleAsync(Magazine magazine, string title)
         {
             if (magazine != null)
             {
@@ -111,7 +111,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
 
-        public Task SetPublisherAsync(Magazine magazine, string publisher, CancellationToken cancellationToken)
+        public Task SetPublisherAsync(Magazine magazine, string publisher)
         {
             if (magazine != null)
             {
@@ -124,7 +124,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("magazine");
         }
 
-        public Task SetLanguageAsync(Magazine magazine, string language, CancellationToken cancellationToken)
+        public Task SetLanguageAsync(Magazine magazine, string language)
         {
             if (magazine != null)
             {
@@ -137,7 +137,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("magazine");
         }
 
-        public Task SetDateAsync(Magazine magazine, string date, CancellationToken cancellationToken)
+        public Task SetDateAsync(Magazine magazine, string date)
         {
             if (magazine != null)
             {
@@ -150,7 +150,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("magazine");
         }
 
-        public Task SetIsbn10Async(Magazine magazine, string isbn10, CancellationToken cancellationToken)
+        public Task SetIsbn10Async(Magazine magazine, string isbn10)
         {
             if (magazine != null)
             {
@@ -163,7 +163,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("magazine");
         }
 
-        public Task SetIsbn13Async(Magazine magazine, string isbn13, CancellationToken cancellationToken)
+        public Task SetIsbn13Async(Magazine magazine, string isbn13)
         {
             if (magazine != null)
             {
@@ -176,7 +176,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("magazine");
         }
 
-        public Task<IdentityResult> UpdateAsync(Magazine magazine, CancellationToken cancellationToken)
+        public Task<IdentityResult> UpdateAsync(Magazine magazine)
         {
             if (magazine != null)
             {

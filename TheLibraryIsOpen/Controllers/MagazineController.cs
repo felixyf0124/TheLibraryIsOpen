@@ -6,35 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Controllers
 {
     public class MagazineController : Controller
     {
-        private readonly TheLibraryIsOpenContext _context;
+        private readonly MagazineCatalog _cs;
 
-        public MagazineController(TheLibraryIsOpenContext context)
+        public MagazineController(MagazineCatalog cs)
         {
-            _context = context;
+            _cs = cs;
         }
 
-        // GET: Magazine
-        public async Task<IActionResult> Index()
+        public async IActionResult Index()
         {
-            return View(await _context.Magazine.ToListAsync());
+            return View();
         }
 
-        // GET: Magazie/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var magazine = await _context.Magazine
-                .FirstOrDefaultAsync(m => m.MagazineId == id);
+            var magazine = await _cs.FindByIdAsync(id);
             if (magazine == null)
             {
                 return NotFound();
@@ -43,37 +41,32 @@ namespace TheLibraryIsOpen.Controllers
             return View(magazine);
         }
 
-        // GET: Magazine/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Magazine/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MagazineId,Title,Publisher,Language,Date,Isbn10,Isbn13")] Magazine magazine)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(magazine);
-                await _context.SaveChangesAsync();
+                await _cs.CreateAsync(magazine);
                 return RedirectToAction(nameof(Index));
             }
             return View(magazine);
         }
 
-        // GET: Magazine/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var magazine = await _context.Magazine.FindAsync(id);
+            var magazine = await _cs.FindByIdAsync(id);
+
             if (magazine == null)
             {
                 return NotFound();
@@ -81,14 +74,11 @@ namespace TheLibraryIsOpen.Controllers
             return View(magazine);
         }
 
-        // POST: Magazine/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Magazine magazine)
+        public async Task<IActionResult> Edit(string id, [Bind("MagazineId,Title,Publisher,Language,Date,Isbn10,Isbn13")] Magazine magazine)
         {
-            if (id != magazine.MagazineId)
+            if (int.Parse(id) != magazine.MagazineId)
             {
                 return NotFound();
             }
@@ -97,12 +87,11 @@ namespace TheLibraryIsOpen.Controllers
             {
                 try
                 {
-                    _context.Update(magazine);
-                    await _context.SaveChangesAsync();
+                    await _cs.UpdateAsync(magazine);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MagazineExists(magazine.MagazineId))
+                    if (!MagazineExists(id))
                     {
                         return NotFound();
                     }
@@ -117,20 +106,19 @@ namespace TheLibraryIsOpen.Controllers
             return View(magazine);
         }
 
-        // GET: Magazine/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var magazine = await _context.Magazine
-                .FirstOrDefaultAsync(m => m.MagazineId == id);
+            var magazine = await _cs.FindByIdAsync(id);
             if (magazine == null)
             {
                 return NotFound();
             }
+            await _cs.DeleteAsync(magazine);
 
             return View(magazine);
         }
@@ -138,17 +126,16 @@ namespace TheLibraryIsOpen.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var magazine = await _context.Magazine.FindAsync(id);
-            _context.Magazine.Remove(magazine);
-            await _context.SaveChangesAsync();
+            var magazine = await _cs.FindByIdAsync(id);
+            await _cs.DeleteAsync(magazine);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MagazineExists(int id)
+        private bool MagazineExists(string id)
         {
-            return _context.Magazine.Any(e => e.MagazineId == id);
+            return (_cs.FindByIdAsync(id) != null);
         }
     }
 }

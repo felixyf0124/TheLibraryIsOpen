@@ -366,7 +366,7 @@ namespace TheLibraryIsOpen.Database
         public void UpdateMagazine(Magazine magazine)
         {
             string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", " +
-                "isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE magazineId = \"{magazine.MagazineId}\";";
+                "isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE magazineID = \"{magazine.MagazineId}\";";
 
             lock (this)
             {
@@ -391,7 +391,7 @@ namespace TheLibraryIsOpen.Database
 
         public void DeleteMagazine(Magazine magazine)
         {
-            string query = $"DELETE FROM magazines WHERE (MusicId = \"{magazine.MagazineId}\");";
+            string query = $"DELETE FROM magazines WHERE (magazineID = \"{magazine.MagazineId}\");";
 
             lock (this)
             {
@@ -459,7 +459,7 @@ namespace TheLibraryIsOpen.Database
 
         public Magazine GetMagazineById(int id)
         {
-            string query = $"SELECT * FROM magazines WHERE magazineId = \" { id } \";";
+            string query = $"SELECT * FROM magazines WHERE magazineID = \" { id } \";";
 
             Magazine magazine = null;
             lock (this)
@@ -582,7 +582,6 @@ namespace TheLibraryIsOpen.Database
             }
             return magazine;
         }
-
 
 
         /*
