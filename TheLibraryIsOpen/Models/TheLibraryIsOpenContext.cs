@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models.DBModels;
 
-namespace TheLibraryIsOpen.Models
+namespace TheLibraryIsOpen.Data
 {
     public class TheLibraryIsOpenContext : DbContext
     {

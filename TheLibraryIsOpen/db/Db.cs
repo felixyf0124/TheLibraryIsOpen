@@ -30,13 +30,10 @@
             magazineID int(11) AI PK 
             title varchar(255) 
             publisher varchar(255) 
-<<<<<<< HEAD
+
             language varchar(255) 
             date varchar(255) 
-=======
-            language varchar(255)
-            date varchar(255)
->>>>>>> da6dab99e95c90186ce19ad6de3bef82ed51aed0
+
             isbn10 varchar(255) 
             isbn13 varchar(255)
 
@@ -384,11 +381,22 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
+        // need improve
         public void UpdateMagazine(Magazine magazine)
         {
             string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", " +
                 "isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE magazineID = \"{magazine.MagazineId}\";";
 
+        }
+
+
+        /*
+         * TO BE TESTED
+         * For all types of tables
+         * Method to send query to database for creating, updating and deleting
+         */
+        public void QuerySend (string query) 
+        {
             lock (this)
             {
                 //open connection
@@ -604,33 +612,6 @@ namespace TheLibraryIsOpen.Database
             return magazine;
         }
 
-
-        /*
-         * The following methods are made for the music table
->>>>>>> da6dab99e95c90186ce19ad6de3bef82ed51aed0
-         */
-        public void QuerySend(string query)
-        {
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
-        }
 
         /*
          * The following methods are made for the music table
