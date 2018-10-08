@@ -67,7 +67,7 @@
             lastname varchar(255) 
             role varchar(255)
 
-    Table: movieperson
+    Table: moviedirector , movieactor , movieproducer
     Columns:
             movieid int(11) 
             personid int(11)
