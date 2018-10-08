@@ -57,6 +57,18 @@
             label varchar(255) 
             releasedate varchar(255) 
             asin varchar(255)   
+
+    Table: person
+    Columns:
+            personID int(11) AI PK 
+            firstname varchar(255) 
+            lastname varchar(255) 
+            role varchar(255)
+
+    Table: movieperson
+    Columns:
+            movieid int(11) 
+            personid int(11)
  */
 using MySql.Data.MySqlClient;
 using System;
