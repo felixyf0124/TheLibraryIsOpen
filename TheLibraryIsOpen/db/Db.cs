@@ -346,6 +346,32 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
+        /*
+        * For all types of tables
+        * Method to send query to database for creating, updating and deleting
+        */
+        public void QuerySend(string query)
+        {
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
 
         /*
          *  Magazine Table methods
@@ -383,35 +409,6 @@ namespace TheLibraryIsOpen.Database
             string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", " +
                 "isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE magazineID = \"{magazine.MagazineId}\";";
 
-        }
-
-
-        /*
-         * TO BE TESTED
-         * For all types of tables
-         * Method to send query to database for creating, updating and deleting
-         */
-        public void QuerySend (string query) 
-        {
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
         }
 
         public void DeleteMagazine(Magazine magazine)
@@ -607,33 +604,6 @@ namespace TheLibraryIsOpen.Database
             }
             return magazine;
         }
-
-
-/*        /*
-         * For all types of tables for sending a query
-         #1#
-        public void QuerySend(string query)
-        {
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
-        }*/
 
         /*
          * The following methods are made for the music table
