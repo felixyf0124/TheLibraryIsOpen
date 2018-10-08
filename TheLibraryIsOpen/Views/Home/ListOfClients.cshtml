@@ -29,14 +29,14 @@
 
     //FOR TESTING//
     //int n = 7;
-    //Music music = new Music(6, "sometype"+n, "sometitle"+n, "someartist"+n, "somelabel"+n, "somereleasedate"+n, "someasin"+n);
+    //Music music = new Music(7, "sometype"+n, "sometitle"+n, "someartist"+n, "somelabel"+n, "somereleasedate"+n, "someasin"+n);
     //await clientStore.CreateMusicAsync(music);
     //await clientStore.UdpateMusicAsync(music);
     //await clientStore.DeleteMusicAsync(music);
-    @*List<Music> allMusicsList = await clientStore.GetAllMusicsDataAsync();
+    List<Music> allMusicsList = await clientStore.GetAllMusicsDataAsync();
     int musicCount = allMusicsList.Count;
     //message = "There is " + musicCount.ToString() + " music";
-    if(musicCount > 0)
+    @*if(musicCount > 0)
     {
         foreach (var musicData in allMusicsList as List<TheLibraryIsOpen.Models.DBModels.Music>)
         {

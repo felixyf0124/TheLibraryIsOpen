@@ -42,7 +42,7 @@
         // Return information about the music
         public override string ToString()
         {
-            return "Music:\nType:" + Type + "\nTitle:" + Title + "Artist:" + Artist + "\nLabel: " + Label + 
+            return "Music:\nType:" + Type + "\nTitle:" + Title + "\nArtist:" + Artist + "\nLabel: " + Label + 
                 "\nRelease Date:" + ReleaseDate + "\nASIN:" + Asin + "\nMusic ID:" + MusicId;
         }
     }

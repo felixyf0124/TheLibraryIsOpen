@@ -26,13 +26,13 @@ namespace TheLibraryIsOpen.Models.DBModels
             Isbn13 = isbn13;
         }
 
-        // another construcor who  assigns client id is added as requested.
+        // another construcor who  assigns magazine id is added as requested.
         public Magazine(int mgId, string title, string publisher, string language, string isbn10, string isbn13)
         {
             MagazineId = mgId;
         }
 
-        // Return information about the music
+        // Return information about the magazine
         public override string ToString()
         {
             return "Magazine:\nTitle:" + Title + "\nPublisher:" + Publisher + "\nLanguage:" + Language +

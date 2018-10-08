@@ -33,7 +33,7 @@
             Isbn13 = isbn13;
         }
 
-        // another construcor who  assigns client id is added as requested.
+        // another construcor who  assigns book id is added as requested.
         public Book(int bId, string title, string author, string format, int pages, string publisher, string date, string language, string isbn10, string isbn13)
         { 
             BookId = bId;
@@ -48,7 +48,7 @@
             Isbn13 = isbn13;
         }
 
-        // Return information about the music
+        // Return information about the book
         public override string ToString()
         {
             return "Book:\nBook ID:" + BookId+ "\nTitle:" + Title + "\nAuthor: " + Author+ "\nFormat:" + Format + "\nPages:" + Pages+ "\nPublisher:" + Publisher + "\nDate:" + Date +

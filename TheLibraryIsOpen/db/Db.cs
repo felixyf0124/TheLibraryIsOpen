@@ -341,170 +341,35 @@ namespace TheLibraryIsOpen.Database
         public void CreateMusic(Music music)
         {
             string query = $"INSERT INTO cds (type, title, artist, label, releasedate, asin) VALUES(\"{music.Type}\", \"{music.Title}\", \"{music.Artist}\", \"{music.Label}\", \"{music.ReleaseDate}\", \"{music.Asin}\");";
-
-            // Try QuerySend when table for music will be created
-            //QuerySend(query);
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         // Update a music's information in the database by MusicId
         public void UpdateMusic(Music music)
         {
             string query = $"UPDATE cds SET type = \"{music.Type}\", title = \"{music.Title}\", artist = \"{music.Artist}\", label = \"{music.Label}\", releasedate = \"{music.ReleaseDate}\", asin = \"{music.Asin}\" WHERE (cdID = \"{music.MusicId}\");";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         // Delete music by MusicId from the database
         public void DeleteMusic(Music music)
         {
             string query = $"DELETE FROM cds WHERE (cdID = \"{music.MusicId}\");";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         // Retrieve a music information by id
         public Music GetMusicById(int id)
         {
             string query = $"SELECT * FROM cds WHERE cdID = \" { id } \";";
-
-            // Try QueryRetrieve when music table will be created
-            //return QueryRetrieve(query);
-
-            Music music = null;
-            lock (this)
-            {
-                //Open connection
-                if (OpenConnection() == true)
-                {
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int musicId = (int)dr["cdID"];
-                            string type = dr["type"] + "";
-                            string title = dr["title"] + "";
-                            string artist = dr["artist"] + "";
-                            string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string asin = dr["asin"] + "";
-
-                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
-                        }
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
-                }
-            }
-            return music;
+            return QueryRetrieve(query);
         }
 
         // Retrieve a music information by ISBN
         public Music GetMusicByAsin(string ASIN)
         {
             string query = $"SELECT * FROM cds WHERE (asin = \"{ ASIN }\");";
-            Music music = null;
-
-            lock (this)
-            {
-                //Open connection
-                if (OpenConnection() == true)
-                {
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int musicId = (int)dr["cdID"];
-                            string type = dr["type"] + "";
-                            string title = dr["title"] + "";
-                            string artist = dr["artist"] + "";
-                            string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string asin = dr["asin"] + "";
-
-                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
-                        }
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
-                }
-            }
-            return music;
+            return QueryRetrieve(query);
         }
 
         // Returns a list of all musics in the db converted to music object.
@@ -555,7 +420,6 @@ namespace TheLibraryIsOpen.Database
 
 
         /*
-         * TO BE TESTED
          * For all types of tables
          * Method to send query to database for creating, updating and deleting
          */
@@ -584,9 +448,8 @@ namespace TheLibraryIsOpen.Database
 
 
         /*
-         * TO BE TESTED
-         * For only music table
-         * Method to retrieve music information by id or ISBN
+         * For retrieving ONE object ONLY
+         * Method to retrieve music information by id or asin 
          */
         public Music QueryRetrieve (string query)
         {
