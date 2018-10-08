@@ -878,6 +878,121 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        /*
+         * The following methods are made for the person table
+         */
+
+        // Inserts a new movie into the database
+        public void CreatePerson(Person person)
+        {
+            string query = $"INSERT INTO persons (firstName, lastName, role) VALUES(\"{person.FirstName}\", \"{person.LastName}\", \"{person.Role}\");";
+            QuerySend(query);
+        }
+
+        // Update a movie's information in the database by MusicId
+        public void UpdateMovie(Movie movie)
+        {
+            string query = $"UPDATE movies SET title = \"{movie.Title}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
+            QuerySend(query);
+        }
+
+        // Delete movie by movieId from the database
+        public void DeleteMovie(Movie movie)
+        {
+            string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
+            QuerySend(query);
+        }
+
+        // Retrieve a movie information by id
+        public Movie GetMovieById(int id)
+        {
+            string query = $"SELECT * FROM movie WHERE movieID = \" { id } \";";
+
+            Movie movie = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create music object and store in list
+                        if (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, language, subtitles, dubbed, releaseDate, runtime);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return movie;
+        }
+
+        // Returns a list of all movies in the db converted to music object.
+        public List<Movie> GetAllMovies()
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = "SELECT * FROM movies;";
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
+
         // Returns a list of all books in the db converted to book object.
         public List<Book> GetAllBooks()
         {
