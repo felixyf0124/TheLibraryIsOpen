@@ -27,31 +27,36 @@
     var style = " ";
 
 
-    //FOR TESTING//
-    //int n = 7;
-    //Music music = new Music(7, "sometype"+n, "sometitle"+n, "someartist"+n, "somelabel"+n, "somereleasedate"+n, "someasin"+n);
-    //await clientStore.CreateMusicAsync(music);
-    //await clientStore.UdpateMusicAsync(music);
-    //await clientStore.DeleteMusicAsync(music);
-    //List<Music> allMusicsList = await clientStore.GetAllMusicsDataAsync();
-    //int musicCount = allMusicsList.Count;
-    //message = "There is " + musicCount.ToString() + " music";
-    @*if(musicCount > 0)
+    ////////FOR TESTING////////
+    //FOR CREATING
+    @*int n = 1;
+    MovieDirector mPerson = new MovieDirector(1,1);
+    await clientStore.CreateMovieDirectorAsync(mPerson);
+
+    //FOR UPDATING
+    @*Person person2 = new Person(2, "test8", "test8", "test8");
+    await clientStore.UpdatePersonAsync(person2);*@
+
+    //FOR DELETING
+    //await clientStore.DeletePersonAsync(person);
+
+    //FOR GETTING ALL
+    List<Person> allPersonList = await clientStore.GetAllMovieDirectorDataAsync(1);
+    int musicCount = allPersonList.Count;
+    message = "There is " + musicCount.ToString() + " music";
+    if(musicCount > 0)
     {
-        foreach (var musicData in allMusicsList as List<TheLibraryIsOpen.Models.DBModels.Music>)
+        foreach (var movieData in allPersonList as List<TheLibraryIsOpen.Models.DBModels.Person>)
         {
-            message += "\nMusic Data:" + musicData.MusicId + " " + musicData.Type + " " + musicData.Title + " "
-                + musicData.Artist + " " + musicData.Label + " " + musicData.ReleaseDate + " " + musicData.Asin;
+            message += "\nPerson Data:" + movieData.PersonId + " " + movieData.FirstName + " " + movieData.LastName + " " + movieData.Role;
         }
 
     }*@
-    @*Music musicData = await clientStore.GetMusicByIdAsync(1);
-    message += "\nMusic Data:" + musicData.MusicId + " " + musicData.Type + " " + musicData.Title + " "
-            + musicData.Artist + " " + musicData.Label + " " + musicData.ReleaseDate + " " + musicData.Asin;*@
-    @*Music musicData = await clientStore.GetMusicByAsinAsync("someasin4");
-    message += "\nMusic Data:" + musicData.MusicId + " " + musicData.Type + " " + musicData.Title + " "
-            + musicData.Artist + " " + musicData.Label + " " + musicData.ReleaseDate + " " + musicData.Asin;*@
-//////////////
+
+    //FOR GETTING ONLY ONE
+    //Person movieData = await clientStore.GetPersonByIdAsync(2);
+    //message += "\nPerson Data:" + movieData.PersonId + " " + movieData.FirstName + " " + movieData.LastName + " " + movieData.Role;
+    //////////////
     }
 <h2>@ViewData["Title"]</h2>
 <h3>@message</h3>

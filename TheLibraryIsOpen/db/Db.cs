@@ -764,7 +764,7 @@ namespace TheLibraryIsOpen.Database
         // Retrieve a movie information by id
         public Movie GetMovieById(int id)
         {
-            string query = $"SELECT * FROM movie WHERE movieID = \" { id } \";";
+            string query = $"SELECT * FROM movies WHERE movieID = \" { id } \";";
 
             Movie movie = null;
 
@@ -855,14 +855,14 @@ namespace TheLibraryIsOpen.Database
          * The following methods are made for the person table
          */
 
-        // Inserts a new movie into the database
+        // Inserts a new person into the database
         public void CreatePerson(Person person)
         {
             string query = $"INSERT INTO person (firstname, lastname, role) VALUES(\"{person.FirstName}\", \"{person.LastName}\", \"{person.Role}\");";
             QuerySend(query);
         }
 
-        // Update a movie's information in the database by MusicId
+        // Update a person's information in the database by PersonId
         public void UpdatePerson(Person person)
         {
             string query = $"UPDATE person SET firstname = \"{person.FirstName}\", lastname = \"{person.LastName}\", role = \"{person.Role}\" WHERE (personID = \"{person.PersonId}\");";
@@ -881,28 +881,14 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new movieDirector into the database
         public void CreateMovieDirector(MovieDirector movieDirector)
         {
-            string query = $"INSERT INTO movieDirector (movieID, directorID) VALUES(\"{movieDirector.MovieId}\", \"{ movieDirector.PersonId}\");";
-            QuerySend(query);
-        }
-
-        // Update MovieDirector's MovieID in the database by PersonID
-        public void UpdateMovieDirectorMovieID(MovieDirector movieDirector)
-        {
-            string query = $"UPDATE movies SET movieID = \"{movieDirector.MovieId}\" WHERE (personID = \"{movieDirector.PersonId}\");";
-            QuerySend(query);
-        }
-
-        // Update MovieDirector's PersonID in the database by MovieID
-        public void UpdateMovieDirectorPersonID(MovieDirector movieDirector)
-        {
-            string query = $"UPDATE movies SET personID = \"{movieDirector.PersonId}\" WHERE (movieID = \"{movieDirector.MovieId}\");";
+            string query = $"INSERT INTO moviedirector (movieID, personID) VALUES(\"{movieDirector.MovieId}\", \"{ movieDirector.PersonId}\");";
             QuerySend(query);
         }
 
         // Delete movieDirector by movieID and personID from the database
         public void DeleteMovieDirector(MovieDirector movieDirector)
         {
-            string query = $"DELETE FROM movieDirector WHERE (movieID = \"{movieDirector.MovieId}\" AND personID = \"{movieDirector.PersonId}\");";
+            string query = $"DELETE FROM moviedirector WHERE (movieID = \"{movieDirector.MovieId}\" AND personID = \"{movieDirector.PersonId}\");";
             QuerySend(query);
         }
 
@@ -911,7 +897,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Person> list = new List<Person>();
-            string query = "SELECT * FROM books;";
+            string query = $"SELECT * FROM person WHERE personID IN SELECT * FROM moviedirector WHERE (movieID = \"{movieId}\");";
             Person person = null;
 
             lock (this)

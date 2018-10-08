@@ -182,5 +182,56 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 }
             });
         }
+
+
+
+
+
+
+
+
+
+
+
+
+        public Task<IdentityResult> CreateMovieDirectorAsync(MovieDirector movieDirector)
+        {
+            if (movieDirector != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    _db.CreateMovieDirector(movieDirector);
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "MovieDirector object was null" });
+            });
+        }
+
+        public Task<IdentityResult> DeleteMovieDirectorAsync(MovieDirector movieDirector)
+        {
+            if (movieDirector != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    _db.DeleteMovieDirector(movieDirector);
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "MovieDirector object was null" });
+            });
+        }
+
+        public Task<List<Person>> GetAllMovieDirectorDataAsync(int movieID)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllMovieDirector(movieID);
+            });
+        }
     }
 }
