@@ -334,6 +334,33 @@ namespace TheLibraryIsOpen.Database
 
 
         /*
+         * For all types of tables
+         * Method to send query to database for creating, updating and deleting
+         */
+        public void QuerySend(string query)
+        {
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        /*
          * The following methods are made for the music table
          */
 
@@ -362,14 +389,60 @@ namespace TheLibraryIsOpen.Database
         public Music GetMusicById(int id)
         {
             string query = $"SELECT * FROM cds WHERE cdID = \" { id } \";";
-            return QueryRetrieve(query);
+            return QueryRetrieveMusic(query);
         }
 
         // Retrieve a music information by ISBN
         public Music GetMusicByAsin(string ASIN)
         {
             string query = $"SELECT * FROM cds WHERE (asin = \"{ ASIN }\");";
-            return QueryRetrieve(query);
+            return QueryRetrieveMusic(query);
+        }
+
+
+        /*
+         * For retrieving ONE object ONLY
+         * Method to retrieve music information by id or asin 
+         */
+        public Music QueryRetrieveMusic(string query)
+        {
+            Music music = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create music object and store in list
+                        if (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return music;
         }
 
         // Returns a list of all musics in the db converted to music object.
@@ -391,7 +464,7 @@ namespace TheLibraryIsOpen.Database
                     MySqlDataReader dr = cmd.ExecuteReader();
                     try
                     {
-                        //Read the data, create client object and store in list
+                        //Read the data, create music object and store in list
                         while (dr.Read())
                         {
                             int musicId = (int)dr["cdID"];
@@ -418,42 +491,37 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-
         /*
-         * For all types of tables
-         * Method to send query to database for creating, updating and deleting
+         * The following methods are made for the movie table
          */
-        public void QuerySend (string query) 
+
+        // Inserts a new movie into the database
+        public void CreateMovie(Movie movie)
         {
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            string query = $"INSERT INTO movies (title, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate}\", \"{movie.RunTime}\");";
+            QuerySend(query);
         }
 
-
-        /*
-         * For retrieving ONE object ONLY
-         * Method to retrieve music information by id or asin 
-         */
-        public Music QueryRetrieve (string query)
+        // Update a movie's information in the database by MusicId
+        public void UpdateMovie(Movie movie)
         {
-            Music music = null;
+            string query = $"UPDATE movies SET title = \"{movie.Title}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
+            QuerySend(query);
+        }
+
+        // Delete movie by movieId from the database
+        public void DeleteMovie(Movie movie)
+        {
+            string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
+            QuerySend(query);
+        }
+
+        // Retrieve a movie information by id
+        public Movie GetMovieById(int id)
+        {
+            string query = $"SELECT * FROM movie WHERE movieID = \" { id } \";";
+
+            Movie movie = null;
 
             lock (this)
             {
@@ -466,18 +534,18 @@ namespace TheLibraryIsOpen.Database
                     MySqlDataReader dr = cmd.ExecuteReader();
                     try
                     {
-                        //Read the data, create client object and store in list
+                        //Read the data, create music object and store in list
                         if (dr.Read())
                         {
-                            int musicId = (int)dr["cdID"];
-                            string type = dr["type"] + "";
+                            int movieId = (int)dr["movieID"];
                             string title = dr["title"] + "";
-                            string artist = dr["artist"] + "";
-                            string label = dr["label"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
                             string releaseDate = dr["releasedate"] + "";
-                            string asin = dr["asin"] + "";
+                            string runtime = dr["runtime"] + "";
 
-                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            movie = new Movie(movieId, title, language, subtitles, dubbed, releaseDate, runtime);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -489,11 +557,56 @@ namespace TheLibraryIsOpen.Database
                     this.CloseConnection();
                 }
             }
-            return music;
+            return movie;
         }
 
+        // Returns a list of all movies in the db converted to music object.
+        public List<Movie> GetAllMovies()
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = "SELECT * FROM movies;";
 
-        // Returns a list of all clients in the db converted to client object.
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
+
+        // Returns a list of all books in the db converted to book object.
         public List<Book> GetAllBooks()
         {
             //Create a list of unknown size to store the result
