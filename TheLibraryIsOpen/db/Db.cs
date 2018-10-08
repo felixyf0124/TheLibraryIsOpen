@@ -801,7 +801,7 @@ namespace TheLibraryIsOpen.Database
                     MySqlDataReader dr = cmd.ExecuteReader();
                     try
                     {
-                        //Read the data, create music object and store in list
+                        //Read the data, create movie object and store in list
                         if (dr.Read())
                         {
                             int movieId = (int)dr["movieID"];
@@ -827,7 +827,7 @@ namespace TheLibraryIsOpen.Database
             return movie;
         }
 
-        // Returns a list of all movies in the db converted to music object.
+        // Returns a list of all movies in the db converted to movie object.
         public List<Movie> GetAllMovies()
         {
             //Create a list of unknown size to store the result
@@ -846,7 +846,7 @@ namespace TheLibraryIsOpen.Database
                     MySqlDataReader dr = cmd.ExecuteReader();
                     try
                     {
-                        //Read the data, create music object and store in list
+                        //Read the data, create movie object and store in list
                         while (dr.Read())
                         {
                             int movieId = (int)dr["movieID"];
