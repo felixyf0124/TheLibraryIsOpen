@@ -875,6 +875,68 @@ namespace TheLibraryIsOpen.Database
         public List<Person> GetAllPerson()         {             //Create a list of unknown size to store the result             List<Person> list = new List<Person>();             Person person = null;             string query = "SELECT * FROM person;";              lock (this)             {                 //Open connection                 if (this.OpenConnection() == true)                 {                     //Create Command                     MySqlCommand cmd = new MySqlCommand(query, connection);                     //Create a data reader and Execute the command                     MySqlDataReader dr = cmd.ExecuteReader();                     try                     {                         //Read the data, create music object and store in list                         while (dr.Read())                         {                             int personId = (int)dr["personID"];                             string firstname = dr["firstname"] + "";                             string lastname = dr["lastname"] + "";                             string role = dr["role"] + "";                              person = new Person(personId, firstname, lastname, role);                              list.Add(person);                         }                     }                     catch (Exception e) { throw e; }                      //close Data Reader                     dr.Close();                      //close Connection                     this.CloseConnection();                 }             }             return list;         }
 
         /*
+         * The following methods are made for the movieActor table
+         */
+
+        // Inserts a new movie actor into the database
+        public void CreateMovieActor(MovieActor movieActor)
+        {
+            string query = $"INSERT INTO movieactor (movieID, personID) VALUES(\"{movieActor.MovieId}\", \"{movieActor.PersonId}\");";
+            QuerySend(query);
+        }
+
+        // Delete movie actor by movieID and personID from the database
+        public void DeleteMovieActor(MovieActor movieActor)
+        {
+            string query = $"DELETE FROM movieactor WHERE (movieID = \"{movieActor.MovieId}\" AND personID = \"{movieActor.PersonId}\");";
+            QuerySend(query);
+        }
+
+        // Get all movie actors from a specific movie
+        public List<Person> GetAllMovieActors(int movieId)
+        {
+            //Create a list of unknown size to store the result
+            List<Person> list = new List<Person>();
+            string query = $"SELECT * FROM person WHERE personID = ANY (SELECT personID FROM movieactor WHERE (movieID = \"{movieId}\"));";
+            Person person = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int personId = (int)dr["personID"];
+                            string firstname = dr["firstname"] + "";
+                            string lastname = dr["lastname"] + "";
+                            string role = dr["role"] + "";
+
+                            person = new Person(personId, firstname, lastname, role);
+
+                            list.Add(person);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
+
+        /*
          * The following methods are made for the movieDirector table
          */
 
@@ -893,11 +955,73 @@ namespace TheLibraryIsOpen.Database
         }
 
         // Get all movie directors from a specific movie
-        public List<Person> GetAllMovieDirector(int movieId)
+        public List<Person> GetAllMovieDirectors(int movieId)
         {
             //Create a list of unknown size to store the result
             List<Person> list = new List<Person>();
-            string query = $"SELECT * FROM person WHERE personID IN SELECT * FROM moviedirector WHERE (movieID = \"{movieId}\");";
+            string query = $"SELECT * FROM person WHERE personID = ANY (SELECT personID FROM moviedirector WHERE (movieID = \"{movieId}\"));";
+            Person person = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int personId = (int)dr["personID"];
+                            string firstname = dr["firstname"] + "";
+                            string lastname = dr["lastname"] + "";
+                            string role = dr["role"] + "";
+
+                            person = new Person(personId, firstname, lastname, role);
+
+                            list.Add(person);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
+
+        /*
+         * The following methods are made for the movieProducer table
+         */
+
+        // Inserts a new movieProducer into the database
+        public void CreateMovieProducer(MovieProducer movieProducer)
+        {
+            string query = $"INSERT INTO movieproducer(movieID, personID) VALUES(\"{movieProducer.MovieId}\", \"{ movieProducer.PersonId}\");";
+            QuerySend(query);
+        }
+
+        // Delete movieProducer by movieID and personID from the database
+        public void DeleteMovieProducer(MovieProducer movieProducer)
+        {
+            string query = $"DELETE FROM movieproducer WHERE (movieID = \"{movieProducer.MovieId}\" AND personID = \"{movieProducer.PersonId}\");";
+            QuerySend(query);
+        }
+
+        // Get all movie producers from a specific movie
+        public List<Person> GetAllMovieProducers(int movieId)
+        {
+            //Create a list of unknown size to store the result
+            List<Person> list = new List<Person>();
+            string query = $"SELECT * FROM person WHERE personID = ANY (SELECT personID FROM movieproducer WHERE (movieID = \"{movieId}\"));";
             Person person = null;
 
             lock (this)
@@ -935,7 +1059,6 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         } 
-
         // Returns a list of all books in the db converted to book object.
         public List<Book> GetAllBooks()
         {
