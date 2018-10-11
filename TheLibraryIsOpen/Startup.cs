@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
+using Microsoft.EntityFrameworkCore;
+using TheLibraryIsOpen.Models;
 
 namespace TheLibraryIsOpen
 {
@@ -51,9 +53,13 @@ namespace TheLibraryIsOpen
             services.AddTransient<ClientStore>();
             services.AddTransient<ClientSignInManager>();
 
+            services.AddTransient<BookCatalog>();
+
             services.AddSingleton(typeof(Db));
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+		    
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
