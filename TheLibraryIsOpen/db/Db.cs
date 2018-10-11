@@ -1023,61 +1023,6 @@ namespace TheLibraryIsOpen.Database
                 }
             }
             return list;
-        } 
-        /*
-        *  Book Table methods
-        */
-
-        public void CreateBook(Book book)
-        {
-            string query = $"INSERT INTO books (title, author, format, pages, publisher, year, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Year}\", \"{book.Language}\", " +
-                "\"{book.Isbn10}\", \"{book.Isbn13}\");";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
-        }
-
-        public void UpdateBook(Book book)
-        {
-            string query = $"UPDATE books SET title = \"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Year}\", \"{book.Language}\", " +
-                "\"{book.Isbn10}\", \"{book.Isbn13}\" WHERE bookID = \"{book.BookId}\";";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
         }
 
         public void DeleteBook(Book book)
@@ -1215,15 +1160,15 @@ namespace TheLibraryIsOpen.Database
 
         // Update a book information in the database by book ID
         // We can add other function to update book
-        public void UpdateBookByBookId(Book book, int bookId)
+        public void UpdateBook(Book book)
         {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{bookId}\");";
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
 
             QuerySend(query);
         }
 
         // Update a book information in the database by isbn10
-        public void UpdateBookByBookIsbn(Book book, string isbn10)
+        public void UpdateBookByIsbn(Book book, string isbn10)
         {
             string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
 
