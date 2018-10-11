@@ -162,13 +162,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("book");
         }
 
-        public Task SetYearAsync(Book book, string year)
+        public Task SetYearAsync(Book book, string date)
         {
             if (book != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    book.Year = year;
+                    book.Date = date;
                     _db.UpdateBook(book);
                 });
             }

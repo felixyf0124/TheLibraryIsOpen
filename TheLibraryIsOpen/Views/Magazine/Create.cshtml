@@ -1,12 +1,9 @@
-﻿@model TheLibraryIsOpen.Models.DBModels.Book
-
-@{
+﻿@model TheLibraryIsOpen.Models.DBModels.Magazine
+ @{
     ViewData["Title"] = "Create";
 }
-
 <h2>Create</h2>
-
-<h4>Book</h4>
+<h4>Magazine</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,34 +15,19 @@
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Author" class="control-label"></label>
-                <input asp-for="Author" class="form-control" />
-                <span asp-validation-for="Author" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Format" class="control-label"></label>
-                <input asp-for="Format" class="form-control" />
-                <span asp-validation-for="Format" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pages" class="control-label"></label>
-                <input asp-for="Pages" class="form-control" />
-                <span asp-validation-for="Pages" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Publisher" class="control-label"></label>
                 <input asp-for="Publisher" class="form-control" />
                 <span asp-validation-for="Publisher" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Language" class="control-label"></label>
                 <input asp-for="Language" class="form-control" />
                 <span asp-validation-for="Language" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Isbn10" class="control-label"></label>
@@ -63,11 +45,9 @@
         </form>
     </div>
 </div>
-
 <div>
-    <a asp-area="" asp-controller="Books" asp-action="Index">Back</a>
+    <a asp-action="Index">Back to List</a>
 </div>
-
-@section Scripts {
+ @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

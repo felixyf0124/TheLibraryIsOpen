@@ -20,7 +20,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         //Create Music
-        public Task<IdentityResult> CreateAsync(Music music)
+        public Task<IdentityResult> CreateMusicAsync(Music music)
         {
             if (music != null)
             {
@@ -39,7 +39,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         //Delete Music
-        public Task<IdentityResult> DeleteAsync(Music music)
+        public Task<IdentityResult> DeleteMusicAsync(Music music)
         {
             if (music != null)
             {
@@ -56,7 +56,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         //Find methods (by id)
-        public Task<Music> FindByIdAsync(string musicId)
+        public Task<Music> FindMusicByIdAsync(string musicId)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -68,7 +68,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         //Update Methods (per attribute, general)
 
-        public Task SetTitleAsync(Music music, string title)
+        public Task SetMusicTitleAsync(Music music, string title)
         {
             if (music != null)
             {
@@ -81,7 +81,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("music");
         }
 
-        public Task SetTypeAsync(Music music, string type)
+        public Task SetMusicTypeAsync(Music music, string type)
         {
             if (music != null)
             {
@@ -94,7 +94,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("music");
         }
 
-        public Task SetArtistAsync(Music music, string artist)
+        public Task SetMusicArtistAsync(Music music, string artist)
         {
             if (music != null)
             {
@@ -107,7 +107,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("music");
         }
 
-        public Task SetLabelAsync(Music music, string label)
+        public Task SetMusicLabelAsync(Music music, string label)
         {
             if (music != null)
             {
@@ -120,7 +120,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("music");
         }
 
-        public Task SetreReleaseDateAsync(Music music, string releaseDate)
+        public Task SetMusicReleaseDateAsync(Music music, string releaseDate)
         {
             if (music != null)
             {
@@ -133,7 +133,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("music");
         }
 
-        public Task SetASINAsync(Music music, string aSIN)
+        public Task SetMusicASINAsync(Music music, string aSIN)
         {
             if (music != null)
             {
@@ -146,7 +146,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("music");
         }
 
-        public Task<IdentityResult> UpdateAsync(Music music)
+        public Task<IdentityResult> UpdateMusicAsync(Music music)
         {
             if (music != null)
             {

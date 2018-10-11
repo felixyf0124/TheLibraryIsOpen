@@ -6,28 +6,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
-using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Data;
+using TheLibraryIsOpen.Models.DBModels;
 
-namespace TheLibraryIsOpen.Controllers.StorageManagement
+namespace TheLibraryIsOpen.Controllers
 {
-    public class BooksController : Controller
+    public class MagazineController : Controller
     {
-        private readonly BookCatalog _bc;
+        private readonly MagazineCatalog _cs;
 
-        public BooksController(BookCatalog bc)
+        public MagazineController(MagazineCatalog cs)
         {
-            _bc = bc;
+            _cs = cs;
         }
 
-        // GET: Books
         public async Task<IActionResult> Index()
         {
-            return View();
+            List<Magazine> li = await _cs.GetAllMagazinesDataAsync();
+            return View(li);
         }
 
-        // GET: Books/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -35,37 +33,32 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
 
-            var book = await _bc.FindByIdAsync(id);
-            if (book == null)
+            var magazine = await _cs.FindByIdAsync(id);
+            if (magazine == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(magazine);
         }
 
-        // GET: Books/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Create([Bind("MagazineId,Title,Publisher,Language,Date,Isbn10,Isbn13")] Magazine magazine)
         {
             if (ModelState.IsValid)
             {
-                await _bc.CreateAsync(book);
-                
+                await _cs.CreateAsync(magazine);
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(magazine);
         }
 
-        // GET: Books/Edit/5
-        [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -73,21 +66,20 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
 
-            var book = await _bc.FindByIdAsync(id);
-            if (book == null)
+            var magazine = await _cs.FindByIdAsync(id);
+
+            if (magazine == null)
             {
                 return NotFound();
             }
-            return View(book);
+            return View(magazine);
         }
 
-        // POST: Books/Edit/5
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Edit(string id, [Bind("MagazineId,Title,Publisher,Language,Date,Isbn10,Isbn13")] Magazine magazine)
         {
-            if (int.Parse(id) != book.BookId)
+            if (int.Parse(id) != magazine.MagazineId)
             {
                 return NotFound();
             }
@@ -96,12 +88,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 try
                 {
-                    await _bc.UpdateAsync(book);
-
+                    await _cs.UpdateAsync(magazine);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(id))
+                    if (!MagazineExists(id))
                     {
                         return NotFound();
                     }
@@ -109,13 +100,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     {
                         throw;
                     }
+
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(magazine);
         }
 
-        // GET: Books/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -123,30 +114,28 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
 
-            var book = await _bc.FindByIdAsync(id);
+            var magazine = await _cs.FindByIdAsync(id);
 
-            if (book == null)
+            if (magazine == null)
             {
                 return NotFound();
             }
-            await _bc.DeleteAsync(book);
-            return View(book);
+            await _cs.DeleteAsync(magazine);
+            return View(magazine);
         }
 
-        // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var book = await _bc.FindByIdAsync(id);
-
-            await _bc.DeleteAsync(book);
+            var magazine = await _cs.FindByIdAsync(id);
+            await _cs.DeleteAsync(magazine);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(string id)
+        private bool MagazineExists(string id)
         {
-            return (_bc.FindByIdAsync(id) != null);
+            return (_cs.FindByIdAsync(id) != null);
         }
     }
 }

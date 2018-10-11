@@ -1,11 +1,8 @@
-﻿@model TheLibraryIsOpen.Models.DBModels.Book
-
+﻿@model TheLibraryIsOpen.Models.DBModels.Magazine
 @{
     ViewData["Title"] = "Details";
 }
-
 <h2>Details</h2>
-
 <div>
     <h4>Book</h4>
     <hr />
@@ -17,40 +14,22 @@
             @Html.DisplayFor(model => model.Title)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Format)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Format)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Pages)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Pages)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Publisher)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Publisher)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Language)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Date)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Isbn10)
@@ -67,6 +46,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.BookId">Edit</a> |
-    <a asp-area="" asp-controller="Books" asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.MagazineId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </div>
