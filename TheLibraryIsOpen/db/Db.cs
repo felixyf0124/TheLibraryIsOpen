@@ -71,6 +71,9 @@
     Columns:
             movieid int(11) 
             personid int(11)
+
+    One things for query language:
+    Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
  */
 using MySql.Data.MySqlClient;
 using System;
@@ -379,61 +382,44 @@ namespace TheLibraryIsOpen.Database
 
         public void CreateMagazine(Magazine magazine)
         {
-            string query = $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\", \"{magazine.Publisher}\", \"{magazine.Language}\", \"{magazine.Date}\", " +
-                "\"{magazine.Isbn10}\", \"{magazine.Isbn13}\");";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            string query =
+                $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
+               
+            QuerySend(query);
         }
 
         // need improve
         public void UpdateMagazine(Magazine magazine)
         {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", " +
-                "isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE magazineID = \"{magazine.MagazineId}\";";
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
+
+            QuerySend(query);
 
         }
 
+        // update magazine by ID
+        public void UpdateMagazine(Magazine magazine, int magazineID)
+        {
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
+
+            QuerySend(query);
+
+        }
+
+        // delete magazine by magazine instance
         public void DeleteMagazine(Magazine magazine)
         {
             string query = $"DELETE FROM magazines WHERE (magazineID = \"{magazine.MagazineId}\");";
 
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
+            QuerySend(query);
+        }
 
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
+        // delete magazine by ID
+        public void DeleteMagazineByID(int magazineID)
+        {
+            string query = $"DELETE FROM magazines WHERE (magazineID = \"{magazineID}\");";
 
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         public List<Magazine> GetAllMagazines() 
@@ -521,53 +507,34 @@ namespace TheLibraryIsOpen.Database
             return magazine;
         }
 
-        public Magazine GetMagazineByIsbn10(string Isbn10)
+        public Magazine GetMagazineByIsbn10(string isbn10)
         {
-            string query = $"SELECT * FROM magazines WHERE isbn10 = \" { Isbn10 } \";";
+            string query = $"SELECT * FROM magazines WHERE isbn10 = \"{isbn10}\";";
 
-            Magazine magazine = null;
-            lock (this)
-            {
-                //Open connection
-                if (OpenConnection() == true)
-                {
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
-                    {
-                        //Read the data, create magazine object and store in list
-                        if (dr.Read())
-                        {
-                            int magazineId = (int)dr["magazineID"];
-                            string title = dr["title"] + "";
-                            string publisher = dr["publisher"] + "";
-                            string language = dr["language"] + "";
-                            string date = dr["date"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
+            Magazine magazine = QueryRetrieveMaganize(query);
 
-                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
-                        }
-                    }
-                    catch (Exception e) { throw e; }
+            return magazine;
 
-                    //close Data Reader
-                    dr.Close();
+        }
 
-                    //close Connection
-                    this.CloseConnection();
-                }
-            }
+        // 
+        public Magazine GetMagazineByIsbn13(string isbn13)
+        {
+            string query = $"SELECT * FROM magazines WHERE isbn13 = \"{isbn13}\";";
+
+            Magazine magazine = QueryRetrieveMaganize(query);
+           
             return magazine;
         }
 
-        public Magazine GetMagazineByIsbn13(string Isbn13)
+        /*
+    * For retrieving ONE object ONLY
+    * Method to retrieve maganize information by id or isbn10 or isbn13
+    */
+        public Magazine QueryRetrieveMaganize(string query)
         {
-            string query = $"SELECT * FROM magazines WHERE isbn13 = \" { Isbn13 } \";";
-
             Magazine magazine = null;
+
             lock (this)
             {
                 //Open connection
@@ -579,7 +546,7 @@ namespace TheLibraryIsOpen.Database
                     MySqlDataReader dr = cmd.ExecuteReader();
                     try
                     {
-                        //Read the data, create magazine object and store in list
+                        //Read the data, create music object and store in list
                         if (dr.Read())
                         {
                             int magazineId = (int)dr["magazineID"];

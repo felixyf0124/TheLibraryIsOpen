@@ -32,6 +32,12 @@ namespace TheLibraryIsOpen.Models.DBModels
         public Magazine(int mgId, string title, string publisher, string language, string date, string isbn10, string isbn13)
         {
             MagazineId = mgId;
+            Title = title;
+            Publisher = publisher;
+            Language = language;
+            Date = date;
+            Isbn10 = isbn10;
+            Isbn13 = isbn13;
         }
 
         // Return information about the magazine
