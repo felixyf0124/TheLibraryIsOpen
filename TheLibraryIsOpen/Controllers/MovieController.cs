@@ -83,6 +83,8 @@ namespace TheLibraryIsOpen.Controllers
         {
 
             Movie toDetails = await _mc.GetMovieByIdAsync(id);
+            toDetails.Producers = await _mc.GetAllMovieProducerDataAsync(id);
+            toDetails.Actors = await _mc.GetAllMovieActorDataAsync(id);
 
             return View(toDetails);
 

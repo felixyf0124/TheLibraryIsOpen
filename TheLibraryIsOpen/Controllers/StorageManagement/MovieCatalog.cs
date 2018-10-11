@@ -151,13 +151,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
          * The following functions are made for movie director table
          */
 
-        public Task<IdentityResult> CreateMovieDirectorAsync(MovieDirector movieDirector)
+        public Task<IdentityResult> AddMovieDirectorAsync(string mid, string pid)
         {
-            if (movieDirector != null)
+            if (mid != null && pid != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.CreateMovieDirector(movieDirector);
+                    _db.CreateMovieDirector(mid,pid);
                     return IdentityResult.Success;
                 });
             }
@@ -167,21 +167,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<IdentityResult> DeleteMovieDirectorAsync(MovieDirector movieDirector)
-        {
-            if (movieDirector != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _db.DeleteMovieDirector(movieDirector);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "MovieDirector object was null" });
-            });
-        }
 
         public Task<List<Person>> GetAllMovieDirectorDataAsync(int movieID)
         {
@@ -195,13 +180,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
          * The following functions are made for the movie producer table
          */
 
-        public Task<IdentityResult> CreateMovieProducerAsync(MovieProducer movieProducer)
+        public Task<IdentityResult> CreateMovieProducerAsync(string mid, string pid)
         {
-            if (movieProducer != null)
+            if (mid != null && pid != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.CreateMovieProducer(movieProducer);
+                    _db.CreateMovieProducer(mid,pid);
                     return IdentityResult.Success;
                 });
             }
@@ -211,13 +196,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<IdentityResult> DeleteMovieProducerAsync(MovieProducer movieProducer)
+        public Task<IdentityResult> DeleteMovieProducerAsync(string mid, string pid)
         {
-            if (movieProducer != null)
+            if (mid != null && pid != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteMovieProducer(movieProducer);
+                    _db.DeleteMovieProducer(mid, pid);
                     return IdentityResult.Success;
                 });
             }
@@ -239,13 +224,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
          * The following functions are made for the movie actor table
          */
 
-        public Task<IdentityResult> CreateMovieActorAsync(MovieActor movieActor)
+        public Task<IdentityResult> CreateMovieActorAsync(string mid, string pid)
         {
-            if (movieActor != null)
+            if (mid != null && pid != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.CreateMovieActor(movieActor);
+                    _db.CreateMovieActor(mid, pid);
                     return IdentityResult.Success;
                 });
             }
@@ -255,13 +240,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<IdentityResult> DeleteMovieActorAsync(MovieActor movieActor)
+        public Task<IdentityResult> DeleteMovieActorAsync(string mid, string pid)
         {
-            if (movieActor != null)
+            if (mid != null && pid != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteMovieActor(movieActor);
+                    _db.DeleteMovieActor(mid, pid);
                     return IdentityResult.Success;
                 });
             }

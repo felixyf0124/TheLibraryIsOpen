@@ -1,12 +1,14 @@
-﻿﻿namespace TheLibraryIsOpen.Models.DBModels
+﻿using System.Collections.Generic;
+
+﻿namespace TheLibraryIsOpen.Models.DBModels
 {
     public class Movie
     {
         public int MovieId { get; set; }
         public string Title { get; set; }
         public string Director { get; set; }
-        //public string Producers { get; set; }
-        //public string Actors { get; set; }
+        public List<Person> Producers { get; set; }
+        public List<Person> Actors { get; set; }
         public string Language { get; set; }
         public string Subtitles { get; set; }
         public string Dubbed { get; set; }

@@ -20,10 +20,40 @@
             @Html.DisplayFor(model => model.Director)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Producers)
+        </dt>
+        <dd>
+            @foreach (var Producer in Model.Producers)
+        {
+            @(Producer.FirstName + " " + Producer.LastName)<br />
+    }
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Actors)
+        </dt>
+        <dd>
+            @foreach (var Actor in Model.Actors)
+        {
+            @(Actor.FirstName + " " + Actor.LastName)<br />
+    }
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Language)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Subtitles)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Subtitles)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Dubbed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dubbed)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.RunTime)
