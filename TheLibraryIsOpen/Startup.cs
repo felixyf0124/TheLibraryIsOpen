@@ -53,6 +53,7 @@ namespace TheLibraryIsOpen
             services.AddTransient<ClientStore>();
             services.AddTransient<ClientSignInManager>();
 
+            services.AddTransient<MagazineCatalog>();
             services.AddTransient<BookCatalog>();
 
             services.AddSingleton(typeof(Db));
