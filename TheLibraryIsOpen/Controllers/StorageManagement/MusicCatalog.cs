@@ -26,7 +26,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    if (_db.GetMusicByASIN(music.Asin) != null)
+                    if (_db.GetMusicByAsin(music.Asin) != null)
                         return IdentityResult.Failed(new IdentityError { Description = "music with this aSIN already exists" });
                     _db.CreateMusic(music);
                     return IdentityResult.Success;
