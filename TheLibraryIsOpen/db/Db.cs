@@ -834,12 +834,92 @@ namespace TheLibraryIsOpen.Database
             return music;
         }
 
+        /*
+        *  Book Table methods
+        */
+
+        public void CreateBook(Book book)
+        {
+            string query = $"INSERT INTO books (title, author, format, pages, publisher, year, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Year}\", \"{book.Language}\", " +
+                "\"{book.Isbn10}\", \"{book.Isbn13}\");";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        public void UpdateBook(Book book)
+        {
+            string query = $"UPDATE books SET title = \"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Year}\", \"{book.Language}\", " +
+                "\"{book.Isbn10}\", \"{book.Isbn13}\" WHERE bookID = \"{book.BookId}\";";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        public void DeleteBook(Book book)
+        {
+            string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
 
         // Returns a list of all clients in the db converted to client object.
         public List<Book> GetAllBooks()
         {
             //Create a list of unknown size to store the result
-            List<Book> list = new List<Book>();
+            List<Book> books = new List<Book>();
             string query = "SELECT * FROM books;";
 
             lock (this)
@@ -870,7 +950,7 @@ namespace TheLibraryIsOpen.Database
                             Book book = new Book(bookId,title, author, format, pages,publisher, year, language,isbn10, isbn13);
                             //Console.Write(book);
 
-                            list.Add(book);
+                            books.Add(book);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -882,7 +962,147 @@ namespace TheLibraryIsOpen.Database
                     this.CloseConnection();
                 }
             }
-            return list;
+            return books;
+        }
+
+
+
+        public Book GetBookById(int id)
+        {
+            string query = $"SELECT * FROM books WHERE bookID = \" { id } \";";
+
+            Book book = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format, 
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
+        }
+
+        public Book GetBookByIsbn10(string Isbn10)
+        {
+            string query = $"SELECT * FROM books WHERE isbn10 = \" { Isbn10 } \";";
+
+            Book book = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format, 
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
+        }
+
+        public Book GetBookByIsbn13(string Isbn13)
+        {
+            string query = $"SELECT * FROM books WHERE isbn13 = \" { Isbn13 } \";";
+
+            Book book = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format,
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
         }
 
     }
