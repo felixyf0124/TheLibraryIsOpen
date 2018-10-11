@@ -51,6 +51,7 @@ namespace TheLibraryIsOpen
             services.AddTransient<ClientStore>();
             services.AddTransient<ClientSignInManager>();
 
+            services.AddTransient<MagazineCatalog>();
             services.AddSingleton(typeof(Db));
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
