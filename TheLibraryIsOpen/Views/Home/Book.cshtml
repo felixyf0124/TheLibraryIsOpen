@@ -1,0 +1,123 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Book
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@*inject BookController bookController*@
+
+
+@{
+    ViewData["Title"] = "Book";
+
+   // List<Book> books = await bookController.();
+}
+
+<h2>Books</h2>
+
+<p >
+    <a  asp-controller="Books" asp-action="Create" 
+        data-toggle="tooltip" data-placement="right" title="Create new" 
+        style="width:36px; height:36px; margin-left:auto; margin-right:auto;
+        font-size:16px; text-decoration:none;">Add</a>
+</p>
+
+<table >
+    <thead>
+        <tr>
+            <th style="border-left: 0px;">Title</th>
+            <th>Author</th>
+            <th>Format</th>
+            <th>Pages</th>
+            <th>Publisher</th>
+            <th>Year</th>
+            <th>Language</th>
+            <th>ISBN10</th>
+            <th>ISBN13</th>
+            <td class="_add">
+                @*<a asp-controller="Books" asp-action="Create"
+                   data-toggle="tooltip" data-placement="right" title="Create new"
+                   style="width:36px; height:36px; margin-left:auto; margin-right:auto;
+                   font-size:36px; text-decoration:none;">&#43;</a>*@
+            </td>
+        </tr>
+        @*// sample*@
+        <tr>
+            <td>Harry Poter</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="_edit">
+                <a asp-controller="Books" asp-action="Edit" asp-route-id=""
+                   style="margin:1px; margin-left:auto; margin-right:auto;
+                   font-size:10px; text-decoration:none; display:block;">Edit</a>
+                <a asp-controller="Books" asp-action="Details"
+                   style="margin:1px; margin-left:auto; margin-right:auto;
+                   font-size:10px; text-decoration:none; display:block;">Details</a>
+                <a asp-controller="Books" asp-action="Delete"
+                   style="margin:1px; margin-left:auto; margin-right:auto;
+                   font-size:10px; text-decoration:none; display:block;">Delete</a>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            
+            <td class="_add">
+                <a asp-controller="Books" asp-action="Create"
+                   data-toggle="tooltip" data-placement="right" title="Create new"
+                   style="width:36px; height:30px; margin-left:auto; margin-right:auto;
+                   font-size:36px; text-decoration:none;">&#43;</a>
+            </td>
+        </tr>
+
+    </thead>
+
+</table>
+
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 4%;
+    }
+
+    td {
+        border-bottom: 1px solid #C0C0C0;
+        text-align: center;
+        padding: 0px;
+        
+    }
+
+    th {
+        border-bottom: 2px solid #D6D6D7;
+        border-left: 1px solid #D6D6D7;
+        background-color: #D6E7FE;
+        text-align: center;
+        padding: 1%;
+        font-weight: bold;
+        
+    }
+    ._add {
+        border: 0px;
+        width:40px;
+
+    }
+
+    ._edit {
+        height:40px;
+        border: 0px;
+    }
+</style>

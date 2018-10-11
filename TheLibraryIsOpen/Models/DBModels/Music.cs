@@ -27,16 +27,22 @@
             Asin = asin;
         }
 
-        // another construcor who  assigns client id is added as requested.
+        // another construcor who  assigns music id is added as requested.
         public Music(int mId, string type, string title, string artist, string label, string releaseDate, string asin)
         {
             MusicId = mId;
+            Type = type;
+            Title = title;
+            Artist = artist;
+            Label = label;
+            ReleaseDate = releaseDate;
+            Asin = asin;
         }
 
         // Return information about the music
         public override string ToString()
         {
-            return "Music:\nType:" + Type + "\nTitle:" + Title + "Artist:" + Artist + "\nLabel: " + Label + 
+            return "Music:\nType:" + Type + "\nTitle:" + Title + "\nArtist:" + Artist + "\nLabel: " + Label + 
                 "\nRelease Date:" + ReleaseDate + "\nASIN:" + Asin + "\nMusic ID:" + MusicId;
         }
     }
