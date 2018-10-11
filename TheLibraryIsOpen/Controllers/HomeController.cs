@@ -27,6 +27,11 @@ namespace TheLibraryIsOpen.Controllers
 			return View();
 		}
 
+        public IActionResult Book()
+        {
+            return View();
+        }
+
 		public IActionResult About()
 		{
 			ViewData["Message"] = "Your application description page.";
