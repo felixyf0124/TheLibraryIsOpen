@@ -4,7 +4,7 @@
     {
         public int MovieId { get; set; }
         public string Title { get; set; }
-        //public string Director { get; set; }
+        public string Director { get; set; }
         //public string Producers { get; set; }
         //public string Actors { get; set; }
         public string Language { get; set; }
@@ -34,10 +34,11 @@
         //    RunTime = runTime;
         //}
 
-        public Movie(string title, string language, string subtitles,
+        public Movie(string title,string director, string language, string subtitles,
                     string dubbed, string releaseDate, string runTime)
         {
             Title = title;
+            Director = director;
             Language = language;
             Subtitles = subtitles;
             Dubbed = dubbed;
@@ -61,11 +62,12 @@
         //    RunTime = runTime;
         //}
 
-        public Movie(int mvId, string title, string language,
+        public Movie(int mvId, string title, string director, string language,
                      string subtitles, string dubbed, string releaseDate, string runTime)
         {
             MovieId = mvId;
             Title = title;
+            Director = director;
             Language = language;
             Subtitles = subtitles;
             Dubbed = dubbed;
@@ -83,7 +85,7 @@
 
         public override string ToString()
         {
-            return "Movie:\nMovie Name:" + Title + "\nLanguage:" + Language + "\nSubtitles:" + Subtitles + "\nDubbed:" + Dubbed +
+            return "Movie:\nMovie Name:" + Title + "\nDirector:" + Director + "\nLanguage:" + Language + "\nSubtitles:" + Subtitles + "\nDubbed:" + Dubbed +
                 "\nRelease Date:" + ReleaseDate + "\nRun Time:" + RunTime + "\nMovie ID:" + MovieId;
         }
     }

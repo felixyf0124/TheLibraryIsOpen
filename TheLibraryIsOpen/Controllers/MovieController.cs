@@ -21,17 +21,21 @@ namespace TheLibraryIsOpen.Controllers
 {
     public class MovieController : Controller
     {
-        private readonly Db _db; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
+        private readonly MovieCatalog _mc; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
         // private readonly MovieManager _mm;
         //private Client client;
 
         // public AuthenticationController(Db db, MovieManager mm) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
-
-
-        public IActionResult Index()
+        public MovieController(MovieCatalog mc)
         {
-            ViewData["Message"] = "Your movie index page.";
-            return View();
+            _mc = mc;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            List<Movie> lm = await _mc.GetAllMoviesDataAsync();
+            ViewData["Message"] = "Your movie list page.";
+            return View(lm);
         }
 
         [HttpGet]
@@ -42,26 +46,30 @@ namespace TheLibraryIsOpen.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Movie movie)
+        public async Task<IActionResult> Create(Movie movie)
         {
             ViewData["Message"] = "Your create movie page.";
-            return View();
+           await _mc.CreateMovieAsync(movie);
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            // TODO: add delete method
-            return View();
+
+            Movie toDelete = await _mc.GetMovieByIdAsync(id);
+
+            return View(toDelete);
 
         }
 
         [HttpPost]
-        public IActionResult Delete(Movie movie)
+        public async Task<ActionResult> Delete(Movie movie)
         {
             try
             {
-                // TODO: add delete from db method
+                ViewData["Message"] = "Your delete movie page.";
+                await _mc.DeleteMovieAsync(movie);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -71,38 +79,40 @@ namespace TheLibraryIsOpen.Controllers
 
         }
 
+        public async Task<ActionResult> Details(int id)
+        {
+
+            Movie toDetails = await _mc.GetMovieByIdAsync(id);
+
+            return View(toDetails);
+
+        }
+
         [HttpGet]
         public async Task<ActionResult> Edit(int id)
         {
-            // Movie m = await _mm.FindByIdAsync(id.ToString());
-            EditViewModel edit = new EditViewModel
-            {
-                // TODO: add attribute edits};
-            };
-            return View(edit);
+            Movie toEdit = await _mc.GetMovieByIdAsync(id);
+
+            return View(toEdit);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(int id, EditViewModel edit)
+        public async Task<ActionResult> Edit(Movie edit)
         {
             try
             {
                 // Movie m = await _mm.FindByIdAsync(id.ToString());
                 // TODO: add edit attributes
-                // await _cm.UpdateAsync(c);
-                return RedirectToAction(nameof(Edit), id);
+
+                 await _mc.UpdateMovieAsync(edit);
+                return RedirectToAction(nameof(Edit), edit.MovieId);
             }
             catch
             {
-                return RedirectToAction("Home", "ListOfMovies");
+                return RedirectToAction("Home", "Index");
             }
         }
 
-        public IActionResult ListOfMovies()
-        {
-            ViewData["Message"] = "Your movie list page.";
-            return View();
-        }
 
         // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         // public IActionResult Error()

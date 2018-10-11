@@ -714,7 +714,7 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        // Update a movie's information in the database by MusicId
+        // Update a movie's information in the database by MovieID
         public void UpdateMovie(Movie movie)
         {
             string query = $"UPDATE movies SET title = \"{movie.Title}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
@@ -751,13 +751,14 @@ namespace TheLibraryIsOpen.Database
                         {
                             int movieId = (int)dr["movieID"];
                             string title = dr["title"] + "";
+                            string director = dr["director"] + "";
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
                             string releaseDate = dr["releasedate"] + "";
                             string runtime = dr["runtime"] + "";
 
-                            movie = new Movie(movieId, title, language, subtitles, dubbed, releaseDate, runtime);
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -796,13 +797,14 @@ namespace TheLibraryIsOpen.Database
                         {
                             int movieId = (int)dr["movieID"];
                             string title = dr["title"] + "";
+                            string director = dr["director"] + "";
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
                             string releaseDate = dr["releasedate"] + "";
                             string runtime = dr["runtime"] + "";
 
-                            movie = new Movie(movieId, title, language, subtitles, dubbed, releaseDate, runtime);
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
                             list.Add(movie);
                         }
                     }

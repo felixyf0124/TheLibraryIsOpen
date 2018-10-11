@@ -53,6 +53,7 @@ namespace TheLibraryIsOpen
             services.AddTransient<ClientManager>();
             services.AddTransient<ClientStore>();
             services.AddTransient<ClientSignInManager>();
+            services.AddTransient<MovieCatalog>();
 
             services.AddSingleton(typeof(Db));
 
