@@ -4,7 +4,7 @@
 }
 <h2>List</h2>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-info" asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -41,9 +41,9 @@
                     @Html.DisplayFor(modelItem => item.ReleaseDate)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.MovieId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.MovieId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.MovieId">Delete</a>
+                    <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@item.MovieId">Edit</a> 
+                    <a asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@item.MovieId">Details</a> 
+                    <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@item.MovieId">Delete</a>
                 </td>
             </tr>
         }

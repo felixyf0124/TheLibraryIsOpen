@@ -717,7 +717,7 @@ namespace TheLibraryIsOpen.Database
         // Update a movie's information in the database by MovieID
         public void UpdateMovie(Movie movie)
         {
-            string query = $"UPDATE movies SET title = \"{movie.Title}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
+            string query = $"UPDATE movies SET title = \"{movie.Title}\", director = \"{movie.Director}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
             QuerySend(query);
         }
 

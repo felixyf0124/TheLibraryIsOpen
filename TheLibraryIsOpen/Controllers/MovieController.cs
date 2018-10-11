@@ -105,7 +105,7 @@ namespace TheLibraryIsOpen.Controllers
                 // TODO: add edit attributes
 
                  await _mc.UpdateMovieAsync(edit);
-                return RedirectToAction(nameof(Edit), edit.MovieId);
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
