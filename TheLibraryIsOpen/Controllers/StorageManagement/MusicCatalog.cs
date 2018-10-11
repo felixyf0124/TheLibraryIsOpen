@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
@@ -18,13 +19,155 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             _db = db;
         }
 
-        public bool AddNewMusic(string type, string title, string artist, string label, string releaseDate, string asin)
+        //Create Music
+        public Task<IdentityResult> CreateAsync(Music music)
         {
-            Music m = new Music();
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    if (_db.GetMusicByASIN(music.Asin) != null)
+                        return IdentityResult.Failed(new IdentityError { Description = "music with this aSIN already exists" });
+                    _db.CreateMusic(music);
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "music was null" });
+            });
+        }
 
-            bool result = Db.createMusic(m);
+        //Delete Music
+        public Task<IdentityResult> DeleteAsync(Music music)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    _db.DeleteMusic(music);
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "music was null" });
+            });
+        }
 
-            return result;
+        //Find methods (by id)
+        public Task<Music> FindByIdAsync(string musicId)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetMusicById((int.Parse(musicId)));
+            });
+            throw new ArgumentNullException("musicId");
+        }
+
+
+        //Update Methods (per attribute, general)
+
+        public Task SetTitleAsync(Music music, string title)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    music.Title = title;
+                    _db.UpdateMusic(music);
+                });
+            }
+            throw new ArgumentNullException("music");
+        }
+
+        public Task SetTypeAsync(Music music, string type)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    music.Type = type;
+                    _db.UpdateMusic(music);
+                });
+            }
+            throw new ArgumentNullException("music");
+        }
+
+        public Task SetArtistAsync(Music music, string artist)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    music.Artist = artist;
+                    _db.UpdateMusic(music);
+                });
+            }
+            throw new ArgumentNullException("music");
+        }
+
+        public Task SetLabelAsync(Music music, string label)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    music.Label = label;
+                    _db.UpdateMusic(music);
+                });
+            }
+            throw new ArgumentNullException("music");
+        }
+
+        public Task SetreReleaseDateAsync(Music music, string releaseDate)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    music.ReleaseDate = releaseDate;
+                    _db.UpdateMusic(music);
+                });
+            }
+            throw new ArgumentNullException("music");
+        }
+
+        public Task SetASINAsync(Music music, string aSIN)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    music.Asin = aSIN;
+                    _db.UpdateMusic(music);
+                });
+            }
+            throw new ArgumentNullException("music");
+        }
+
+        public Task<IdentityResult> UpdateAsync(Music music)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    _db.UpdateMusic(music);
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "music was null" });
+            });
+        }
+
+        public Task<List<Music>> GetAllMusicDataAsync()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllMusic();
+            });
         }
     }
 }

@@ -417,6 +417,53 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
+        // Returns a list of all clients in the db converted to client object.
+        public List<Music> GetAllMusic()
+        {
+            //Create a list of unknown size to store the result
+            List<Music> musicList = new List<Music>();
+            string query = "SELECT * FROM music;";
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["musicID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releaseDate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            Music music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            //Console.Write(book);
+
+                            musicList.Add(music);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return musicList;
+        }
+
         // Retrieve a music information by id
         public Music GetMusicById(int id)
         {
@@ -463,10 +510,10 @@ namespace TheLibraryIsOpen.Database
             return music;
         }
 
-        // Retrieve a music information by ISBN
-        public Music GetMusicByIsbn(int ISBN)
+        // Retrieve a music information by aSIN
+        public Music GetMusicByASIN(string aSIN)
         {
-            string query = $"SELECT * FROM musics WHERE isbn = \" { ISBN } \";";
+            string query = $"SELECT * FROM musics WHERE asin = \" { aSIN } \";";
             Music music = null;
 
             lock (this)
