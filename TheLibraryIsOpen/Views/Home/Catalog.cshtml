@@ -1,0 +1,20 @@
+﻿@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject MagazineCatalog magazineCatalog
+@inject BookCatalog bookCatalog
+@inject MovieCatalog movieCatalog
+@inject MusicCatalog musicCatalog
+@{
+    ViewData["Title"] = "Catalog";
+    Html.RenderPartial("_Card");
+
+    //Retrieve all the catalogs from the database
+ /*   List<Magazine> magazineList = await magazineCatalog.GetAllMagazinesDataAsync();
+    List<Book> bookList = await bookCatalog.GetAllBookDataAsync();
+    List<Music> musicList = await musicCatalog.GetAllMusicsDataAsync();
+    List<Movie> movieList = await movieCatalog.GetAllMoviesDataAsync();
+    */
+    ViewData["Title"] = "Books";
+}
+
+
