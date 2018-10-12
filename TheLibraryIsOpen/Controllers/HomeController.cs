@@ -44,15 +44,22 @@ namespace TheLibraryIsOpen.Controllers
 			ViewData["Message"] = "Your contact page.";
 
 			return View();
-		}
+		} 
 
 		public IActionResult Privacy()
 		{
 			return View();
 		}
 
+        public IActionResult Catalog()
+        {
+            ViewData["Message"] = "The catalog.";
+
+            return View();
+        }
+
         // For test db.cs
-	    public void ListTest()
+        public void ListTest()
 	    {
 	        Db _db = new Db();
             /*List<Book> allBooksList = _db.GetAllBooks();

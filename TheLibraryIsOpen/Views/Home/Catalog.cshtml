@@ -1,0 +1,101 @@
+﻿@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject MagazineCatalog magazineCatalog
+@inject BookCatalog bookCatalog
+@inject MovieCatalog movieCatalog
+@inject MusicCatalog musicCatalog
+@{
+    ViewData["Title"] = "Catalog";
+    Html.RenderPartialAsync("_Card");
+
+    //Retrieve all the catalogs from the database
+    List<Magazine> magazineList = await magazineCatalog.GetAllMagazinesDataAsync();
+    List<Book> bookList = await bookCatalog.GetAllBookDataAsync();
+    List<Music> musicList = await musicCatalog.GetAllMusicDataAsync();
+    List<Movie> movieList = await movieCatalog.GetAllMoviesDataAsync();
+
+    <style type="text/css">
+        td {
+            width: 100px;
+        }
+    </style>
+
+    <h3>Books</h3>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+        @foreach (var book in bookList)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Date</td>
+                <td><a asp-controller="Books" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@book.BookId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
+            </tr>
+        }
+    </table>
+
+
+    <h3>Magazines</h3>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Publisher</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+        @foreach (var magazine in magazineList)
+        {
+            <tr>
+                <td>@magazine.Title</td>
+                <td>@magazine.Publisher</td>
+                <td>@magazine.Date</td>
+                <td><a asp-controller="Magazine" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@magazine.MagazineId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
+            </tr>
+        }
+    </table>
+
+    <h3>Movies</h3>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Runtime</th>
+            <th>Release Date</th>
+            <th></th>
+        </tr>
+        @foreach (var movie in movieList)
+        {
+            <tr>
+                <td>@movie.Title</td>
+                <td>@movie.RunTime</td>
+                <td>@movie.ReleaseDate</td>
+                <td><a asp-controller="Movie" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@movie.MovieId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
+            </tr>
+        }
+    </table>
+
+    <h3>Music</h3>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Release Date</th>
+            <th></th>
+        </tr>
+        @foreach (var music in musicList)
+        {
+        <tr>
+            <td>@music.Title</td>
+            <td>@music.Artist</td>
+            <td>@music.ReleaseDate</td>
+            <td><a asp-controller="Music" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
+        </tr>
+        }
+    </table>
+}
+
+

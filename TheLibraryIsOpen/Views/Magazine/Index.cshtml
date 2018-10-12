@@ -1,8 +1,25 @@
 ﻿@model IEnumerable<TheLibraryIsOpen.Models.DBModels.Magazine>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Magazine";
+
+    int nb = Model.Count();
+
+    string message = nb.ToString();
+
+    if (nb < 2)
+    {
+        message += " Magazine";
+    }
+    else
+    {
+        message += " Magazines";
+    }
+    message += " found from TheLibraryIsOpen database";
 }
-<h2>Index</h2>
+
+<h2>@ViewData["Title"]</h2>
+<h3>@message</h3>
+
 <p>
     <a asp-action="Create" class="btn btn-info"><label class="glyphicon glyphicon-plus"></label>&nbsp; Create New</a>
 </p>

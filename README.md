@@ -38,3 +38,6 @@ It's easier to have visual studio 2017 with the .net core packages installed to 
     * "Now listening on: https://localhost:[portnb2]"
 4) pick whichever link and put it into a browser
     
+## admin
+username: J@HOTMAIL.COM
+password: fire
