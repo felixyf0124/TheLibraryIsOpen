@@ -1,0 +1,95 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Book
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Controllers
+@using TheLibraryIsOpen.Models.DBModels
+@inject BookCatalog bookCatalog
+
+
+@{
+    ViewData["Title"] = "Book";
+
+    List<Book> books = await bookCatalog.GetAllBookDataAsync();
+
+    int numberOfBooks = books.Count;
+
+    string message = numberOfBooks.ToString();
+
+    if (numberOfBooks < 2)
+    {
+        message += " Book";
+    }
+    else
+    {
+        message += " Books";
+    }
+    message += " found from TheLibraryIsOpen database";
+
+    var style = "";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>@message</h3>
+
+<p>
+    <a asp-controller="Books" asp-action="Create" class="btn btn-info"><label class="glyphicon glyphicon-plus"></label>&nbsp; Create New</a>
+</p>
+
+@if (numberOfBooks != 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Author)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Format)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pages)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Publisher)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Isbn10)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Isbn13)
+                </th>
+                <th></th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var book in books as List<TheLibraryIsOpen.Models.DBModels.Book>)
+            {
+              
+            <tr style="@style">
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Format</td>
+                <td>@book.Pages</td>
+                <td>@book.Publisher</td>
+                <td>@book.Date</td>
+                <td>@book.Isbn10</td>
+                <td>@book.Isbn13</td>
+                <td>
+                    <div class="">
+                        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@book.BookId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+                        <a asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@book.BookId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a>
+                        <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@book.BookId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
+                    </div>
+                </td>
+            </tr>
+
+            }
+        </tbody>
+    </table>
+}

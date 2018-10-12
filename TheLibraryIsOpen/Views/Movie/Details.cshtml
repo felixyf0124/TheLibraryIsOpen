@@ -1,0 +1,88 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Movie
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientManager cm
+@{
+    bool signedIn = User.Identity.IsAuthenticated;
+    // get clientEmail
+    string clientEmail = User.Identity.Name;
+    Client client = await cm.FindByEmailAsync(clientEmail);
+    bool isAdmin = client.IsAdmin;
+}
+@{
+    ViewData["Title"] = "Details";
+}
+<h2>Details</h2>
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Director)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Director)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Producers)
+        </dt>
+        <dd>
+            @foreach (var Producer in Model.Producers)
+            {
+                @(Producer.FirstName + " " + Producer.LastName)<br />
+            }
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Actors)
+        </dt>
+        <dd>
+            @foreach (var Actor in Model.Actors)
+            {
+                @(Actor.FirstName + " " + Actor.LastName)<br />
+            }
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Language)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Subtitles)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Subtitles)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Dubbed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dubbed)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RunTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RunTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.MovieId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+    }
+    <a asp-area="" class="btn btn-sm btn-info" asp-action="Index">Back to List</a>
+</div>

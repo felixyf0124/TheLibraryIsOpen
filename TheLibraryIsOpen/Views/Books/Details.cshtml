@@ -1,0 +1,84 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Book
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientManager cm
+@{
+    bool signedIn = User.Identity.IsAuthenticated;
+    // get clientEmail
+    string clientEmail = User.Identity.Name;
+    Client client = await cm.FindByEmailAsync(clientEmail);
+    bool isAdmin = client.IsAdmin;
+}
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Book</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Author)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Format)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Format)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Pages)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Pages)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Publisher)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Publisher)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Language)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Isbn10)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Isbn10)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Isbn13)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Isbn13)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.BookId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+    }
+    <a asp-area="" class="btn btn-sm btn-info" asp-action="Index">Back to List</a>
+</div>
