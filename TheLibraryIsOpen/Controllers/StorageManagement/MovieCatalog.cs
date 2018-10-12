@@ -47,36 +47,46 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     prevMovie.Actors = _db.GetAllMovieActors(movie.MovieId);
                     prevMovie.Producers = _db.GetAllMovieProducers(movie.MovieId);
 
-                    if (!(movie.Actors is null))
+                    var actorsToAdd = movie.Actors?
+                                            .Select(a => a.PersonId)?
+                                            .Except(prevMovie.Actors?
+                                                .Select(a => a.PersonId) ?? new List<int>())
+                                            ?? new List<int>();
+                    var actorsToRemove = prevMovie.Actors?
+                                            .Select(a => a.PersonId)?
+                                            .Except(movie.Actors?
+                                                .Select(a => a.PersonId) ?? new List<int>())
+                                            ?? new List<int>();
+
+                    foreach (var actor in actorsToRemove)
                     {
-                        var actorsToAdd = movie.Actors.Select(a => a.PersonId).Except(prevMovie.Actors.Select(a => a.PersonId));
-                        var actorsToRemove = prevMovie.Actors.Select(a => a.PersonId).Except(movie.Actors.Select(a => a.PersonId));
-
-                        foreach (var actor in actorsToRemove)
-                        {
-                            await DeleteMovieActorAsync(movie.MovieId.ToString(), actor.ToString());
-                        }
-
-                        foreach (var actor in actorsToAdd)
-                        {
-                            await CreateMovieActorAsync(movie.MovieId.ToString(), actor.ToString());
-                        }
+                        await DeleteMovieActorAsync(movie.MovieId.ToString(), actor.ToString());
                     }
 
-                    if (!(movie.Producers is null))
+                    foreach (var actor in actorsToAdd)
                     {
-                        var producersToAdd = movie.Producers.Select(a => a.PersonId).Except(prevMovie.Producers.Select(a => a.PersonId));
-                        var producersToRemove = prevMovie.Producers.Select(a => a.PersonId).Except(movie.Producers.Select(a => a.PersonId));
+                        await CreateMovieActorAsync(movie.MovieId.ToString(), actor.ToString());
+                    }
 
-                        foreach (var producer in producersToRemove)
-                        {
-                            await DeleteMovieProducerAsync(movie.MovieId.ToString(), producer.ToString());
-                        }
+                    var producersToAdd = movie.Producers?
+                                                .Select(a => a.PersonId)?
+                                                .Except(prevMovie.Producers?
+                                                    .Select(p => p.PersonId) ?? new List<int>())
+                                                ?? new List<int>();
+                    var producersToRemove = prevMovie.Producers?
+                                                .Select(a => a.PersonId)?
+                                                .Except(movie.Producers?
+                                                    .Select(p => p.PersonId) ?? new List<int>())
+                                                ?? new List<int>();
 
-                        foreach (var producer in producersToAdd)
-                        {
-                            await CreateMovieProducerAsync(movie.MovieId.ToString(), producer.ToString());
-                        }
+                    foreach (var producer in producersToRemove)
+                    {
+                        await DeleteMovieProducerAsync(movie.MovieId.ToString(), producer.ToString());
+                    }
+
+                    foreach (var producer in producersToAdd)
+                    {
+                        await CreateMovieProducerAsync(movie.MovieId.ToString(), producer.ToString());
                     }
 
                     _db.UpdateMovie(movie);
