@@ -833,10 +833,97 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        // Delete person by PersonId from the database         public void DeletePerson(Person person)         {             string query = $"DELETE FROM person WHERE (personID = \"{ person.PersonId}\");";             QuerySend(query);         }          // Retrieve a person information by id         public Person GetPersonById(int id)         {             string query = $"SELECT * FROM person WHERE personID = \" {  id } \";";              Person person = null;              lock (this)             {                 //Open connection                 if (OpenConnection() == true)                 {                     //Create Command                     MySqlCommand cmd = new MySqlCommand(query, connection);                     //Create a data reader and Execute the command                     MySqlDataReader dr = cmd.ExecuteReader();                     try                     {                         //Read the data, create music object and store in list                         if (dr.Read())                         {                             int personId = (int)dr["personID"];                             string firstname = dr["firstname"] + "";                             string lastname = dr["lastname"] + "";                              person = new Person(personId, firstname, lastname);                         }                     }                     catch (Exception e) { throw e; }                      //close Data Reader                     dr.Close();                      //close Connection                     this.CloseConnection();                 }             }             return person;         }
+        // Delete person by PersonId from the database
+        public void DeletePerson(Person person)
+        {
+            string query = $"DELETE FROM person WHERE (personID = \"{ person.PersonId}\");";
+            QuerySend(query);
+        }
+
+        // Retrieve a person information by id
+        public Person GetPersonById(int id)
+        {
+            string query = $"SELECT * FROM person WHERE personID = \" {  id } \";";
+
+            Person person = null;
+
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create music object and store in list
+                        if (dr.Read())
+                        {
+                            int personId = (int)dr["personID"];
+                            string firstname = dr["firstname"] + "";
+                            string lastname = dr["lastname"] + "";
+                            string role = dr["role"] + "";
+
+                            person = new Person(personId, firstname, lastname, role);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return person;
+        }
 
         // Returns a list of all person in the db converted to person object.
-        public List<Person> GetAllPerson()         {             //Create a list of unknown size to store the result             List<Person> list = new List<Person>();             Person person = null;             string query = "SELECT * FROM person;";              lock (this)             {                 //Open connection                 if (this.OpenConnection() == true)                 {                     //Create Command                     MySqlCommand cmd = new MySqlCommand(query, connection);                     //Create a data reader and Execute the command                     MySqlDataReader dr = cmd.ExecuteReader();                     try                     {                         //Read the data, create music object and store in list                         while (dr.Read())                         {                             int personId = (int)dr["personID"];                             string firstname = dr["firstname"] + "";                             string lastname = dr["lastname"] + "";                              person = new Person(personId, firstname, lastname);                              list.Add(person);                         }                     }                     catch (Exception e) { throw e; }                      //close Data Reader                     dr.Close();                      //close Connection                     this.CloseConnection();                 }             }             return list;         }
+        public List<Person> GetAllPerson()
+        {
+            //Create a list of unknown size to store the result
+            List<Person> list = new List<Person>();
+            Person person = null;
+            string query = "SELECT * FROM person;";
+
+            lock (this)
+            {
+                //Open connection
+                if (this.OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int personId = (int)dr["personID"];
+                            string firstname = dr["firstname"] + "";
+                            string lastname = dr["lastname"] + "";
+                            string role = dr["role"] + "";
+
+                            person = new Person(personId, firstname, lastname, role);
+
+                            list.Add(person);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return list;
+        }
 
         /*
          * The following methods are made for the movieActor table

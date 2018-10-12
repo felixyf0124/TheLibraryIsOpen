@@ -1,0 +1,130 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Music
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Controllers
+@using TheLibraryIsOpen.Models.DBModels
+@inject MusicCatalog musicCatalog
+
+
+@{
+    ViewData["Title"] = "Music";
+
+    List<Music> musicList = await musicCatalog.GetAllMusicDataAsync();
+
+    int numberOfMusic = musicList.Count;
+
+    string message = numberOfMusic.ToString();
+
+    if (numberOfMusic < 2)
+    {
+        message += " Music album";
+    }
+    else
+    {
+        message += " Music albums";
+    }
+    message += " found from TheLibraryIsOpen database";
+
+    var style = "";
+
+    int musicIndex = 0;
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>@message</h3>
+
+
+<p>
+    <a asp-controller="Music" asp-action="Create"
+       data-toggle="tooltip" data-placement="right" title="Create new"
+       style="width:36px; height:36px; margin-left:auto; margin-right:auto;
+        font-size:16px; text-decoration:none;">Add</a>
+</p>
+
+@if (numberOfMusic != 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th style="border-left: 0px;">Type</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Label</th>
+                <th>Release Date</th>
+                <th>aSIN</th>
+                <th></th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var music in musicList as List<TheLibraryIsOpen.Models.DBModels.Music>)
+            {
+                <!--For displaying a different alter background color-->
+                musicIndex++;
+                if (musicIndex / 2 == 1)
+                {
+                    style = "background-color: #ffffff";
+                }
+                else
+                {
+                    style = "background-color: #f9f9f9";
+                }
+                <tr style="@style">
+                    <td>@music.Type</td>
+                    <td>@music.Title</td>
+                    <td>@music.Artist</td>
+                    <td>@music.Label</td>
+                    <td>@music.ReleaseDate</td>
+                    <td>@music.Asin</td>
+
+                    <td class="_edit">
+                        <a asp-controller="Music" asp-action="Edit" asp-route-id="@music.MusicId"
+                           style="margin:1px; margin-left:auto; margin-right:auto;
+                       font-size:10px; text-decoration:none; display:block;">Edit</a>
+                        <a asp-controller="Music" asp-action="Details" asp-route-id="@music.MusicId"
+                           style="margin:1px; margin-left:auto; margin-right:auto;
+                       font-size:10px; text-decoration:none; display:block;">Details</a>
+                        <a asp-controller="Music" asp-action="Delete" asp-route-id="@music.MusicId"
+                           style="margin:1px; margin-left:auto; margin-right:auto;
+                       font-size:10px; text-decoration:none; display:block;">Delete</a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 4%;
+    }
+
+    td {
+        border-bottom: 1px solid #C0C0C0;
+        text-align: center;
+        padding: 0px;
+    }
+
+    th {
+        border-bottom: 2px solid #D6D6D7;
+        border-left: 1px solid #D6D6D7;
+        background-color: #D6E7FE;
+        text-align: center;
+        padding: 1%;
+        font-weight: bold;
+    }
+
+    ._add {
+        border: 0px;
+        width: 40px;
+    }
+
+    ._edit {
+        height: 40px;
+        border: 0px;
+    }
+</style>
