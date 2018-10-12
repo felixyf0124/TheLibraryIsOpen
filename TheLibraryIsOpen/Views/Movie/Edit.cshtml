@@ -1,7 +1,11 @@
-﻿@model TheLibraryIsOpen.Models.DBModels.Movie
-
+﻿@model TheLibraryIsOpen.Models.Movie.MovieViewModel
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@inject MovieCatalog mc
 @{
     ViewData["Title"] = "Edit";
+    var listOfPeople = await mc.GetAllPersonDataAsync();
+    MultiSelectList actorsList = new MultiSelectList(listOfPeople, "PersonId", "FullName", Model.Actors);
+    MultiSelectList producersList = new MultiSelectList(listOfPeople, "PersonId", "FullName", Model.Producers);
 }
 
 <h2>Edit</h2>
@@ -9,9 +13,9 @@
 <h4>Movie</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-4">
             <input type="hidden" asp-for="MovieId" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -21,11 +25,6 @@
             <div class="form-group">
                 <label asp-for="Director" class="control-label"></label>
                 <input asp-for="Director" class="form-control" />
-                <span asp-validation-for="Director" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Producers" class="control-label"></label>
-                <input asp-for="Producers" class="form-control" />
                 <span asp-validation-for="Director" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -56,8 +55,24 @@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
-        </form>
-    </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Producers" class="control-label"></label> &nbsp;
+                <button type="button" onclick="clearBox('producers');" class="btn btn-sm btn-warning">Clear</button>
+                <select id="producers" asp-for="Producers" class="form-control" size="10"
+                        asp-items="producersList"></select>
+                <span asp-validation-for="Producers" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Actors" class="control-label"></label> &nbsp;
+                <button type="button" onclick="clearBox('actors');" class="btn btn-sm btn-warning">Clear</button>
+                <select id="actors" asp-for="Actors" class="form-control" size="10"
+                        asp-items="actorsList"></select>
+                <span asp-validation-for="Actors" class="text-danger"></span>
+            </div>
+        </div>
+    </form>
 </div>
 
 <div>
@@ -66,4 +81,18 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function clearBox(selectBoxID) {
+            $("#" + selectBoxID).val([]);
+        }
+        @* This is to prevent the select box to deselect options if selecting an option while
+            the ctrl button isn't pressed *@
+        $('option').mousedown(function (e) {
+            e.preventDefault();
+            $(this).prop('selected', !$(this).prop('selected'));
+            return false;
+        });
+
+    </script>
 }

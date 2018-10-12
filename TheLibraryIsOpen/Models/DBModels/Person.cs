@@ -1,10 +1,15 @@
-﻿namespace TheLibraryIsOpen.Models.DBModels
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TheLibraryIsOpen.Models.DBModels
 {
     public class Person
     {
         public int PersonId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        [NotMapped]
+        public string FullName { get => $"{FirstName} {LastName}"; }
 
         // Default constructor
         public Person() { }
@@ -34,5 +39,6 @@
         {
             return "Person:\nFirst Name:" + FirstName + "\nLast Name:" + LastName + "\nPerson ID:" + PersonId;
         }
+
     }
 }

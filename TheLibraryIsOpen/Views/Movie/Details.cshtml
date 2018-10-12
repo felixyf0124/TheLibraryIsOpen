@@ -4,7 +4,7 @@
 }
 <h2>Details</h2>
 <div>
-    <h4>Book</h4>
+    <h4>Movie</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -24,18 +24,18 @@
         </dt>
         <dd>
             @foreach (var Producer in Model.Producers)
-        {
-            @(Producer.FirstName + " " + Producer.LastName)<br />
-    }
+            {
+                @(Producer.FirstName + " " + Producer.LastName)<br />
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Actors)
         </dt>
         <dd>
             @foreach (var Actor in Model.Actors)
-        {
-            @(Actor.FirstName + " " + Actor.LastName)<br />
-    }
+            {
+                @(Actor.FirstName + " " + Actor.LastName)<br />
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Language)

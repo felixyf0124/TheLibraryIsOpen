@@ -1,31 +1,29 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
 using System.Security.Claims;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.Authentication;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Models.Movie;
 
 namespace TheLibraryIsOpen.Controllers
 {
     public class MovieController : Controller
     {
-        private readonly MovieCatalog _mc; //gonna change this to the actual thing we're gonna use. (Catalog, UoW, etc.)
-        // private readonly MovieManager _mm;
-        //private Client client;
+        private readonly MovieCatalog _mc;
 
-        // public AuthenticationController(Db db, MovieManager mm) //gonna change this to the actual thing we're gonna use (Catalog, UoW, etc.)
         public MovieController(MovieCatalog mc)
         {
             _mc = mc;
@@ -49,7 +47,7 @@ namespace TheLibraryIsOpen.Controllers
         public async Task<IActionResult> Create(Movie movie)
         {
             ViewData["Message"] = "Your create movie page.";
-           await _mc.CreateMovieAsync(movie);
+            await _mc.CreateMovieAsync(movie);
             return RedirectToAction(nameof(Index));
         }
 
@@ -94,19 +92,19 @@ namespace TheLibraryIsOpen.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             Movie toEdit = await _mc.GetMovieByIdAsync(id);
+            toEdit.Producers = await _mc.GetAllMovieProducerDataAsync(id);
+            toEdit.Actors = await _mc.GetAllMovieActorDataAsync(id);
 
-            return View(toEdit);
+            return View(toEdit.ToEditViewModel());
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(Movie edit)
+        public async Task<ActionResult> Edit(MovieViewModel edit)
         {
             try
             {
-                // Movie m = await _mm.FindByIdAsync(id.ToString());
-                // TODO: add edit attributes
+                await _mc.UpdateMovieAsync(edit.ToMovie());
 
-                 await _mc.UpdateMovieAsync(edit);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -114,13 +112,5 @@ namespace TheLibraryIsOpen.Controllers
                 return RedirectToAction("Home", "Index");
             }
         }
-
-
-        // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        // public IActionResult Error()
-        // {
-        //     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        // }
-
     }
 }
