@@ -1231,7 +1231,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
+                            string year = dr["date"] + "";
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";

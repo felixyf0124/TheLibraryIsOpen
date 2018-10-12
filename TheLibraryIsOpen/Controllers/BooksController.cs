@@ -84,7 +84,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Edit(string id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Date,Language,Isbn10,Isbn13")] Book book)
         {
             if (int.Parse(id) != book.BookId)
             {
