@@ -1,4 +1,14 @@
 ﻿@model TheLibraryIsOpen.Models.DBModels.Music
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientManager cm
+@{
+    bool signedIn = User.Identity.IsAuthenticated;
+    // get clientEmail
+    string clientEmail = User.Identity.Name;
+    Client client = await cm.FindByEmailAsync(clientEmail);
+    bool isAdmin = client.IsAdmin;
+}
 
 @{
     ViewData["Title"] = "Details";
@@ -49,6 +59,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.MusicId">Edit</a> |
-    <a asp-area="" asp-controller="Music" asp-action="Index">Back to List</a>
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.MusicId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+    }
+    <a asp-area="" class="btn btn-sm btn-info" asp-action="Index">Back to List</a>
 </div>

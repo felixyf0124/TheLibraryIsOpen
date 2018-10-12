@@ -26,6 +26,7 @@
             <th>Title</th>
             <th>Author</th>
             <th>Date</th>
+            <th></th>
         </tr>
         @foreach (var book in bookList)
         {
@@ -33,6 +34,7 @@
                 <td>@book.Title</td>
                 <td>@book.Author</td>
                 <td>@book.Date</td>
+                <td><a asp-controller="Books" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@book.BookId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }
     </table>
@@ -44,6 +46,7 @@
             <th>Title</th>
             <th>Publisher</th>
             <th>Date</th>
+            <th></th>
         </tr>
         @foreach (var magazine in magazineList)
         {
@@ -51,6 +54,7 @@
                 <td>@magazine.Title</td>
                 <td>@magazine.Publisher</td>
                 <td>@magazine.Date</td>
+                <td><a asp-controller="Magazine" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@magazine.MagazineId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }
     </table>
@@ -61,6 +65,7 @@
             <th>Title</th>
             <th>Runtime</th>
             <th>Release Date</th>
+            <th></th>
         </tr>
         @foreach (var movie in movieList)
         {
@@ -68,6 +73,7 @@
                 <td>@movie.Title</td>
                 <td>@movie.RunTime</td>
                 <td>@movie.ReleaseDate</td>
+                <td><a asp-controller="Movie" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@movie.MovieId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }
     </table>
@@ -78,14 +84,16 @@
             <th>Title</th>
             <th>Artist</th>
             <th>Release Date</th>
+            <th></th>
         </tr>
         @foreach (var music in musicList)
         {
-            <tr>
-                <td>@music.Title</td>
-                <td>@music.Artist</td>
-                <td>@music.ReleaseDate</td>
-            </tr>
+        <tr>
+            <td>@music.Title</td>
+            <td>@music.Artist</td>
+            <td>@music.ReleaseDate</td>
+            <td><a asp-controller="Music" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
+        </tr>
         }
     </table>
 }
