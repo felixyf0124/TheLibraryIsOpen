@@ -1,0 +1,54 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Music
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Music</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Artist)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Artist)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Label)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Label)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Asin)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Asin)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.MusicId">Edit</a> |
+    <a asp-area="" asp-controller="Music" asp-action="Index">Back to List</a>
+</div>

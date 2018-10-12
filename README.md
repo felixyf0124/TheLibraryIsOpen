@@ -26,3 +26,15 @@ Name,  Student Id,  Email,  Github Username
 10. Xi Chen,  27276605,  davidseechan@gmail.com,  g82005
 
 *I am including github usernames since some of the account emails do not match the ones submitted to the TA.
+
+## Compilation
+To compile, the .net core runtime must be installed on the host computer.
+It's easier to have visual studio 2017 with the .net core packages installed to run it. However, it can still be done via console:
+
+1) cd to the root folder of the project and run the command `dotnet build --configuration Release`.
+2) cd to `TheLibraryIsOpen\bin\Release\netcoreapp2.1` and run the command `dotnet TheLibraryIsOpen.dll`
+3) the console will show a few messages, among which:
+    * "Now listening on: http://localhost:[portnb1]"
+    * "Now listening on: https://localhost:[portnb2]"
+4) pick whichever link and put it into a browser
+    

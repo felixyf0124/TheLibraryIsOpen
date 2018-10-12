@@ -16,7 +16,6 @@ using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 using Microsoft.EntityFrameworkCore;
-using TheLibraryIsOpen.Data;
 using TheLibraryIsOpen.Models;
 
 namespace TheLibraryIsOpen
@@ -53,11 +52,11 @@ namespace TheLibraryIsOpen
             services.AddTransient<ClientManager>();
             services.AddTransient<ClientStore>();
             services.AddTransient<ClientSignInManager>();
+            services.AddTransient<MovieCatalog>();
 
             services.AddTransient<MagazineCatalog>();
             services.AddTransient<BookCatalog>();
             services.AddTransient<MusicCatalog>();
-            services.AddTransient<MovieCatalog>();
 
             services.AddSingleton(typeof(Db));
 

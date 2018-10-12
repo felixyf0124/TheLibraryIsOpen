@@ -3,30 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TheLibraryIsOpen.Models;
-using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
+using TheLibraryIsOpen.Models.DBModels;
 
-namespace TheLibraryIsOpen.Controllers.StorageManagement
+namespace TheLibraryIsOpen.Controllers
 {
-    public class BooksController : Controller
+    public class MusicController : Controller
     {
-        private readonly BookCatalog _bc;
+        private readonly MusicCatalog _mc;
 
-        public BooksController(BookCatalog bc)
+        public MusicController(MusicCatalog mc)
         {
-            _bc = bc;
+            _mc = mc;
         }
 
-        // GET: Books
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }
 
-        // GET: Books/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -34,36 +30,32 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
 
-            var book = await _bc.FindByIdAsync(id);
-            if (book == null)
+            var music = await _mc.FindMusicByIdAsync(id);
+            if (music == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(music);
         }
 
-        // GET: Books/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Create([Bind("MusicId,Type,Title,Artist,Label,ReleaseDate,aSIN")] Music music)
         {
             if (ModelState.IsValid)
             {
-                await _bc.CreateAsync(book);
-                
+                await _mc.CreateMusicAsync(music);
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(music);
         }
 
-        // GET: Books/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -72,21 +64,19 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
 
-            var book = await _bc.FindByIdAsync(id);
-            if (book == null)
+            var music = await _mc.FindMusicByIdAsync(id);
+            if (music == null)
             {
                 return NotFound();
             }
-            return View(book);
+            return View(music);
         }
 
-        // POST: Books/Edit/5
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Date,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Edit(string id, [Bind("MusicId,Type,Title,Artist,Label,ReleaseDate,Asin")] Music music)
         {
-            if (int.Parse(id) != book.BookId)
+            if (int.Parse(id) != music.MusicId)
             {
                 return NotFound();
             }
@@ -95,12 +85,12 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 try
                 {
-                    await _bc.UpdateAsync(book);
+                    await _mc.UpdateMusicAsync(music);
 
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(id))
+                    if (!MusicExists(id))
                     {
                         return NotFound();
                     }
@@ -111,10 +101,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(music);
         }
 
-        // GET: Books/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -122,30 +111,29 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
 
-            var book = await _bc.FindByIdAsync(id);
+            var music = await _mc.FindMusicByIdAsync(id);
 
-            if (book == null)
+            if (music == null)
             {
                 return NotFound();
             }
-            await _bc.DeleteAsync(book);
-            return View(book);
+            await _mc.DeleteMusicAsync(music);
+            return View(music);
         }
 
-        // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var book = await _bc.FindByIdAsync(id);
-
-            await _bc.DeleteAsync(book);
+            var music = await _mc.FindMusicByIdAsync(id);
+            await _mc.DeleteMusicAsync(music);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(string id)
+        private bool MusicExists(string id)
         {
-            return (_bc.FindByIdAsync(id) != null);
+            return (_mc.FindMusicByIdAsync(id) != null);
         }
+
     }
 }

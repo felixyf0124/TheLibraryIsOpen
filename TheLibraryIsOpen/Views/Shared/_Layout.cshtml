@@ -47,6 +47,10 @@
                         <li><a asp-area="" asp-controller="Music" asp-action="Index">Music</a></li>
                         <li><a asp-area="" asp-controller="Movie" asp-action="Index">Movies</a></li>
                     }
+                    @if (signedIn)
+                    {
+                        <li><a asp-area="" asp-controller="Music" asp-action="Index">Music</a></li>
+                    }
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Catalog">Catalog</a></li>
