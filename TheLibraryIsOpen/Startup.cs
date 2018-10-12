@@ -56,6 +56,8 @@ namespace TheLibraryIsOpen
 
             services.AddTransient<MagazineCatalog>();
             services.AddTransient<BookCatalog>();
+            services.AddTransient<MusicCatalog>();
+            services.AddTransient<MovieCatalog>();
 
             services.AddSingleton(typeof(Db));
 
