@@ -74,7 +74,7 @@ namespace TheLibraryIsOpen.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("MusicId,Type,Title,Artist,Label,ReleaseDate,aSIN")] Music music)
+        public async Task<IActionResult> Edit(string id, [Bind("MusicId,Type,Title,Artist,Label,ReleaseDate,Asin")] Music music)
         {
             if (int.Parse(id) != music.MusicId)
             {
