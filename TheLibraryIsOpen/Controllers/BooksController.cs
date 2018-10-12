@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Data;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {

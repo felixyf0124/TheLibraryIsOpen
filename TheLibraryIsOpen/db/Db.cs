@@ -822,7 +822,7 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new person into the database
         public void CreatePerson(Person person)
         {
-            string query = $"INSERT INTO person (firstname, lastname, role) VALUES(\"{person.FirstName}\", \"{person.LastName}\");";
+            string query = $"INSERT INTO person (firstname, lastname) VALUES(\"{person.FirstName}\", \"{person.LastName}\");";
             QuerySend(query);
         }
 
@@ -864,9 +864,8 @@ namespace TheLibraryIsOpen.Database
                             int personId = (int)dr["personID"];
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
-                            string role = dr["role"] + "";
 
-                            person = new Person(personId, firstname, lastname, role);
+                            person = new Person(personId, firstname, lastname);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -906,9 +905,8 @@ namespace TheLibraryIsOpen.Database
                             int personId = (int)dr["personID"];
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
-                            string role = dr["role"] + "";
 
-                            person = new Person(personId, firstname, lastname, role);
+                            person = new Person(personId, firstname, lastname);
 
                             list.Add(person);
                         }
