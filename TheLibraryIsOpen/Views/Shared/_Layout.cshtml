@@ -40,24 +40,13 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    @if (signedIn)
-                    {
-                        <li><a asp-area="" asp-controller="Books" asp-action="Index">Books</a></li>
-                        <li><a asp-area="" asp-controller="Magazine" asp-action="Index">Magazines</a></li>
-                        <li><a asp-area="" asp-controller="Music" asp-action="Index">Music</a></li>
-                        <li><a asp-area="" asp-controller="Movie" asp-action="Index">Movies</a></li>
-                    }
-                    @if (signedIn)
-                    {
-                        <li><a asp-area="" asp-controller="Music" asp-action="Index">Music</a></li>
-                    }
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Catalog">Catalog</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Catalog">All Catalogs</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (!signedIn)
-                
+
                     {
 
                         <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
@@ -69,6 +58,10 @@
                         bool isAdmin = client.IsAdmin;
                         if (isAdmin)
                         {
+                            <li><a asp-area="" asp-controller="Books" asp-action="Index">Books</a></li>
+                            <li><a asp-area="" asp-controller="Magazine" asp-action="Index">Magazines</a></li>
+                            <li><a asp-area="" asp-controller="Music" asp-action="Index">Music</a></li>
+                            <li><a asp-area="" asp-controller="Movie" asp-action="Index">Movies</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li>
                         }
                         else

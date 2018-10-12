@@ -11,8 +11,14 @@
     //Retrieve all the catalogs from the database
     List<Magazine> magazineList = await magazineCatalog.GetAllMagazinesDataAsync();
     List<Book> bookList = await bookCatalog.GetAllBookDataAsync();
-    List<Music> musicList = await musicCatalog.GetAllMusicsDataAsync();
+    List<Music> musicList = await musicCatalog.GetAllMusicDataAsync();
     List<Movie> movieList = await movieCatalog.GetAllMoviesDataAsync();
+
+    <style type="text/css">
+        td {
+            width: 100px;
+        }
+    </style>
 
     <h3>Books</h3>
     <table class="table">
