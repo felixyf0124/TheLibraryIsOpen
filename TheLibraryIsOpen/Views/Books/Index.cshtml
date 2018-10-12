@@ -1,83 +1,136 @@
-﻿@model IEnumerable<TheLibraryIsOpen.Models.DBModels.Book>
+﻿@model TheLibraryIsOpen.Models.DBModels.Book
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Controllers
+@using TheLibraryIsOpen.Models.DBModels
+@inject BookCatalog bookCatalog
+
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Book";
+
+    List<Book> books = await bookCatalog.GetAllBookDataAsync();
+
+    int numberOfBooks = books.Count;
+
+    string message = numberOfBooks.ToString();
+
+    if (numberOfBooks < 2)
+    {
+        message += " Book";
+    }
+    else
+    {
+        message += " Books";
+    }
+    message += " found from TheLibraryIsOpen database";
+
+    var style = "";
+
+    int BookIndex = 0;
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
+<h3>@message</h3>
+
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-controller="Books" asp-action="Create"
+       data-toggle="tooltip" data-placement="right" title="Create new"
+       style="width:36px; height:36px; margin-left:auto; margin-right:auto;
+        font-size:16px; text-decoration:none;">Add</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Format)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pages)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Publisher)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Language)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Isbn10)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Isbn13)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Format)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pages)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Language)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Isbn10)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Isbn13)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
-            </td>
-        </tr>
+
+@if (numberOfBooks != 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th style="border-left: 0px;">Title</th>
+                <th>Author</th>
+                <th>Format</th>
+                <th>Pages</th>
+                <th>Publisher</th>
+                <th>Year</th>
+                <th>Language</th>
+                <th>ISBN10</th>
+                <th>ISBN13</th>
+                <th></th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var book in books as List<TheLibraryIsOpen.Models.DBModels.Book>)
+            {
+                <!--For displaying a different alter background color-->
+                BookIndex++;
+                if (BookIndex / 2 == 1)
+                {
+                    style = "background-color: #ffffff";
+                }
+                else
+                {
+                    style = "background-color: #f9f9f9";
+                }
+                <tr style="@style">
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Format</td>
+                    <td>@book.Pages</td>
+                    <td>@book.Publisher</td>
+                    <td>@book.Date</td>
+                    <td>@book.Language</td>
+                    <td>@book.Isbn10</td>
+                    <td>@book.Isbn13</td>
+
+                    <td class="_edit">
+                        <a asp-controller="Books" asp-action="Edit" asp-route-id="@book.BookId"
+                           style="margin:1px; margin-left:auto; margin-right:auto;
+                       font-size:10px; text-decoration:none; display:block;">Edit</a>
+                        <a asp-controller="Books" asp-action="Details" asp-route-id="@book.BookId"
+                           style="margin:1px; margin-left:auto; margin-right:auto;
+                       font-size:10px; text-decoration:none; display:block;">Details</a>
+                        <a asp-controller="Books" asp-action="Delete" asp-route-id="@book.BookId"
+                           style="margin:1px; margin-left:auto; margin-right:auto;
+                       font-size:10px; text-decoration:none; display:block;">Delete</a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 4%;
+    }
+
+    td {
+        border-bottom: 1px solid #C0C0C0;
+        text-align: center;
+        padding: 0px;
+    }
+
+    th {
+        border-bottom: 2px solid #D6D6D7;
+        border-left: 1px solid #D6D6D7;
+        background-color: #D6E7FE;
+        text-align: center;
+        padding: 1%;
+        font-weight: bold;
+    }
+
+    ._add {
+        border: 0px;
+        width: 40px;
+    }
+
+    ._edit {
+        height: 40px;
+        border: 0px;
+    }
+</style>

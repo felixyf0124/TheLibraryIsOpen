@@ -30,10 +30,8 @@
             magazineID int(11) AI PK 
             title varchar(255) 
             publisher varchar(255) 
-
-            language varchar(255) 
-            date varchar(255) 
-
+            language varchar(255)
+            date varchar(255)
             isbn10 varchar(255) 
             isbn13 varchar(255)
 
@@ -655,7 +653,7 @@ namespace TheLibraryIsOpen.Database
         }
 
         // Returns a list of all musics in the db converted to music object.
-        public List<Music> GetAllMusics()
+        public List<Music> GetAllMusic()
         {
             //Create a list of unknown size to store the result
             List<Music> list = new List<Music>();
@@ -962,12 +960,38 @@ namespace TheLibraryIsOpen.Database
                 }
             }
             return list;
-        } 
-        // Returns a list of all books in the db converted to book object.
+        }
+
+        public void DeleteBook(Book book)
+        {
+            string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
+
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        // Returns a list of all clients in the db converted to client object.
         public List<Book> GetAllBooks()
         {
             //Create a list of unknown size to store the result
-            List<Book> list = new List<Book>();
+            List<Book> books = new List<Book>();
             string query = "SELECT * FROM books;";
 
             lock (this)
@@ -998,7 +1022,7 @@ namespace TheLibraryIsOpen.Database
                             Book book = new Book(bookId,title, author, format, pages,publisher, year, language,isbn10, isbn13);
                             //Console.Write(book);
 
-                            list.Add(book);
+                            books.Add(book);
                         }
                     }
                     catch (Exception e) { throw e; }
@@ -1010,7 +1034,7 @@ namespace TheLibraryIsOpen.Database
                     this.CloseConnection();
                 }
             }
-            return list;
+            return books;
         }
 
 
@@ -1073,15 +1097,15 @@ namespace TheLibraryIsOpen.Database
 
         // Update a book information in the database by book ID
         // We can add other function to update book
-        public void UpdateBookByBookId(Book book, int bookId)
+        public void UpdateBook(Book book)
         {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{bookId}\");";
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
 
             QuerySend(query);
         }
 
         // Update a book information in the database by isbn10
-        public void UpdateBookByBookIsbn(Book book, string isbn10)
+        public void UpdateBookByIsbn(Book book, string isbn10)
         {
             string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
 
@@ -1095,5 +1119,145 @@ namespace TheLibraryIsOpen.Database
 
             QuerySend(query);
         }
+
+
+        public Book GetBookById(int id)
+        {
+            string query = $"SELECT * FROM books WHERE bookID = \" { id } \";";
+
+            Book book = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create book object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format, 
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
+        }
+
+        public Book GetBookByIsbn10(string Isbn10)
+        {
+            string query = $"SELECT * FROM books WHERE isbn10 = \" { Isbn10 } \";";
+
+            Book book = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format, 
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
+        }
+
+        public Book GetBookByIsbn13(string Isbn13)
+        {
+            string query = $"SELECT * FROM books WHERE isbn13 = \" { Isbn13 } \";";
+
+            Book book = null;
+            lock (this)
+            {
+                //Open connection
+                if (OpenConnection() == true)
+                {
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    try
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format,
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close Data Reader
+                    dr.Close();
+
+                    //close Connection
+                    this.CloseConnection();
+                }
+            }
+            return book;
+        }
+
     }
 }

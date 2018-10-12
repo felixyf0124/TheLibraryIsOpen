@@ -55,12 +55,14 @@ namespace TheLibraryIsOpen
             services.AddTransient<ClientSignInManager>();
             services.AddTransient<MovieCatalog>();
 
+            services.AddTransient<MagazineCatalog>();
+            services.AddTransient<BookCatalog>();
+
             services.AddSingleton(typeof(Db));
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-		    services.AddDbContext<TheLibraryIsOpenContext>(options =>
-		            options.UseSqlServer(Configuration.GetConnectionString("TheLibraryIsOpenContext")));
+		    
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

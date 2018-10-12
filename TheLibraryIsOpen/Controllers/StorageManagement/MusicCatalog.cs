@@ -64,7 +64,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllMusics();
+                return _db.GetAllMusic();
             });
         }
 

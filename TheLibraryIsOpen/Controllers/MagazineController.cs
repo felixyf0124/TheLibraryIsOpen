@@ -20,9 +20,10 @@ namespace TheLibraryIsOpen.Controllers
             _cs = cs;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<Magazine> li = await _cs.GetAllMagazinesDataAsync();
+            return View(li);
         }
 
         public async Task<IActionResult> Details(string id)

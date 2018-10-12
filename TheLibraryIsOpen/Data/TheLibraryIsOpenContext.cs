@@ -14,7 +14,6 @@ namespace TheLibraryIsOpen.Models
         {
         }
 
-        public DbSet<TheLibraryIsOpen.Models.DBModels.Book> Book { get; set; }
         public DbSet<TheLibraryIsOpen.Models.DBModels.Magazine> Magazine { get; set; }
     }
 }
