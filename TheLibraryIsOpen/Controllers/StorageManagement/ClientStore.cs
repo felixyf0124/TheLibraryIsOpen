@@ -161,10 +161,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<List<Client>> GetAllClientsDataAsync() 
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return _db.GetAllClients();
-            });
+            return Task.Factory.StartNew(_db.GetAllClients);
         }
 
         public Task<bool> IsItAdminAsync(string clientEmail)
