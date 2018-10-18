@@ -49,14 +49,14 @@ namespace TheLibraryIsOpen
 
             //services.AddScoped(typeof(Microsoft.AspNet.Identity.UserManager<Client>), typeof(ClientManager));
             //services.AddScoped(typeof(Microsoft.AspNet.Identity.IUserStore<Client>), typeof(ClientStore));
-            services.AddTransient<ClientManager>();
-            services.AddTransient<ClientStore>();
-            services.AddTransient<ClientSignInManager>();
-            services.AddTransient<MovieCatalog>();
+            services.AddSingleton(typeof(ClientManager));
+            services.AddSingleton(typeof(ClientStore));
+            services.AddSingleton(typeof(ClientSignInManager));
+            services.AddSingleton(typeof(MovieCatalog));
 
-            services.AddTransient<MagazineCatalog>();
-            services.AddTransient<BookCatalog>();
-            services.AddTransient<MusicCatalog>();
+            services.AddSingleton(typeof(MagazineCatalog));
+            services.AddSingleton(typeof(BookCatalog));
+            services.AddSingleton(typeof(MusicCatalog));
 
             services.AddSingleton(typeof(Db));
 
