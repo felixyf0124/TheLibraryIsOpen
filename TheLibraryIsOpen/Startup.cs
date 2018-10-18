@@ -66,7 +66,7 @@ namespace TheLibraryIsOpen
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ClientManager cm)
 		{
 			if (env.IsDevelopment())
 			{
@@ -89,6 +89,28 @@ namespace TheLibraryIsOpen
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
+
+            string email = Configuration["DefaultAdmin:Email"];
+            string password = Configuration["DefaultAdmin:Password"];
+
+            Client x = await cm.FindByEmailAsync(email);
+
+            if (x == null)
+            {
+                await cm.CreateAsync(new Client
+                {
+                    EmailAddress = email,
+                    Password = password,
+                    IsAdmin = true
+                });
+            }
+            else if (!x.IsAdmin)
+            {
+
+                x.IsAdmin = true;
+                await cm.UpdateAsync(x);
+
+            }
 		}
 	}
 }
