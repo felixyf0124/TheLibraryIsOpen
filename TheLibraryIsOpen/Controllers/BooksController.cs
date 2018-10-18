@@ -23,7 +23,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return View();
+            List<Book> books = await _bc.GetAllBookDataAsync();
+            return View(books);
         }
 
         // GET: Books/Details/5

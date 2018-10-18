@@ -6,7 +6,7 @@
 @inject MusicCatalog musicCatalog
 @{
     ViewData["Title"] = "Catalog";
-    Html.RenderPartialAsync("_Card");
+    await Html.RenderPartialAsync("_Card");
 
     //Retrieve all the catalogs from the database
     List<Magazine> magazineList = await magazineCatalog.GetAllMagazinesDataAsync();

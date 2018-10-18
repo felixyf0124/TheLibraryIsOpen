@@ -1,15 +1,13 @@
 ﻿
-@using TheLibraryIsOpen.Controllers.StorageManagement
-@using TheLibraryIsOpen.Models.DBModels
-@inject ClientStore clientStore
+@model List<TheLibraryIsOpen.Models.DBModels.Client>
+
 @{
     ViewData["Title"] = "List Of Clients";
 
-    //Retrieve all the clients from the database
-    List<Client> allClientsList = await  clientStore.GetAllClientsDataAsync();
+
 
     //For displaying a message of the number of client found in the database
-    int numberOfClients = allClientsList.Count;
+    int numberOfClients = Model.Count;
     string message = numberOfClients.ToString();
 
     //Display a different message depending on the number of clients
@@ -51,7 +49,7 @@
         </tr>*@
 
     <!--Display all the clients information into the table-->
-    @foreach (var client in allClientsList as List<TheLibraryIsOpen.Models.DBModels.Client>)
+    @foreach (var client in Model)
     {
         <!--For displaying a different background color if isAdmin is true-->
         if (client.IsAdmin == true)

@@ -1,16 +1,10 @@
-﻿@model TheLibraryIsOpen.Models.DBModels.Music
-@using TheLibraryIsOpen.Controllers.StorageManagement
-@using TheLibraryIsOpen.Controllers
-@using TheLibraryIsOpen.Models.DBModels
-@inject MusicCatalog musicCatalog
-
-
+﻿@model List<TheLibraryIsOpen.Models.DBModels.Music>
 @{
     ViewData["Title"] = "Music";
 
-    List<Music> musicList = await musicCatalog.GetAllMusicDataAsync();
 
-    int numberOfMusic = musicList.Count;
+
+    int numberOfMusic = Model.Count;
 
     string message = numberOfMusic.ToString();
 
@@ -24,61 +18,58 @@
     }
     message += " found from TheLibraryIsOpen database";
 }
-
 <h2>@ViewData["Title"]</h2>
 <h3>@message</h3>
-
 <p>
     <a asp-controller="Music" asp-action="Create" class="btn btn-info"><label class="glyphicon glyphicon-plus"></label>&nbsp; Create New</a>
 </p>
-
 @if (numberOfMusic != 0)
 {
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Type)
+                    Type
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Title)
+                    Title
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Artist)
+                    Artist
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Label)
+                    Label
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ReleaseDate)
+                    Release Date
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Asin)
+                    ASIN
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var music in musicList as List<TheLibraryIsOpen.Models.DBModels.Music>)
+            @foreach (var music in Model)
             {
-              
-            <tr>
-                <td>@music.Type</td>
-                <td>@music.Title</td>
-                <td>@music.Artist</td>
-                <td>@music.Label</td>
-                <td>@music.ReleaseDate</td>
-                <td>@music.Asin</td>
-                <td>
-                    <div class="">
-                        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
-                        <a asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a>
-                        <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
-                    </div>
-                </td>
-            </tr>
+
+                <tr>
+                    <td>@music.Type</td>
+                    <td>@music.Title</td>
+                    <td>@music.Artist</td>
+                    <td>@music.Label</td>
+                    <td>@music.ReleaseDate</td>
+                    <td>@music.Asin</td>
+                    <td>
+                        <div class="">
+                            <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+                            <a asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a>
+                            <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
+                        </div>
+                    </td>
+                </tr>
 
             }
         </tbody>
-     </table>
-     }
+    </table>
+}
