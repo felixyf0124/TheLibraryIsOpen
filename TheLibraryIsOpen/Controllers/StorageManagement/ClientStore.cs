@@ -163,7 +163,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllClients
+                return _db.GetAllClients();
             });
         }
 
