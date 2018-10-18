@@ -1,8 +1,8 @@
-﻿@model IEnumerable<TheLibraryIsOpen.Models.DBModels.Magazine>
+﻿@model List<TheLibraryIsOpen.Models.DBModels.Magazine>
 @{
     ViewData["Title"] = "Magazine";
 
-    int nb = Model.Count();
+    int nb = Model.Count;
 
     string message = nb.ToString();
 
