@@ -96,7 +96,9 @@ namespace TheLibraryIsOpen.Controllers
             bool isAdmin = await _cs.IsItAdminAsync(clientEmail);
             if (isAdmin)
             {
-                return View();
+                //Retrieve all the clients from the database
+                List<Client> allClientsList = await _cs.GetAllClientsDataAsync();
+                return View(allClientsList);
             }
             else
             {

@@ -46,16 +46,16 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                    @item.Title
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Director)
+                    @item.Director
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RunTime)
+                    @item.RunTime
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ReleaseDate)
+                    @item.ReleaseDate
                 </td>
                 <td>
                     <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@item.MovieId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
