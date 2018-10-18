@@ -18,9 +18,10 @@ namespace TheLibraryIsOpen.Controllers
             _mc = mc;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<Music> musicList = await _mc.GetAllMusicDataAsync();
+            return View(musicList);
         }
 
         public async Task<IActionResult> Details(string id)
