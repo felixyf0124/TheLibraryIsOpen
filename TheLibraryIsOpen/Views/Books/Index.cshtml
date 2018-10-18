@@ -1,16 +1,9 @@
-﻿@model TheLibraryIsOpen.Models.DBModels.Book
-@using TheLibraryIsOpen.Controllers.StorageManagement
-@using TheLibraryIsOpen.Controllers
-@using TheLibraryIsOpen.Models.DBModels
-@inject BookCatalog bookCatalog
-
-
+﻿@model List<TheLibraryIsOpen.Models.DBModels.Book>
 @{
     ViewData["Title"] = "Book";
+    
 
-    List<Book> books = await bookCatalog.GetAllBookDataAsync();
-
-    int numberOfBooks = books.Count;
+    int numberOfBooks = Model.Count;
 
     string message = numberOfBooks.ToString();
 
@@ -40,35 +33,35 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Title)
+                    Title
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Author)
+                    Author
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Format)
+                    Format
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Pages)
+                    Pages
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Publisher)
+                    Publisher
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Date)
+                    Date
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Isbn10)
+                    ISBN-10
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Isbn13)
+                    ISBN-13
                 </th>
                 <th></th>
             </tr>
 
         </thead>
         <tbody>
-            @foreach (var book in books as List<TheLibraryIsOpen.Models.DBModels.Book>)
+            @foreach (var book in Model)
             {
               
             <tr style="@style">
