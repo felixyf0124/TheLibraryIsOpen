@@ -1,8 +1,8 @@
-﻿@model IEnumerable<TheLibraryIsOpen.Models.DBModels.Movie>
+﻿@model List<TheLibraryIsOpen.Models.DBModels.Movie>
 @{
     ViewData["Title"] = "Movie";
 
-    int nb = Model.Count();
+    int nb = Model.Count;
 
     string message = nb.ToString();
 
