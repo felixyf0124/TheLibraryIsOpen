@@ -73,6 +73,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Database
@@ -128,6 +129,34 @@ namespace TheLibraryIsOpen.Database
             catch (MySqlException e) { throw e; }
         }
 
+        /*
+        * For all types of tables
+        * Method to send query to database for creating, updating and deleting
+        */
+        public void QuerySend(string query)
+        {
+            lock (this)
+            {
+                //open connection
+                if (this.OpenConnection() == true)
+                {
+                    try
+                    {
+                        //create command and assign the query and connection from the constructor
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                        //Execute command
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e) { throw e; }
+
+                    //close connection
+                    this.CloseConnection();
+                }
+            }
+        }
+
+        #region clients
         // Returns a list of all clients in the db converted to client object.
         public List<Client> GetAllClients()
         {
@@ -343,34 +372,9 @@ namespace TheLibraryIsOpen.Database
                 }
             }
         }
+        #endregion
 
-        /*
-        * For all types of tables
-        * Method to send query to database for creating, updating and deleting
-        */
-        public void QuerySend(string query)
-        {
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
-        }
-
+        #region magazines
         /*
          *  Magazine Table methods
          */
@@ -379,9 +383,15 @@ namespace TheLibraryIsOpen.Database
         {
             string query =
                 $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
-               
+
             QuerySend(query);
         }
+
+        //TODO: implement this method
+        public void CreateMagazines(params Magazine[] magazines) { }
+
+        //TODO: implement this method
+        public void UpdateMagazines(params Magazine[] magazines) { }
 
         // need improve
         public void UpdateMagazine(Magazine magazine)
@@ -400,6 +410,9 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
 
         }
+
+        //TODO: implement this method
+        public void DeleteMagazines(params Magazine[] magazines) { }
 
         // delete magazine by magazine instance
         public void DeleteMagazine(Magazine magazine)
@@ -566,19 +579,25 @@ namespace TheLibraryIsOpen.Database
             }
             return magazine;
         }
-
+        #endregion
+        #region music
         /*
          * The following methods are made for the music table
          */
 
-        // Inserts a new music into the database
-        public void CreateMusic(Music music)
+        // Inserts new music into the database
+        public void CreateMusic(params Music[] music)
         {
-            string query = $"INSERT INTO cds (type, title, artist, label, releasedate, asin) VALUES(\"{music.Type}\", \"{music.Title}\", \"{music.Artist}\", \"{music.Label}\", \"{music.ReleaseDate}\", \"{music.Asin}\");";
-            QuerySend(query);
+            StringBuilder sb = new StringBuilder("INSERT INTO cds (type, title, artist, label, releasedate, asin) VALUES");
+            for (int i = 0; i < music.Length; ++i)
+            {
+                sb.Append($"(\"{music[i].Type}\", \"{music[i].Title}\", \"{music[i].Artist}\", \"{music[i].Label}\", \"{music[i].ReleaseDate}\", \"{music[i].Asin}\"){(i + 1 < music.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
         }
 
         // Update a music's information in the database by MusicId
+        //TODO: update this method to work with params Music[]
         public void UpdateMusic(Music music)
         {
             string query = $"UPDATE cds SET type = \"{music.Type}\", title = \"{music.Title}\", artist = \"{music.Artist}\", label = \"{music.Label}\", releasedate = \"{music.ReleaseDate}\", asin = \"{music.Asin}\" WHERE (cdID = \"{music.MusicId}\");";
@@ -586,6 +605,7 @@ namespace TheLibraryIsOpen.Database
         }
 
         // Delete music by MusicId from the database
+        //TODO: update this method to work with params Music[]
         public void DeleteMusic(Music music)
         {
             string query = $"DELETE FROM cds WHERE (cdID = \"{music.MusicId}\");";
@@ -698,6 +718,8 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        #endregion
+        #region movies
         /*
          * The following methods are made for the movie table
          */
@@ -709,6 +731,10 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        //TODO: implement this method. MAKE SURE THAT THE MOVIEACTOR
+        //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
+        public void CreateMovies(params Movie[] movies) { }
+
         // Update a movie's information in the database by MovieID
         public void UpdateMovie(Movie movie)
         {
@@ -716,12 +742,18 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        //TODO: implement this method
+        public void UpdateMovies(params Movie[] movies) { }
+
         // Delete movie by movieId from the database
         public void DeleteMovie(Movie movie)
         {
             string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
             QuerySend(query);
         }
+
+        //TODO: implement this method
+        public void DeleteMovies(params Movie[] movies) { }
 
         // Retrieve a movie information by id
         public Movie GetMovieById(int id)
@@ -815,6 +847,7 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        #region person
         /*
          * The following methods are made for the person table
          */
@@ -825,6 +858,16 @@ namespace TheLibraryIsOpen.Database
             string query = $"INSERT INTO person (firstname, lastname) VALUES(\"{person.FirstName}\", \"{person.LastName}\");";
             QuerySend(query);
         }
+
+        //TODO: implement this method
+        public void CreatePeople(params Person[] people) { }
+
+        //TODO: implement this method
+        public void UpdatePeople(params Person[] people) { }
+
+        //TODO: implement this method. MAKE SURE THAT THE MOVIEACTOR
+        //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
+        public void DeletePeople(params Person[] people) { }
 
         // Update a person's information in the database by PersonId
         public void UpdatePerson(Person person)
@@ -922,7 +965,7 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-
+        #region movieactor
         /*
          * The following methods are made for the movieActor table
          */
@@ -984,7 +1027,8 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-
+        #endregion
+        #region movieproducer
         /*
          * The following methods are made for the movieProducer table
          */
@@ -1046,7 +1090,10 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-
+        #endregion
+        #endregion
+        #endregion
+        #region books
         public void DeleteBook(Book book)
         {
             string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
@@ -1070,6 +1117,17 @@ namespace TheLibraryIsOpen.Database
                     this.CloseConnection();
                 }
             }
+        }
+
+        // Deletes several books from the db
+        public void DeleteBooks(params Book[] books)
+        {
+            StringBuilder sb = new StringBuilder("DELETE FROM books WHERE bookID IN (");
+            for (int i = 0; i < books.Length; ++i)
+            {
+                sb.Append($"{books[i].BookId}{(i + 1 < books.Length ? "," : ");")}");
+            }
+            QuerySend(sb.ToString());
         }
 
         // Returns a list of all clients in the db converted to client object.
@@ -1176,8 +1234,19 @@ namespace TheLibraryIsOpen.Database
         {
 
             string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
-            
+
             QuerySend(query);
+        }
+
+        // Inserts several new books into the db
+        public void CreateBooks(params Book[] books)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES");
+            for (int i = 0; i < books.Length; ++i)
+            {
+                sb.Append($"(\"{books[i].Title}\", \"{books[i].Author}\", \"{books[i].Format}\", \"{books[i].Pages}\", \"{books[i].Publisher}\", \"{books[i].Date}\", \"{books[i].Language}\",\"{books[i].Isbn10}\",\"{books[i].Isbn13}\"){(i + 1 < books.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
         }
 
         // Update a book information in the database by book ID
@@ -1343,6 +1412,6 @@ namespace TheLibraryIsOpen.Database
             }
             return book;
         }
-
+        #endregion
     }
 }
