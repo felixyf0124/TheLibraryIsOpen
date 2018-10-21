@@ -17,6 +17,7 @@ using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.db;
 
 namespace TheLibraryIsOpen
 {
@@ -47,18 +48,17 @@ namespace TheLibraryIsOpen
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 
-            //services.AddScoped(typeof(Microsoft.AspNet.Identity.UserManager<Client>), typeof(ClientManager));
-            //services.AddScoped(typeof(Microsoft.AspNet.Identity.IUserStore<Client>), typeof(ClientStore));
-            services.AddSingleton(typeof(ClientManager));
-            services.AddSingleton(typeof(ClientStore));
-            services.AddSingleton(typeof(ClientSignInManager));
-            services.AddSingleton(typeof(MovieCatalog));
-
-            services.AddSingleton(typeof(MagazineCatalog));
-            services.AddSingleton(typeof(BookCatalog));
-            services.AddSingleton(typeof(MusicCatalog));
-
             services.AddSingleton(typeof(Db));
+            services.AddScoped(typeof(UnitOfWork));
+            services.AddScoped(typeof(IdentityMap));
+
+            services.AddScoped(typeof(ClientManager));
+            services.AddScoped(typeof(ClientStore));
+            services.AddScoped(typeof(MovieCatalog));
+                     
+            services.AddScoped(typeof(MagazineCatalog));
+            services.AddScoped(typeof(BookCatalog));
+            services.AddScoped(typeof(MusicCatalog));
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
