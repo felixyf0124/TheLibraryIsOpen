@@ -39,27 +39,27 @@ namespace TheLibraryIsOpen.db
                 case TypeEnum.Book:
                     {
                         Book temp = (Book)o;
-                        return RegisteredNew.TryAdd($"0-{temp.BookId}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
                     }
                 case TypeEnum.Magazine:
                     {
                         Magazine temp = (Magazine)o;
-                        return RegisteredNew.TryAdd($"0-{temp.MagazineId}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
                     }
                 case TypeEnum.Movie:
                     {
                         Movie temp = (Movie)o;
-                        return RegisteredNew.TryAdd($"0-{temp.MovieId}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
                     }
                 case TypeEnum.Music:
                     {
                         Music temp = (Music)o;
-                        return RegisteredNew.TryAdd($"0-{temp.MusicId}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
                     }
                 case TypeEnum.Person:
                     {
                         Person temp = (Person)o;
-                        return RegisteredNew.TryAdd($"0-{temp.PersonId}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
                     }
                 default:
                     {
