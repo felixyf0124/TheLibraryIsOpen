@@ -388,10 +388,27 @@ namespace TheLibraryIsOpen.Database
         }
 
         //TODO: implement this method
-        public void CreateMagazines(params Magazine[] magazines) { }
+        public void CreateMagazines(params Magazine[] magazines)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO magazines ((title, publisher, language, date, isbn10, isbn13) VALUES");
+            for (int i = 0; i < magazines.Length; ++i)
+            {
+                sb.Append($"(\"{magazines[i].Title}\",\"{magazines[i].Publisher}\",\"{magazines[i].Language}\",\"{magazines[i].Date}\",\"{magazines[i].Isbn10}\",\"{magazines[i].Isbn13}\"){(i + 1 < magazines.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
 
         //TODO: implement this method
-        public void UpdateMagazines(params Magazine[] magazines) { }
+        public void UpdateMagazines(params Magazine[] magazines)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE magazines SET ");
+            for (int i = 0; i < magazines.Length; ++i)
+            {
+                sb.Append($"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
+            }
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         // need improve
         public void UpdateMagazine(Magazine magazine)
@@ -412,7 +429,16 @@ namespace TheLibraryIsOpen.Database
         }
 
         //TODO: implement this method
-        public void DeleteMagazines(params Magazine[] magazines) { }
+        public void DeleteMagazines(params Magazine[] magazines)
+        {
+            StringBuilder sb = new StringBuilder("DELETE FROM magazines ");
+            for (int i = 0; i < magazines.Length; ++i)
+            {
+                sb.Append($"WHERE magazineID = \"{magazines[i].MagazineId}\"{(i + 1 < magazines.Length ? "," : ";")}");
+            }
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         // delete magazine by magazine instance
         public void DeleteMagazine(Magazine magazine)
@@ -598,18 +624,29 @@ namespace TheLibraryIsOpen.Database
 
         // Update a music's information in the database by MusicId
         //TODO: update this method to work with params Music[]
-        public void UpdateMusic(Music music)
+        public void UpdateMusic(params Music[] music)
         {
-            string query = $"UPDATE cds SET type = \"{music.Type}\", title = \"{music.Title}\", artist = \"{music.Artist}\", label = \"{music.Label}\", releasedate = \"{music.ReleaseDate}\", asin = \"{music.Asin}\" WHERE (cdID = \"{music.MusicId}\");";
-            QuerySend(query);
+        
+            StringBuilder sb = new StringBuilder("UPDATE cds SET ");
+            for (int i = 0; i < music.Length; ++i)
+            {
+                sb.Append($"type = \"{music[i].Type}\", title = \"{music[i].Title}\",artist = \"{music[i].Artist}\", label = \"{music[i].Label}\", releasedate = \"{music[i].ReleaseDate}\", asin = \"{music[i].Asin}\" WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
+            }
+           // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
         }
-
+    
         // Delete music by MusicId from the database
         //TODO: update this method to work with params Music[]
-        public void DeleteMusic(Music music)
+        public void DeleteMusic(params Music [] music)
         {
-            string query = $"DELETE FROM cds WHERE (cdID = \"{music.MusicId}\");";
-            QuerySend(query);
+            StringBuilder sb = new StringBuilder("DELETE FROM cds ");
+            for (int i = 0; i < music.Length; ++i)
+            {
+                sb.Append($"WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
+            }
+           // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
         }
 
         // Retrieve a music information by id
@@ -733,7 +770,15 @@ namespace TheLibraryIsOpen.Database
 
         //TODO: implement this method. MAKE SURE THAT THE MOVIEACTOR
         //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
-        public void CreateMovies(params Movie[] movies) { }
+        public void CreateMovies(params Movie[] movies)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO movies (title, language, subtitles, dubbed, releasedate, runtime) VALUES");
+            for (int i = 0; i < movies.Length; ++i)
+            {
+                sb.Append($"(\"{movies[i].Title}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
 
         // Update a movie's information in the database by MovieID
         public void UpdateMovie(Movie movie)
@@ -743,7 +788,16 @@ namespace TheLibraryIsOpen.Database
         }
 
         //TODO: implement this method
-        public void UpdateMovies(params Movie[] movies) { }
+        public void UpdateMovies(params Movie[] movies)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE movies SET ");
+            for (int i = 0; i < movies.Length; ++i)
+            {
+                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\"WHERE cdID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
+            }
+            Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         // Delete movie by movieId from the database
         public void DeleteMovie(Movie movie)
@@ -753,7 +807,16 @@ namespace TheLibraryIsOpen.Database
         }
 
         //TODO: implement this method
-        public void DeleteMovies(params Movie[] movies) { }
+        public void DeleteMovies(params Movie[] movies)
+        {
+            StringBuilder sb = new StringBuilder("DELETE FROM movies ");
+            for (int i = 0; i < movies.Length; ++i)
+            {
+                sb.Append($"WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
+            }
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         // Retrieve a movie information by id
         public Movie GetMovieById(int id)
@@ -860,14 +923,40 @@ namespace TheLibraryIsOpen.Database
         }
 
         //TODO: implement this method
-        public void CreatePeople(params Person[] people) { }
+        public void CreatePeople(params Person[] people)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO person (firstname, lastname) VALUES");
+            for (int i = 0; i < people.Length; ++i)
+            {
+                sb.Append($"(\"{people[i].FirstName}\", \"{people[i].LastName}\"){(i + 1 < people.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
 
         //TODO: implement this method
-        public void UpdatePeople(params Person[] people) { }
+        public void UpdatePeople(params Person[] people)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE person SET ");
+            for (int i = 0; i < people.Length; ++i)
+            {
+                sb.Append($"firstname = \"{people[i].FirstName}\", lastname = \"{people[i].LastName}\" WHERE cdID = \"{people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
+            }
+            Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         //TODO: implement this method. MAKE SURE THAT THE MOVIEACTOR
         //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
-        public void DeletePeople(params Person[] people) { }
+        public void DeletePeople(params Person[] people)
+        {
+            StringBuilder sb = new StringBuilder("DELETE FROM person ");
+            for (int i = 0; i < people.Length; ++i)
+            {
+                sb.Append($"WHERE personID = \"{ people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
+            }
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         // Update a person's information in the database by PersonId
         public void UpdatePerson(Person person)

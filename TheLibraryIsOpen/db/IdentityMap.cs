@@ -151,7 +151,7 @@ namespace TheLibraryIsOpen.db
                 if (music.Count > 0)
                 {
                     music.ForEach(temp => _books.Remove(temp.MusicId));
-                    //TODO: _db.DeleteMusic(music.ToArray());
+                    _db.DeleteMusic(music.ToArray());
                 }
                 if (people.Count > 0)
                 {
