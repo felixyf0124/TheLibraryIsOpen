@@ -1,4 +1,7 @@
 ﻿@model TheLibraryIsOpen.Models.DBModels.Movie
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientManager cm
 @{
     bool signedIn = User.Identity.IsAuthenticated;
     // get clientEmail
