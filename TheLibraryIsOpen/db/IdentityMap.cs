@@ -73,18 +73,24 @@ namespace TheLibraryIsOpen.db
                             }
                     }
                 }
-
-                if(books.Count > 0)
-                    _db.CreateBooks(books.ToArray());
-                if (mags.Count > 0)
-                    _db.CreateMagazines(mags.ToArray());
-                if (movies.Count > 0)
-                    _db.CreateMovies(movies.ToArray());
-                if (music.Count > 0)
-                    _db.CreateMusic(music.ToArray());
-                if (people.Count > 0)
-                    _db.CreatePeople(people.ToArray());
-                return true;
+                try
+                {
+                    if (books.Count > 0)
+                        _db.CreateBooks(books.ToArray());
+                    if (mags.Count > 0)
+                        _db.CreateMagazines(mags.ToArray());
+                    if (movies.Count > 0)
+                        _db.CreateMovies(movies.ToArray());
+                    if (music.Count > 0)
+                        _db.CreateMusic(music.ToArray());
+                    if (people.Count > 0)
+                        _db.CreatePeople(people.ToArray());
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             });
         }
 
@@ -132,33 +138,39 @@ namespace TheLibraryIsOpen.db
                             }
                     }
                 }
-
-                if (books.Count > 0)
+                try
                 {
-                    books.ForEach(temp => _books.Remove(temp.BookId));
-                    _db.DeleteBooks(books.ToArray());
+                    if (books.Count > 0)
+                    {
+                        books.ForEach(temp => _books.Remove(temp.BookId));
+                        _db.DeleteBooks(books.ToArray());
+                    }
+                    if (mags.Count > 0)
+                    {
+                        mags.ForEach(temp => _mags.Remove(temp.MagazineId));
+                        _db.DeleteMagazines(mags.ToArray());
+                    }
+                    if (movies.Count > 0)
+                    {
+                        movies.ForEach(temp => _movies.Remove(temp.MovieId));
+                        _db.DeleteMovies(movies.ToArray());
+                    }
+                    if (music.Count > 0)
+                    {
+                        music.ForEach(temp => _books.Remove(temp.MusicId));
+                        //TODO: _db.DeleteMusic(music.ToArray());
+                    }
+                    if (people.Count > 0)
+                    {
+                        people.ForEach(temp => _books.Remove(temp.PersonId));
+                        _db.DeletePeople(people.ToArray());
+                    }
+                    return true;
                 }
-                if (mags.Count > 0)
+                catch
                 {
-                    mags.ForEach(temp => _mags.Remove(temp.MagazineId));
-                    _db.DeleteMagazines(mags.ToArray());
+                    return false;
                 }
-                if (movies.Count > 0)
-                {
-                    movies.ForEach(temp => _movies.Remove(temp.MovieId));
-                    _db.DeleteMovies(movies.ToArray());
-                }
-                if (music.Count > 0)
-                {
-                    music.ForEach(temp => _books.Remove(temp.MusicId));
-                    _db.DeleteMusic(music.ToArray());
-                }
-                if (people.Count > 0)
-                {
-                    people.ForEach(temp => _books.Remove(temp.PersonId));
-                    _db.DeletePeople(people.ToArray());
-                }
-                return true;
             });
         }
     }
