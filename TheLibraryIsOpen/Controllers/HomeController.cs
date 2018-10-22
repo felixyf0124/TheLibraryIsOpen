@@ -16,6 +16,10 @@ namespace TheLibraryIsOpen.Controllers
 	public class HomeController : Controller
 	{
         private readonly ClientStore _cs;
+        private readonly BookCatalog _bookc;
+        private readonly MusicCatalog _musicc;
+        private readonly MovieCatalog _moviec;
+        private readonly MagazineCatalog _magazinec;
 
         public HomeController(ClientStore cs)
         {
@@ -53,11 +57,10 @@ namespace TheLibraryIsOpen.Controllers
 
         public IActionResult Catalog()
         {
-            ViewData["Message"] = "The catalog.";
-
-            return View();
+            CatalogViewModel list = new CatalogViewModel(_bookc.GetAllBookDataAsync(), _musicc.GetAllMusicDataAsync(), _moviec.GetAllMoviesDataAsync(), _magazinec.GetAllMagazinesDataAsync());
+            return View(list);
         }
-
+    
         // For test db.cs
         public void ListTest()
 	    {
@@ -106,7 +109,8 @@ namespace TheLibraryIsOpen.Controllers
             }
         }
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
