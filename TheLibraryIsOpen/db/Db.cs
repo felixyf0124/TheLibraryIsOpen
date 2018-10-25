@@ -74,6 +74,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Database
@@ -387,7 +388,7 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        //TODO: implement this method
+       
         public void CreateMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO magazines ((title, publisher, language, date, isbn10, isbn13) VALUES");
@@ -398,7 +399,7 @@ namespace TheLibraryIsOpen.Database
             QuerySend(sb.ToString());
         }
 
-        //TODO: implement this method
+        
         public void UpdateMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("UPDATE magazines SET ");
@@ -428,7 +429,7 @@ namespace TheLibraryIsOpen.Database
 
         }
 
-        //TODO: implement this method
+        
         public void DeleteMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("DELETE FROM magazines ");
@@ -623,7 +624,6 @@ namespace TheLibraryIsOpen.Database
         }
 
         // Update a music's information in the database by MusicId
-        //TODO: update this method to work with params Music[]
         public void UpdateMusic(params Music[] music)
         {
         
@@ -637,7 +637,6 @@ namespace TheLibraryIsOpen.Database
         }
     
         // Delete music by MusicId from the database
-        //TODO: update this method to work with params Music[]
         public void DeleteMusic(params Music [] music)
         {
             StringBuilder sb = new StringBuilder("DELETE FROM cds ");
@@ -768,7 +767,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        //TODO: implement this method. MAKE SURE THAT THE MOVIEACTOR
         //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
         public void CreateMovies(params Movie[] movies)
         {
@@ -787,7 +785,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        //TODO: implement this method
         public void UpdateMovies(params Movie[] movies)
         {
             StringBuilder sb = new StringBuilder("UPDATE movies SET ");
@@ -802,20 +799,32 @@ namespace TheLibraryIsOpen.Database
         // Delete movie by movieId from the database
         public void DeleteMovie(Movie movie)
         {
-            string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
-            QuerySend(query);
-        }
+        
+           DeleteMovieActors(movie);
+           DeleteMovieProducers(movie);
+           string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
+           QuerySend(query);
+       }
 
-        //TODO: implement this method
-        public void DeleteMovies(params Movie[] movies)
-        {
+       public void DeleteMovies(params Movie[] movies)
+       {
+           for (int i = 0; i < movies.Length; i++)
+           {
+               DeleteMovieActors(movies[i]);
+               DeleteMovieProducers(movies[i]);
+           }
+
             StringBuilder sb = new StringBuilder("DELETE FROM movies ");
+
             for (int i = 0; i < movies.Length; ++i)
             {
+
                 sb.Append($"WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
-            }
-            // Console.WriteLine(sb.ToString());
+
+            }  
+            
             QuerySend(sb.ToString());
+
         }
 
         // Retrieve a movie information by id
@@ -922,7 +931,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        //TODO: implement this method
         public void CreatePeople(params Person[] people)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO person (firstname, lastname) VALUES");
@@ -933,7 +941,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(sb.ToString());
         }
 
-        //TODO: implement this method
         public void UpdatePeople(params Person[] people)
         {
             StringBuilder sb = new StringBuilder("UPDATE person SET ");
@@ -945,7 +952,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(sb.ToString());
         }
 
-        //TODO: implement this method. MAKE SURE THAT THE MOVIEACTOR
         //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
         public void DeletePeople(params Person[] people)
         {
@@ -1073,6 +1079,18 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        // Delete all movie actors by movies array
+        public void DeleteMovieActors(Movie movie)
+        {
+            List<Person> list = GetAllMovieActors(movie.MovieId);
+   
+            for (int i = 0; i < list.Count; i++)
+            {
+                DeleteMovieActor(movie.MovieId.ToString(), list[i].PersonId.ToString());
+            }
+
+        }
+
         // Get all movie actors from a specific movie
         public List<Person> GetAllMovieActors(int movieId)
         {
@@ -1135,6 +1153,20 @@ namespace TheLibraryIsOpen.Database
             string query = $"DELETE FROM movieproducer WHERE (movieID = \"{mid}\" AND personID = \"{pid}\");";
             QuerySend(query);
         }
+
+
+        // Delete all movieProducer by Movie object
+        public void DeleteMovieProducers(Movie movie)
+        {
+            List<Person> list = GetAllMovieProducers(movie.MovieId);
+           
+            for (int i = 0; i < list.Count; i++)
+            {
+               DeleteMovieProducer(movie.MovieId.ToString(), list[i].PersonId.ToString());
+            }
+
+        }
+
 
         // Get all movie producers from a specific movie
         public List<Person> GetAllMovieProducers(int movieId)
