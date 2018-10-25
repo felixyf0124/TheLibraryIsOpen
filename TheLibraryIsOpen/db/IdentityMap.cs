@@ -165,6 +165,10 @@ namespace TheLibraryIsOpen.db
                         movies.ForEach(temp => _movies.Remove(temp.MovieId));
                         _lock.ExitWriteLock();
 
+                        var movieArr = movies.ToArray();
+                        // to be activated once the methods exist in the Db
+                        //_db.DeleteMovieActors(movieArr);
+                        //_db.DeleteMovieProducers(movieArr);
                         _db.DeleteMovies(movies.ToArray());
                     }
                     if (music.Count > 0)
