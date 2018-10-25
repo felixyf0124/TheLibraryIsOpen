@@ -44,22 +44,22 @@ namespace TheLibraryIsOpen.db
                 case TypeEnum.Magazine:
                     {
                         Magazine temp = (Magazine)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.MagazineId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MagazineId}")}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Magazine}-{(temp.MagazineId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MagazineId}")}", o);
                     }
                 case TypeEnum.Movie:
                     {
                         Movie temp = (Movie)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.MovieId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MovieId}")}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Movie}-{(temp.MovieId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MovieId}")}", o);
                     }
                 case TypeEnum.Music:
                     {
                         Music temp = (Music)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.MusicId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MusicId}")}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Music}-{(temp.MusicId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MusicId}")}", o);
                     }
                 case TypeEnum.Person:
                     {
                         Person temp = (Person)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.PersonId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.PersonId}")}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Person}-{(temp.PersonId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.PersonId}")}", o);
                     }
                 default:
                     {
