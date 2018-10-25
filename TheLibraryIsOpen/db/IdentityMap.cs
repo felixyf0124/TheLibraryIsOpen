@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Database;
@@ -12,6 +13,7 @@ namespace TheLibraryIsOpen.db
     public class IdentityMap
     {
         private readonly Db _db;
+        private readonly ReaderWriterLockSlim _lock;
 
         private readonly Dictionary<int, Book> _books;
         private readonly Dictionary<int, Magazine> _mags;
@@ -22,6 +24,7 @@ namespace TheLibraryIsOpen.db
         public IdentityMap(Db db)
         {
             _db = db;
+            _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _books = new Dictionary<int, Book>();
             _mags = new Dictionary<int, Magazine>();
             _movies = new Dictionary<int, Movie>();
@@ -142,27 +145,42 @@ namespace TheLibraryIsOpen.db
                 {
                     if (books.Count > 0)
                     {
+                        while (!_lock.TryEnterWriteLock(10)) ;
                         books.ForEach(temp => _books.Remove(temp.BookId));
+                        _lock.ExitWriteLock();
+
                         _db.DeleteBooks(books.ToArray());
                     }
                     if (mags.Count > 0)
                     {
+                        while (!_lock.TryEnterWriteLock(10)) ;
                         mags.ForEach(temp => _mags.Remove(temp.MagazineId));
+                        _lock.ExitWriteLock();
+
                         _db.DeleteMagazines(mags.ToArray());
                     }
                     if (movies.Count > 0)
                     {
+                        while (!_lock.TryEnterWriteLock(10)) ;
                         movies.ForEach(temp => _movies.Remove(temp.MovieId));
+                        _lock.ExitWriteLock();
+
                         _db.DeleteMovies(movies.ToArray());
                     }
                     if (music.Count > 0)
                     {
+                        while (!_lock.TryEnterWriteLock(10)) ;
                         music.ForEach(temp => _books.Remove(temp.MusicId));
+                        _lock.ExitWriteLock();
+
                         //TODO: _db.DeleteMusic(music.ToArray());
                     }
                     if (people.Count > 0)
                     {
+                        while (!_lock.TryEnterWriteLock(10)) ;
                         people.ForEach(temp => _books.Remove(temp.PersonId));
+                        _lock.ExitWriteLock();
+
                         _db.DeletePeople(people.ToArray());
                     }
                     return true;
