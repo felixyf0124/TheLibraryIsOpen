@@ -5,7 +5,7 @@
     ViewData["Title"] = "Catalog";
     await Html.RenderPartialAsync("_Card");
 
-    <style type="text/css">
+        <style type="text/css">
         td {
             width: 100px;
         }
@@ -19,7 +19,8 @@
             <th>Date</th>
             <th></th>
         </tr>
-        @foreach (var book in Model.book) { 
+        @foreach (var book in Model.Book)
+        {
             <tr>
                 <td>@book.Title</td>
                 <td>@book.Author</td>
@@ -38,7 +39,7 @@
             <th>Date</th>
             <th></th>
         </tr>
-        @foreach (var magazine in Model.magazine)
+        @foreach (var magazine in Model.Magazine)
         {
             <tr>
                 <td>@magazine.Title</td>
@@ -57,7 +58,7 @@
             <th>Release Date</th>
             <th></th>
         </tr>
-        @foreach (var movie in Model.movie)
+        @foreach (var movie in Model.Movie)
         {
             <tr>
                 <td>@movie.Title</td>
@@ -76,7 +77,7 @@
             <th>Release Date</th>
             <th></th>
         </tr>
-        @foreach (var music in Model.music)
+        @foreach (var music in Model.Music)
         {
             <tr>
                 <td>@music.Title</td>

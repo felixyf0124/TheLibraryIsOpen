@@ -21,9 +21,13 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
 
-        public HomeController(ClientStore cs)
+        public HomeController(ClientStore cs, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac)
         {
             _cs = cs;
+            _bookc = bc;
+            _moviec = moc;
+            _musicc = muc;
+            _magazinec = mac;
         }
 	    
         public IActionResult Index()
@@ -55,12 +59,12 @@ namespace TheLibraryIsOpen.Controllers
 			return View();
 		}
 
-        public IActionResult Catalog()
+        public async Task<ActionResult> Catalog()
         {
-            CatalogViewModel list = new CatalogViewModel(_bookc.GetAllBookDataAsync(), _musicc.GetAllMusicDataAsync(), _moviec.GetAllMoviesDataAsync(), _magazinec.GetAllMagazinesDataAsync());
+            CatalogViewModel list = new CatalogViewModel(await _bookc.GetAllBookDataAsync(), await _musicc.GetAllMusicDataAsync(), await _moviec.GetAllMoviesDataAsync(), await _magazinec.GetAllMagazinesDataAsync());
             return View(list);
         }
-    
+
         // For test db.cs
         public void ListTest()
 	    {
