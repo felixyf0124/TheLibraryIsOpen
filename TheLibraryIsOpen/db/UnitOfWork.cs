@@ -39,27 +39,73 @@ namespace TheLibraryIsOpen.db
                 case TypeEnum.Book:
                     {
                         Book temp = (Book)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
+                        if (RegisteredNew.ContainsValue(temp) == false)
+                            return RegisteredNew.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
+                        return false;
                     }
                 case TypeEnum.Magazine:
                     {
                         Magazine temp = (Magazine)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
+                        if (RegisteredNew.ContainsValue(temp) == false)
+                            return RegisteredNew.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
+                        return false;
                     }
                 case TypeEnum.Movie:
                     {
                         Movie temp = (Movie)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
+                        if (RegisteredNew.ContainsValue(temp) == false)
+                            return RegisteredNew.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
+                        return false;
                     }
                 case TypeEnum.Music:
                     {
                         Music temp = (Music)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
+                        if (RegisteredNew.ContainsValue(temp) == false)
+                            return RegisteredNew.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
+                        return false;
                     }
                 case TypeEnum.Person:
                     {
                         Person temp = (Person)o;
-                        return RegisteredNew.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
+                        if (RegisteredNew.ContainsValue(temp) == false)
+                            return RegisteredNew.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
+                        return false;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+            }
+        }
+
+        public bool RegisterDelete(object o)
+        {
+            switch (GetTypeNum(o.GetType()))
+            {
+                case TypeEnum.Book:
+                    {
+                        Book temp = (Book)o;
+                        return RegisteredDeleted.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
+                    }
+                case TypeEnum.Magazine:
+                    {
+                        Magazine temp = (Magazine)o;
+                        return RegisteredDeleted.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
+                    }
+                case TypeEnum.Movie:
+                    {
+                        Movie temp = (Movie)o;
+                        return RegisteredDeleted.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
+                    }
+                case TypeEnum.Music:
+                    {
+                        Music temp = (Music)o;
+                        return RegisteredDeleted.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
+                    }
+                case TypeEnum.Person:
+                    {
+                        Person temp = (Person)o;
+                        return RegisteredDeleted.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
                     }
                 default:
                     {

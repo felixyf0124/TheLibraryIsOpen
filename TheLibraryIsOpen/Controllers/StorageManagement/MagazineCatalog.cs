@@ -4,18 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class MagazineCatalog
     {
-        private readonly Db _db;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
-        public MagazineCatalog(Db db)
+
+        public MagazineCatalog(UnitOfWork unitOfWork, Db db)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _db = db; // TODO: delete this when db code is removed
+
         }
 
         //Create Magazine
@@ -25,9 +31,17 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    if (_db.GetMagazineByIsbn10(magazine.Isbn10) != null)
-                        return IdentityResult.Failed(new IdentityError { Description = "magazine with this isbn10 already exists" });
-                    _db.CreateMagazine(magazine);
+
+                    // TODO: find if magazine already exists
+
+                    bool registered = _unitOfWork.RegisterNew(magazine);
+
+                    // ? Not sure what error to return here
+                    if (registered == false)
+                        return IdentityResult.Failed(new IdentityError { Description = "cannot add magazine" });
+                    // if (_db.GetMagazineByIsbn10(magazine.Isbn10) != null)
+                    //     return IdentityResult.Failed(new IdentityError { Description = "magazine with this isbn10 already exists" });
+                    // _db.CreateMagazine(magazine);
                     return IdentityResult.Success;
                 });
             }
@@ -45,7 +59,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteMagazine(magazine);
+                    bool registered = _unitOfWork.RegisterDelete(magazine);
+
+                    // ? not sure what error to return here 
+                    if (registered == false)
+                        return IdentityResult.Failed(new IdentityError { Description = "cannot delete magazine" });
                     return IdentityResult.Success;
                 });
             }
@@ -202,7 +220,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-
+        public Task<bool> CommitAsync()
+        {
+            return _unitOfWork.CommitAsync();
+        }
 
     }
 }

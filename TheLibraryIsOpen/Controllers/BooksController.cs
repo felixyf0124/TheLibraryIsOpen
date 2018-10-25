@@ -58,6 +58,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             if (ModelState.IsValid)
             {
                 await _bc.CreateAsync(book);
+                await _bc.CommitAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -130,6 +131,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return NotFound();
             }
             await _bc.DeleteAsync(book);
+            await _bc.CommitAsync();
             return View(book);
         }
 

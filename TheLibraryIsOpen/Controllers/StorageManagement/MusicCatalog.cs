@@ -5,18 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class MusicCatalog : ControllerBase
     {
-        private readonly Db _db;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
-        public MusicCatalog(Db db)
+
+        public MusicCatalog(UnitOfWork unitOfWork, Db db)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _db = db; // TODO: delete this when db code is removed
+
         }
 
         //Create Music
@@ -26,9 +31,16 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    if (_db.GetMusicByAsin(music.Asin) != null)
-                        return IdentityResult.Failed(new IdentityError { Description = "music with this aSIN already exists" });
-                    _db.CreateMusic(music);
+                    // TODO: find if music already exists
+
+                    bool registered = _unitOfWork.RegisterNew(music);
+
+                    // ? Not sure what error to return here
+                    if (registered == false)
+                        return IdentityResult.Failed(new IdentityError { Description = "cannot add music" });
+                    // if (_db.GetMusicByAsin(music.Asin) != null)
+                    //     return IdentityResult.Failed(new IdentityError { Description = "music with this aSIN already exists" });
+                    // _db.CreateMusic(music);
                     return IdentityResult.Success;
                 });
             }
@@ -45,7 +57,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteMusic(music);
+                    bool registered = _unitOfWork.RegisterDelete(music);
+
+                    // ? not sure what error to return here 
+                    if (registered == false)
+                        return IdentityResult.Failed(new IdentityError { Description = "cannot delete music" });
                     return IdentityResult.Success;
                 });
             }
@@ -168,6 +184,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return _db.GetAllMusic();
             });
+        }
+
+        public Task<bool> CommitAsync()
+        {
+            return _unitOfWork.CommitAsync();
         }
     }
 }
