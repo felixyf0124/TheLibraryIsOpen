@@ -30,17 +30,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: find if book already exists
- 
-                    bool registered = _unitOfWork.RegisterNew(book);
+                    // TODO: manage error if register returns false
 
-                    // ? Not sure what error to return here
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "book with this isbn10 already exists" });
-
-                    // if (_db.GetBookByIsbn10(book.Isbn10) != null)
-                    //     return IdentityResult.Failed(new IdentityError { Description = "book with this isbn10 already exists" });
-                    // _db.CreateBook(book);
+                    _unitOfWork.RegisterNew(book);
                     return IdentityResult.Success;
                 });
             }
@@ -58,12 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-    
-                    bool registered = _unitOfWork.RegisterDelete(book);
-
-                    // ? not sure what error to return here 
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot delete book" });
+                    // _unitOfWork.RegisterDelete(book);
                     return IdentityResult.Success;
                 });
             }

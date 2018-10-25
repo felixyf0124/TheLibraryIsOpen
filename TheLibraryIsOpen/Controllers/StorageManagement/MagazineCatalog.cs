@@ -31,17 +31,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-
-                    // TODO: find if magazine already exists
-
-                    bool registered = _unitOfWork.RegisterNew(magazine);
-
-                    // ? Not sure what error to return here
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot add magazine" });
-                    // if (_db.GetMagazineByIsbn10(magazine.Isbn10) != null)
-                    //     return IdentityResult.Failed(new IdentityError { Description = "magazine with this isbn10 already exists" });
-                    // _db.CreateMagazine(magazine);
+                    // TODO: manage error if register return false
+                    _unitOfWork.RegisterNew(magazine);
                     return IdentityResult.Success;
                 });
             }
@@ -59,11 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    bool registered = _unitOfWork.RegisterDelete(magazine);
-
-                    // ? not sure what error to return here 
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot delete magazine" });
+                    // _unitOfWork.RegisterDelete(magazine);
                     return IdentityResult.Success;
                 });
             }

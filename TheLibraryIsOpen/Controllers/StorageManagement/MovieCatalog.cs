@@ -33,13 +33,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: find if movie already exists
-
-                    bool registered = _unitOfWork.RegisterNew(movie);
-
-                    // ? Not sure what error to return here
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot add movie" });
+                    // TODO: manage errors if register returns false
+                    _unitOfWork.RegisterNew(movie);
                     return IdentityResult.Success;
                 });
             }
@@ -113,11 +108,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    bool registered = _unitOfWork.RegisterDelete(movie);
-
-                    // ? not sure what error to return here 
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot delete movie" });
+                    // _unitOfWork.RegisterDelete(movie);
                     return IdentityResult.Success;
                 });
             }

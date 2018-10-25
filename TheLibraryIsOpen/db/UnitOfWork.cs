@@ -39,73 +39,27 @@ namespace TheLibraryIsOpen.db
                 case TypeEnum.Book:
                     {
                         Book temp = (Book)o;
-                        if (RegisteredNew.ContainsValue(temp) == false)
-                            return RegisteredNew.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
-                        return false;
+                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.BookId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.BookId}")}", o);
                     }
                 case TypeEnum.Magazine:
                     {
                         Magazine temp = (Magazine)o;
-                        if (RegisteredNew.ContainsValue(temp) == false)
-                            return RegisteredNew.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
-                        return false;
+                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.MagazineId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MagazineId}")}", o);
                     }
                 case TypeEnum.Movie:
                     {
                         Movie temp = (Movie)o;
-                        if (RegisteredNew.ContainsValue(temp) == false)
-                            return RegisteredNew.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
-                        return false;
+                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.MovieId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MovieId}")}", o);
                     }
                 case TypeEnum.Music:
                     {
                         Music temp = (Music)o;
-                        if (RegisteredNew.ContainsValue(temp) == false)
-                            return RegisteredNew.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
-                        return false;
+                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.MusicId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.MusicId}")}", o);
                     }
                 case TypeEnum.Person:
                     {
                         Person temp = (Person)o;
-                        if (RegisteredNew.ContainsValue(temp) == false)
-                            return RegisteredNew.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
-                        return false;
-                    }
-                default:
-                    {
-                        return false;
-                    }
-            }
-        }
-
-        public bool RegisterDelete(object o)
-        {
-            switch (GetTypeNum(o.GetType()))
-            {
-                case TypeEnum.Book:
-                    {
-                        Book temp = (Book)o;
-                        return RegisteredDeleted.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
-                    }
-                case TypeEnum.Magazine:
-                    {
-                        Magazine temp = (Magazine)o;
-                        return RegisteredDeleted.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
-                    }
-                case TypeEnum.Movie:
-                    {
-                        Movie temp = (Movie)o;
-                        return RegisteredDeleted.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
-                    }
-                case TypeEnum.Music:
-                    {
-                        Music temp = (Music)o;
-                        return RegisteredDeleted.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
-                    }
-                case TypeEnum.Person:
-                    {
-                        Person temp = (Person)o;
-                        return RegisteredDeleted.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
+                        return RegisteredNew.TryAdd($"{TypeEnum.Book}-{(temp.PersonId == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.PersonId}")}", o);
                     }
                 default:
                     {

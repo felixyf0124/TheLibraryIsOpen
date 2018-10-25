@@ -31,16 +31,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: find if music already exists
-
-                    bool registered = _unitOfWork.RegisterNew(music);
-
-                    // ? Not sure what error to return here
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot add music" });
-                    // if (_db.GetMusicByAsin(music.Asin) != null)
-                    //     return IdentityResult.Failed(new IdentityError { Description = "music with this aSIN already exists" });
-                    // _db.CreateMusic(music);
+                    // TODO: manage errors if register fails, it returns false
+                    _unitOfWork.RegisterNew(music);
                     return IdentityResult.Success;
                 });
             }
@@ -57,11 +49,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    bool registered = _unitOfWork.RegisterDelete(music);
-
-                    // ? not sure what error to return here 
-                    if (registered == false)
-                        return IdentityResult.Failed(new IdentityError { Description = "cannot delete music" });
+                    // _unitOfWork.RegisterDelete(music);
                     return IdentityResult.Success;
                 });
             }
