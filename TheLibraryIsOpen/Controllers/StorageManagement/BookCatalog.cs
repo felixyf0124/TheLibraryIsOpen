@@ -4,18 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
-    public class BookCatalog 
+    public class BookCatalog
     {
-        private readonly Db _db;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
-        public BookCatalog(Db db)
+        public BookCatalog(UnitOfWork unitOfWork, Db db)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _db = db; // TODO: delete this when db code is removed
         }
 
         //Create Book
@@ -23,11 +27,12 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             if (book != null)
             {
+
                 return Task.Factory.StartNew(() =>
                 {
-                    if (_db.GetBookByIsbn10(book.Isbn10) != null)
-                        return IdentityResult.Failed(new IdentityError { Description = "book with this isbn10 already exists" });
-                    _db.CreateBook(book);
+                    // TODO: manage error if register returns false
+
+                    _unitOfWork.RegisterNew(book);
                     return IdentityResult.Success;
                 });
             }
@@ -45,7 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteBook(book);
+                    // _unitOfWork.RegisterDelete(book);
                     return IdentityResult.Success;
                 });
             }
@@ -188,7 +193,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             throw new ArgumentNullException("book");
         }
 
-        
+
 
         public Task SetIsbn10Async(Book book, string isbn10)
         {
@@ -242,5 +247,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
+        public Task<bool> CommitAsync()
+        {
+            return _unitOfWork.CommitAsync();
+        }
     }
 }

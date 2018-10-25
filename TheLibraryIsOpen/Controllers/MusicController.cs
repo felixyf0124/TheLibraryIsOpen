@@ -52,6 +52,7 @@ namespace TheLibraryIsOpen.Controllers
             if (ModelState.IsValid)
             {
                 await _mc.CreateMusicAsync(music);
+                await _mc.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(music);
@@ -119,6 +120,8 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
             await _mc.DeleteMusicAsync(music);
+            await _mc.CommitAsync();
+
             return View(music);
         }
 
