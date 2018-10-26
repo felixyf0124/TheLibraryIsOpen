@@ -75,59 +75,27 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Database
 {
     public class Db
     {
-        private MySqlConnection connection;
-        private string server;
-        private string database;
-        private string uid;
-        private string password;
+        private readonly string connectionString;
+        private readonly string server;
+        private readonly string database;
+        private readonly string uid;
+        private readonly string password;
 
         public Db()
-        {
-            Initialize();
-        }
-
-        private void Initialize()
         {
             server = "35.236.241.114";
             database = "library";
             uid = "root";
             password = "library343";
-            string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
-
-            connection = new MySqlConnection(connectionString);
-        }
-
-        private bool OpenConnection()
-        {
-            try
-            {
-                connection.Open();
-                return true;
-            }
-            //When handling errors, you can your application's response based 
-            //on the error number.
-            //The two most common error numbers when connecting are as follows:
-            //0: Cannot connect to server.
-            //1045: Invalid user name and/or password.
-            catch (MySqlException e) { throw e; }
-        }
-
-        private bool CloseConnection()
-        {
-            try
-            {
-                connection.Close();
-                return true;
-            }
-            catch (MySqlException e) { throw e; }
         }
 
         /*
@@ -136,26 +104,21 @@ namespace TheLibraryIsOpen.Database
         */
         public void QuerySend(string query)
         {
-            lock (this)
+            //open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //open connection
-                if (this.OpenConnection() == true)
+                try
                 {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
+                    connection.Open();
+                    //create command and assign the query and connection from the constructor
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Execute command
+                    cmd.ExecuteNonQuery();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
         }
+
 
         #region clients
         // Returns a list of all clients in the db converted to client object.
@@ -165,16 +128,17 @@ namespace TheLibraryIsOpen.Database
             List<Client> list = new List<Client>();
             string query = "SELECT * FROM users;";
 
-            lock (this)
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
                         while (dr.Read())
@@ -193,14 +157,8 @@ namespace TheLibraryIsOpen.Database
                             list.Add(client);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
         }
@@ -211,17 +169,17 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM users WHERE clientID = \"{id}\";";
             Client client = null;
 
-            lock (this)
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
                         if (dr.Read())
@@ -238,14 +196,8 @@ namespace TheLibraryIsOpen.Database
                             client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e); }
             }
             return client;
         }
@@ -256,16 +208,16 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM users WHERE emailAddress = \"{emailAddres}\";";
             Client client = null;
 
-            lock (this)
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
                         if (dr.Read())
@@ -282,14 +234,8 @@ namespace TheLibraryIsOpen.Database
                             client = new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e); }
             }
             return client;
         }
@@ -298,80 +244,22 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new client into the db
         public void CreateClient(Client client)
         {
-
             string query = $"INSERT INTO users (firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin) VALUES(\"{client.FirstName}\", \"{client.LastName}\", \"{client.EmailAddress}\", \"{client.HomeAddress}\", \"{client.PhoneNo}\", \"{client.Password}\", {client.IsAdmin});";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         // Deletes a client by id from the db
         public void DeleteClient(Client client)
         {
             string query = $"DELETE FROM users WHERE (clientID = \"{client.clientId}\");";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         // Updates a client's information in the db by id
         public void UpdateClient(Client client)
         {
             string query = $"UPDATE users SET firstName = \"{client.FirstName}\", lastName = \"{client.LastName}\", emailAddress = \"{client.EmailAddress}\", homeAddress = \"{client.HomeAddress}\", phoneNumber = \"{client.PhoneNo}\", password = \"{client.Password}\", isAdmin = {client.IsAdmin} WHERE clientID = \"{client.clientId}\";";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
         #endregion
 
@@ -457,21 +345,20 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-        public List<Magazine> GetAllMagazines() 
+        public List<Magazine> GetAllMagazines()
         {
             string query = $"SELECT * FROM magazines;";
 
             List<Magazine> magazines = new List<Magazine>();
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create magazine object and store in list
                         while (dr.Read())
@@ -487,14 +374,8 @@ namespace TheLibraryIsOpen.Database
                             magazines.Add(new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13));
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e); }
             }
             return magazines;
 
@@ -504,41 +385,7 @@ namespace TheLibraryIsOpen.Database
         {
             string query = $"SELECT * FROM magazines WHERE magazineID = \" { id } \";";
 
-            Magazine magazine = null;
-            lock (this)
-            {
-                //Open connection
-                if (OpenConnection() == true)
-                {
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
-                    {
-                        //Read the data, create magazine object and store in list
-                        if (dr.Read())
-                        {
-                            int magazineId = (int)dr["magazineID"];
-                            string title = dr["title"] + "";
-                            string publisher = dr["publisher"] + "";
-                            string language = dr["language"] + "";
-                            string date = dr["date"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
-                        }
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
-                }
-            }
+            Magazine magazine = QueryRetrieveMaganize(query);
             return magazine;
         }
 
@@ -558,7 +405,7 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM magazines WHERE isbn13 = \"{isbn13}\";";
 
             Magazine magazine = QueryRetrieveMaganize(query);
-           
+
             return magazine;
         }
 
@@ -570,16 +417,15 @@ namespace TheLibraryIsOpen.Database
         {
             Magazine magazine = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create music object and store in list
                         if (dr.Read())
@@ -595,14 +441,8 @@ namespace TheLibraryIsOpen.Database
                             magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e); }
             }
             return magazine;
         }
@@ -671,16 +511,15 @@ namespace TheLibraryIsOpen.Database
         {
             Music music = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create music object and store in list
                         if (dr.Read())
@@ -696,14 +535,8 @@ namespace TheLibraryIsOpen.Database
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return music;
         }
@@ -716,16 +549,16 @@ namespace TheLibraryIsOpen.Database
             Music music = null;
             string query = "SELECT * FROM cds;";
 
-            lock (this)
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create music object and store in list
                         while (dr.Read())
@@ -742,14 +575,8 @@ namespace TheLibraryIsOpen.Database
                             list.Add(music);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return list;
         }
@@ -834,16 +661,15 @@ namespace TheLibraryIsOpen.Database
 
             Movie movie = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create movie object and store in list
                         if (dr.Read())
@@ -860,14 +686,8 @@ namespace TheLibraryIsOpen.Database
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return movie;
         }
@@ -880,16 +700,16 @@ namespace TheLibraryIsOpen.Database
             Movie movie = null;
             string query = "SELECT * FROM movies;";
 
-            lock (this)
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create movie object and store in list
                         while (dr.Read())
@@ -907,14 +727,8 @@ namespace TheLibraryIsOpen.Database
                             list.Add(movie);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
         }
@@ -985,16 +799,15 @@ namespace TheLibraryIsOpen.Database
 
             Person person = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create music object and store in list
                         if (dr.Read())
@@ -1006,14 +819,8 @@ namespace TheLibraryIsOpen.Database
                             person = new Person(personId, firstname, lastname);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return person;
         }
@@ -1026,16 +833,15 @@ namespace TheLibraryIsOpen.Database
             Person person = null;
             string query = "SELECT * FROM person;";
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create music object and store in list
                         while (dr.Read())
@@ -1049,14 +855,8 @@ namespace TheLibraryIsOpen.Database
                             list.Add(person);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return list;
         }
@@ -1095,16 +895,15 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM person WHERE personID = ANY (SELECT personID FROM movieactor WHERE (movieID = \"{movieId}\"));";
             Person person = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create book object and store in list
                         while (dr.Read())
@@ -1112,21 +911,15 @@ namespace TheLibraryIsOpen.Database
                             int personId = (int)dr["personID"];
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
-                          
+
 
                             person = new Person(personId, firstname, lastname);
 
                             list.Add(person);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return list;
         }
@@ -1168,16 +961,15 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM person WHERE personID = ANY (SELECT personID FROM movieproducer WHERE (movieID = \"{movieId}\"));";
             Person person = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create book object and store in list
                         while (dr.Read())
@@ -1192,14 +984,8 @@ namespace TheLibraryIsOpen.Database
                             list.Add(person);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return list;
         }
@@ -1210,26 +996,7 @@ namespace TheLibraryIsOpen.Database
         public void DeleteBook(Book book)
         {
             string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
-
-            lock (this)
-            {
-                //open connection
-                if (this.OpenConnection() == true)
-                {
-                    try
-                    {
-                        //create command and assign the query and connection from the constructor
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                        //Execute command
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close connection
-                    this.CloseConnection();
-                }
-            }
+            QuerySend(query);
         }
 
         // Deletes several books from the db
@@ -1250,16 +1017,15 @@ namespace TheLibraryIsOpen.Database
             List<Book> books = new List<Book>();
             string query = "SELECT * FROM books;";
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (this.OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create book object and store in list
                         while (dr.Read())
@@ -1271,24 +1037,18 @@ namespace TheLibraryIsOpen.Database
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
                             string year = dr["date"] + "";
-                            string language = dr["language"] + "";                             
-                            string isbn10 = dr["isbn10"]+"";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
-                            Book book = new Book(bookId,title, author, format, pages,publisher, year, language,isbn10, isbn13);
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
                             //Console.Write(book);
 
                             books.Add(book);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return books;
         }
@@ -1300,17 +1060,15 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM books WHERE isbn10 = \"{isbn}\";";
             Book book = null;
 
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
                         if (dr.Read())
@@ -1329,14 +1087,8 @@ namespace TheLibraryIsOpen.Database
                             book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return book;
         }
@@ -1393,16 +1145,15 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM books WHERE bookID = \" { id } \";";
 
             Book book = null;
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create book object and store in list
                         if (dr.Read())
@@ -1418,18 +1169,12 @@ namespace TheLibraryIsOpen.Database
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
-                            book = new Book(bookId, title, author, format, 
+                            book = new Book(bookId, title, author, format,
                                 pages, publisher, year, language, isbn10, isbn13);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return book;
         }
@@ -1439,62 +1184,15 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM books WHERE isbn10 = \" { Isbn10 } \";";
 
             Book book = null;
-            lock (this)
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                //Open connection
-                if (OpenConnection() == true)
+                try
                 {
+                    connection.Open();
                     //Create Command
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
-                    {
-                        //Read the data, create magazine object and store in list
-                        if (dr.Read())
-                        {
-                            int bookId = (int)dr["bookID"];
-                            string title = dr["title"] + "";
-                            string author = dr["author"] + "";
-                            string format = dr["format"] + "";
-                            int pages = (int)dr["pages"];
-                            string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
-                            string language = dr["language"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            book = new Book(bookId, title, author, format, 
-                                pages, publisher, year, language, isbn10, isbn13);
-                        }
-                    }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
-                }
-            }
-            return book;
-        }
-
-        public Book GetBookByIsbn13(string Isbn13)
-        {
-            string query = $"SELECT * FROM books WHERE isbn13 = \" { Isbn13 } \";";
-
-            Book book = null;
-            lock (this)
-            {
-                //Open connection
-                if (OpenConnection() == true)
-                {
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    MySqlDataReader dr = cmd.ExecuteReader();
-                    try
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create magazine object and store in list
                         if (dr.Read())
@@ -1514,14 +1212,47 @@ namespace TheLibraryIsOpen.Database
                                 pages, publisher, year, language, isbn10, isbn13);
                         }
                     }
-                    catch (Exception e) { throw e; }
-
-                    //close Data Reader
-                    dr.Close();
-
-                    //close Connection
-                    this.CloseConnection();
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return book;
+        }
+
+        public Book GetBookByIsbn13(string Isbn13)
+        {
+            string query = $"SELECT * FROM books WHERE isbn13 = \" { Isbn13 } \";";
+
+            Book book = null;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format,
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
             }
             return book;
         }
