@@ -1082,12 +1082,8 @@ namespace TheLibraryIsOpen.Database
         // Delete all movie actors by movies array
         public void DeleteMovieActors(Movie movie)
         {
-            List<Person> list = GetAllMovieActors(movie.MovieId);
-   
-            for (int i = 0; i < list.Count; i++)
-            {
-                DeleteMovieActor(movie.MovieId.ToString(), list[i].PersonId.ToString());
-            }
+            string query = $"DELETE FROM movieactor WHERE (movieID = \"{movie.MovieId}\";";
+            QuerySend(query);
 
         }
 
@@ -1158,12 +1154,8 @@ namespace TheLibraryIsOpen.Database
         // Delete all movieProducer by Movie object
         public void DeleteMovieProducers(Movie movie)
         {
-            List<Person> list = GetAllMovieProducers(movie.MovieId);
-           
-            for (int i = 0; i < list.Count; i++)
-            {
-               DeleteMovieProducer(movie.MovieId.ToString(), list[i].PersonId.ToString());
-            }
+            string query = $"DELETE FROM movieproducer WHERE (movieID = \"{movie.MovieId}\";";
+            QuerySend(query);
 
         }
 
