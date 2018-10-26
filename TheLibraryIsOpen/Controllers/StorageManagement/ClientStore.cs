@@ -12,6 +12,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     public class ClientStore : IUserStore<Client>
     {
         private readonly Db _db;
+        private Client thisClient;
 
         public ClientStore(Db db)
         {
@@ -59,7 +60,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetClientById(int.Parse(userId));
+                if (thisClient == null || thisClient.Id != userId)
+                    thisClient = _db.GetClientById(int.Parse(userId));
+                return thisClient;
             });
             throw new ArgumentNullException("userId");
         }
@@ -71,7 +74,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    return _db.GetClientByEmail(email);
+                    if (thisClient == null || thisClient.EmailAddress != email)
+                        thisClient = _db.GetClientByEmail(email);
+                    return thisClient;
                 });
             }
             throw new ArgumentNullException("userName");
@@ -81,7 +86,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetClientById(int.Parse(user.Id))?.EmailAddress?.Normalize() ?? null;
+                if (thisClient == null || thisClient.Id != user.Id)
+                    thisClient = _db.GetClientById(user.clientId);
+                return thisClient?.EmailAddress?.Normalize() ?? null;
             });
             throw new ArgumentNullException("user");
         }
@@ -150,6 +157,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     _db.UpdateClient(user);
+                    thisClient = user;
                     return IdentityResult.Success;
                 });
             }
@@ -171,8 +179,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                Client client = _db.GetClientByEmail(clientEmail);
-                if (client.IsAdmin == true)
+                if (thisClient == null || thisClient.EmailAddress != clientEmail)
+                    thisClient = _db.GetClientByEmail(clientEmail);
+                if (thisClient.IsAdmin == true)
                 {
                     return true;
                 }

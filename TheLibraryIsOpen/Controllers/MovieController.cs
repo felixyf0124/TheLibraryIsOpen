@@ -48,6 +48,7 @@ namespace TheLibraryIsOpen.Controllers
         {
             ViewData["Message"] = "Your create movie page.";
             await _mc.CreateMovieAsync(movie);
+            await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -68,6 +69,7 @@ namespace TheLibraryIsOpen.Controllers
             {
                 ViewData["Message"] = "Your delete movie page.";
                 await _mc.DeleteMovieAsync(movie);
+                await _mc.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch

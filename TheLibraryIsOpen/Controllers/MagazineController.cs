@@ -54,6 +54,7 @@ namespace TheLibraryIsOpen.Controllers
             if (ModelState.IsValid)
             {
                 await _cs.CreateAsync(magazine);
+                await _cs.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(magazine);
@@ -121,6 +122,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
             await _cs.DeleteAsync(magazine);
+            await _cs.CommitAsync();
             return View(magazine);
         }
 

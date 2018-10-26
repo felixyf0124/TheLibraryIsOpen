@@ -17,6 +17,7 @@ using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.db;
 
 namespace TheLibraryIsOpen
 {
@@ -47,18 +48,17 @@ namespace TheLibraryIsOpen
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 
-            //services.AddScoped(typeof(Microsoft.AspNet.Identity.UserManager<Client>), typeof(ClientManager));
-            //services.AddScoped(typeof(Microsoft.AspNet.Identity.IUserStore<Client>), typeof(ClientStore));
-            services.AddTransient<ClientManager>();
-            services.AddTransient<ClientStore>();
-            services.AddTransient<ClientSignInManager>();
-            services.AddTransient<MovieCatalog>();
-
-            services.AddTransient<MagazineCatalog>();
-            services.AddTransient<BookCatalog>();
-            services.AddTransient<MusicCatalog>();
-
             services.AddSingleton(typeof(Db));
+            services.AddScoped(typeof(UnitOfWork));
+            services.AddScoped(typeof(IdentityMap));
+
+            services.AddScoped(typeof(ClientManager));
+            services.AddScoped(typeof(ClientStore));
+            services.AddScoped(typeof(MovieCatalog));
+                     
+            services.AddScoped(typeof(MagazineCatalog));
+            services.AddScoped(typeof(BookCatalog));
+            services.AddScoped(typeof(MusicCatalog));
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -66,7 +66,7 @@ namespace TheLibraryIsOpen
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ClientManager cm)
 		{
 			if (env.IsDevelopment())
 			{
@@ -89,6 +89,28 @@ namespace TheLibraryIsOpen
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
+
+            string email = Configuration["DefaultAdmin:Email"];
+            string password = Configuration["DefaultAdmin:Password"];
+
+            Client x = await cm.FindByEmailAsync(email);
+
+            if (x == null)
+            {
+                await cm.CreateAsync(new Client
+                {
+                    EmailAddress = email,
+                    Password = password,
+                    IsAdmin = true
+                });
+            }
+            else if (!x.IsAdmin)
+            {
+
+                x.IsAdmin = true;
+                await cm.UpdateAsync(x);
+
+            }
 		}
 	}
 }

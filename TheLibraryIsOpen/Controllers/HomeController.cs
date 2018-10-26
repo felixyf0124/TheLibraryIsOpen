@@ -16,10 +16,18 @@ namespace TheLibraryIsOpen.Controllers
 	public class HomeController : Controller
 	{
         private readonly ClientStore _cs;
+        private readonly BookCatalog _bookc;
+        private readonly MusicCatalog _musicc;
+        private readonly MovieCatalog _moviec;
+        private readonly MagazineCatalog _magazinec;
 
-        public HomeController(ClientStore cs)
+        public HomeController(ClientStore cs, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac)
         {
             _cs = cs;
+            _bookc = bc;
+            _moviec = moc;
+            _musicc = muc;
+            _magazinec = mac;
         }
 	    
         public IActionResult Index()
@@ -51,11 +59,10 @@ namespace TheLibraryIsOpen.Controllers
 			return View();
 		}
 
-        public IActionResult Catalog()
+        public async Task<ActionResult> Catalog()
         {
-            ViewData["Message"] = "The catalog.";
-
-            return View();
+            CatalogViewModel list = new CatalogViewModel(await _bookc.GetAllBookDataAsync(), await _musicc.GetAllMusicDataAsync(), await _moviec.GetAllMoviesDataAsync(), await _magazinec.GetAllMagazinesDataAsync());
+            return View(list);
         }
 
         // For test db.cs
@@ -106,7 +113,8 @@ namespace TheLibraryIsOpen.Controllers
             }
         }
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
