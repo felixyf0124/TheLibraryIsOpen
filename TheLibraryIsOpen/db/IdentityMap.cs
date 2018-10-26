@@ -176,9 +176,7 @@ namespace TheLibraryIsOpen.db
                         _movieLock.ExitWriteLock();
 
                         var movieArr = movies.ToArray();
-                        // to be activated once the methods exist in the Db
-                        //_db.DeleteMovieActors(movieArr);
-                        //_db.DeleteMovieProducers(movieArr);
+
                         _db.DeleteMovies(movies.ToArray());
                     }
                     if (music.Count > 0)
@@ -187,7 +185,7 @@ namespace TheLibraryIsOpen.db
                         music.ForEach(temp => _books.Remove(temp.MusicId));
                         _musicLock.ExitWriteLock();
 
-                        //TODO: _db.DeleteMusic(music.ToArray());
+                        _db.DeleteMusic(music.ToArray());
                     }
                     if (people.Count > 0)
                     {
