@@ -4,18 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class MagazineCatalog
     {
-        private readonly Db _db;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
-        public MagazineCatalog(Db db)
+
+        public MagazineCatalog(UnitOfWork unitOfWork, Db db)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _db = db; // TODO: delete this when db code is removed
+
         }
 
         //Create Magazine
@@ -25,9 +31,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    if (_db.GetMagazineByIsbn10(magazine.Isbn10) != null)
-                        return IdentityResult.Failed(new IdentityError { Description = "magazine with this isbn10 already exists" });
-                    _db.CreateMagazine(magazine);
+                    // TODO: manage error if register return false
+                    _unitOfWork.RegisterNew(magazine);
                     return IdentityResult.Success;
                 });
             }
@@ -45,7 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteMagazine(magazine);
+                    // _unitOfWork.RegisterDelete(magazine);
                     return IdentityResult.Success;
                 });
             }
@@ -202,7 +207,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-
+        public Task<bool> CommitAsync()
+        {
+            return _unitOfWork.CommitAsync();
+        }
 
     }
 }

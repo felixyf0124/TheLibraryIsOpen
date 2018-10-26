@@ -1,20 +1,11 @@
 ﻿@using TheLibraryIsOpen.Controllers.StorageManagement
 @using TheLibraryIsOpen.Models.DBModels
-@inject MagazineCatalog magazineCatalog
-@inject BookCatalog bookCatalog
-@inject MovieCatalog movieCatalog
-@inject MusicCatalog musicCatalog
+@model TheLibraryIsOpen.Models.CatalogViewModel
 @{
     ViewData["Title"] = "Catalog";
     await Html.RenderPartialAsync("_Card");
 
-    //Retrieve all the catalogs from the database
-    List<Magazine> magazineList = await magazineCatalog.GetAllMagazinesDataAsync();
-    List<Book> bookList = await bookCatalog.GetAllBookDataAsync();
-    List<Music> musicList = await musicCatalog.GetAllMusicDataAsync();
-    List<Movie> movieList = await movieCatalog.GetAllMoviesDataAsync();
-
-    <style type="text/css">
+        <style type="text/css">
         td {
             width: 100px;
         }
@@ -28,7 +19,7 @@
             <th>Date</th>
             <th></th>
         </tr>
-        @foreach (var book in bookList)
+        @foreach (var book in Model.Book)
         {
             <tr>
                 <td>@book.Title</td>
@@ -48,7 +39,7 @@
             <th>Date</th>
             <th></th>
         </tr>
-        @foreach (var magazine in magazineList)
+        @foreach (var magazine in Model.Magazine)
         {
             <tr>
                 <td>@magazine.Title</td>
@@ -67,7 +58,7 @@
             <th>Release Date</th>
             <th></th>
         </tr>
-        @foreach (var movie in movieList)
+        @foreach (var movie in Model.Movie)
         {
             <tr>
                 <td>@movie.Title</td>
@@ -86,14 +77,14 @@
             <th>Release Date</th>
             <th></th>
         </tr>
-        @foreach (var music in musicList)
+        @foreach (var music in Model.Music)
         {
-        <tr>
-            <td>@music.Title</td>
-            <td>@music.Artist</td>
-            <td>@music.ReleaseDate</td>
-            <td><a asp-controller="Music" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
-        </tr>
+            <tr>
+                <td>@music.Title</td>
+                <td>@music.Artist</td>
+                <td>@music.ReleaseDate</td>
+                <td><a asp-controller="Music" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
+            </tr>
         }
     </table>
 }

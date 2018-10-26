@@ -3,18 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class MovieCatalog
     {
-        private readonly Db _db;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
-        public MovieCatalog(Db db)
+
+        public MovieCatalog(UnitOfWork unitOfWork, Db db)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _db = db; // TODO: delete this when db code is removed
+
         }
 
         /*
@@ -27,7 +33,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.CreateMovie(movie);
+                    // TODO: manage errors if register returns false
+                    _unitOfWork.RegisterNew(movie);
                     return IdentityResult.Success;
                 });
             }
@@ -101,7 +108,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeleteMovie(movie);
+                    // _unitOfWork.RegisterDelete(movie);
                     return IdentityResult.Success;
                 });
             }
@@ -280,6 +287,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return _db.GetAllMovieActors(movieID);
             });
+        }
+        public Task<bool> CommitAsync()
+        {
+            return _unitOfWork.CommitAsync();
         }
     }
 }
