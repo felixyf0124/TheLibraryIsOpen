@@ -10,8 +10,8 @@ namespace TheLibraryIsOpen.db
 {
     /*
      * TODO:
-     * - Implement RegisterDeleted
-     * - Implement RegisterDirty
+     * - Implement RegisterDeleted - done please double check
+     * - Implement RegisterDirty - done please double check
      * - ? Implement RegisterClean? should we?
      * - Complete CommitAsync
      */
@@ -92,13 +92,122 @@ namespace TheLibraryIsOpen.db
             return succeeded;
         }
 
+        public bool RegisterDirty(object o)
+        {
+            bool succeeded = false;
+            switch (GetTypeNum(o.GetType()))
+            {
+                case TypeEnum.Book:
+                    {
+                        Book temp = (Book)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Book}-{RegisteredDirty.Count.ToString()}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Magazine:
+                    {
+                        Magazine temp = (Magazine)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Magazine}-{RegisteredDirty.Count.ToString()}", o); ;
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Movie:
+                    {
+                        Movie temp = (Movie)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Movie}-{RegisteredDirty.Count.ToString()}", o); ;
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Music:
+                    {
+                        Music temp = (Music)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Music}-{RegisteredDirty.Count.ToString()}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Person:
+                    {
+                        Person temp = (Person)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{RegisteredDirty.Count.ToString()}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+            }
+            return succeeded;
+        }
+
+        public bool RegisterDeleted(object o)
+        {
+            bool succeeded = false;
+            switch (GetTypeNum(o.GetType()))
+            {
+                case TypeEnum.Book:
+                    {
+                        Book temp = (Book)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Magazine:
+                    {
+                        Magazine temp = (Magazine)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Movie:
+                    {
+                        Movie temp = (Movie)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Music:
+                    {
+                        Music temp = (Music)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.Person:
+                    {
+                        Person temp = (Person)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+            }
+            return succeeded;
+        }
+
+
         public async Task<bool> CommitAsync()
         {
             return (
                 await _im.AddAsync(RegisteredNew.ToArray())
                 &&
-                await _im.DeleteAsync(RegisteredDeleted.ToArray())
-                // TODO: Edit RegisteredDirty
+                //TODO: EditAsync needed
+                //await _im.EditAsync(RegisteredDirty.ToArray())
+                //&&
+                await _im.DeleteAsync(RegisteredDeleted.ToArray())                
                 );
         }
     }
