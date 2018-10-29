@@ -175,8 +175,6 @@ namespace TheLibraryIsOpen.db
                         movies.ForEach(temp => _movies.Remove(temp.MovieId));
                         _movieLock.ExitWriteLock();
 
-                        var movieArr = movies.ToArray();
-
                         _db.DeleteMovies(movies.ToArray());
                     }
                     if (music.Count > 0)
