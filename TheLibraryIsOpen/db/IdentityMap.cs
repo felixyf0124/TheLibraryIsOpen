@@ -106,6 +106,8 @@ namespace TheLibraryIsOpen.db
                 }
             });
         }
+        
+        // TODO: EditAsync needed
 
         public Task<bool> DeleteAsync(params object[] objectsToDelete)
         {
