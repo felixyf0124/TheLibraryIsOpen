@@ -204,15 +204,12 @@ namespace TheLibraryIsOpen.db
             });
         }
 
-
-        #region Magazine
-        //get magazine if found
         public Magazine FindMagazine(int magazineID)
         {
-
             Magazine magazineToFind;
             while (!_magLock.TryEnterReadLock(10)) ;
             _mags.TryGetValue(magazineID, out magazineToFind);
+            _magLock.ExitReadLock();
             if (magazineToFind == null)
             {
                 magazineToFind = _db.GetMagazineById(magazineID);
@@ -226,16 +223,13 @@ namespace TheLibraryIsOpen.db
             }
             return magazineToFind;
         }
-        #endregion
-
-        #region Book
-        //get book if found
+        
         public Book FindBook(int bookID)
         {
-
             Book bookToFind;
             while (!_bookLock.TryEnterReadLock(10)) ;
             _books.TryGetValue(bookID, out bookToFind);
+            _bookLock.ExitReadLock();
             if (bookToFind == null)
             {
                 bookToFind = _db.GetBookById(bookID);
@@ -249,6 +243,5 @@ namespace TheLibraryIsOpen.db
             }
             return bookToFind;
         }
-        #endregion
     }
 }
