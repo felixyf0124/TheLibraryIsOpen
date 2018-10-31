@@ -871,6 +871,19 @@ namespace TheLibraryIsOpen.Database
             string query = $"INSERT INTO movieactor (movieID, personID) VALUES(\"{mid}\", \"{pid}\");";
             QuerySend(query);
         }
+       
+        public void CreateMovieActors(int movieId, params int[] actorIds)
+        {
+
+            StringBuilder ma = new StringBuilder($"INSERT INTO movieactor (movieID, personID) VALUES ");
+            for (int i = 0; i < actorIds.Length; i++)
+            {
+                ma.Append($"({movieId}, {actorIds[i]})");
+            }
+            ma.Append(";");
+           
+            QuerySend(ma.ToString());
+        }
 
         // Delete movie actor by movieID and personID from the database
         public void DeleteMovieActor(string mid, string pid)
@@ -884,8 +897,17 @@ namespace TheLibraryIsOpen.Database
         {
             string query = $"DELETE FROM movieactor WHERE (movieID = \"{movie.MovieId}\";";
             QuerySend(query);
-
         }
+
+        public void DeleteMovieActors(int movieId, params int[] actorsIds)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM movieactor WHERE movieID =\"{movieId} \" AND personID IN (");
+            sb.AppendJoin(',', actorsIds);
+            sb.Append(");");
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        
+    }
 
         // Get all movie actors from a specific movie
         public List<Person> GetAllMovieActors(int movieId)
@@ -936,6 +958,20 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        //insert producers into the database
+        public void CreateMovieProducers(int movieId, params int[] producerIds)
+        {
+
+            StringBuilder mp = new StringBuilder($"INSERT INTO movieproducer (movieID, personID) VALUES ");
+            for (int i = 0; i < producerIds.Length; i++)
+            {
+                mp.Append($"({movieId}, {producerIds[i]})");
+            }
+            mp.Append(";");
+
+            QuerySend(mp.ToString());
+        }
+
         // Delete movieProducer by movieID and personID from the database
         public void DeleteMovieProducer(string mid, string pid)
         {
@@ -949,6 +985,16 @@ namespace TheLibraryIsOpen.Database
         {
             string query = $"DELETE FROM movieproducer WHERE (movieID = \"{movie.MovieId}\";";
             QuerySend(query);
+
+        }
+
+        public void DeleteMovieProducers(int movieId, params int[] producerIds)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM movieproducer WHERE movieID =\"{movieId} \" AND personID IN (");
+            sb.AppendJoin(',', producerIds);
+            sb.Append(");");
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
 
         }
 
@@ -1121,6 +1167,18 @@ namespace TheLibraryIsOpen.Database
             string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
 
             QuerySend(query);
+        }
+
+        //update books information
+        public void UpdateBooks(params Book[] books)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE books SET ");
+            for (int i = 0; i < books.Length; ++i)
+            {
+                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", Language = \"{books[i].Language}\" ISBN-10 = \"{books[i].Isbn10}\", ISBN-13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
+            }
+
+            QuerySend(sb.ToString());
         }
 
         // Update a book information in the database by isbn10

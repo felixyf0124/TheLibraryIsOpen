@@ -202,12 +202,11 @@ namespace TheLibraryIsOpen.db
         public async Task<bool> CommitAsync()
         {
             return (
-                await _im.AddAsync(RegisteredNew.ToArray())
+                await _im.AddAsync(RegisteredNew.Values.ToArray())
                 &&
-                //TODO: EditAsync needed
-                //await _im.EditAsync(RegisteredDirty.ToArray())
-                //&&
-                await _im.DeleteAsync(RegisteredDeleted.ToArray())                
+                await _im.EditAsync(RegisteredDirty.Values.ToArray())
+                &&
+                await _im.DeleteAsync(RegisteredDeleted.Values.ToArray())
                 );
         }
     }
