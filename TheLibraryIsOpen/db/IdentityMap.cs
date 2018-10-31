@@ -194,18 +194,64 @@ namespace TheLibraryIsOpen.db
                        
                     if (movies.Count > 0)
                     {
-                        movies.ForEach(temp =>
+                        movies.ForEach(movie =>
                         {
+                            var prevMovie = FindMovie(movie.MovieId);
+                            if(prevMovie.Actors == null)
+                                prevMovie.Actors = _db.GetAllMovieActors(movie.MovieId);
+                            if(prevMovie.Producers == null)
+                                prevMovie.Producers = _db.GetAllMovieProducers(movie.MovieId);
+
+                            var actorsToAdd = movie.Actors?
+                                                    .Select(a => a.PersonId)?
+                                                    .Except(prevMovie.Actors?
+                                                        .Select(a => a.PersonId) ?? new List<int>())
+                                                   .ToArray()
+                                                    ?? new int[0];
+
+                            _db.CreateMovieActors(movie.MovieId, actorsToAdd);
+
+
+                            var actorsToRemove = prevMovie.Actors?
+                                                    .Select(a => a.PersonId)?
+                                                    .Except(movie.Actors?
+                                                        .Select(a => a.PersonId) ?? new List<int>())
+                                                    .ToArray()
+                                                    ?? new int[0];
+
+                            _db.DeleteMovieActors(movie.MovieId, actorsToRemove);
+
+                            var producersToAdd = movie.Producers?
+                                                        .Select(a => a.PersonId)?
+                                                        .Except(prevMovie.Producers?
+                                                            .Select(p => p.PersonId) ?? new List<int>())
+                                                      .ToArray()
+                                                        ?? new int[0];
+
+                            _db.CreateMovieProducers(movie.MovieId, producersToAdd);
+
+
+                            var producersToRemove = prevMovie.Producers?
+                                                        .Select(a => a.PersonId)?
+                                                        .Except(movie.Producers?
+                                                            .Select(p => p.PersonId) ?? new List<int>())
+                                                       .ToArray()
+                                                        ?? new int[0];
+
+                            _db.DeleteMovieProducers(movie.MovieId, producersToRemove);
+                         
+
                             while (!_movieLock.TryEnterReadLock(10)) ;
-                            bool hasMovie = _movies.ContainsKey(temp.MovieId);
+                            bool hasMovie = _mags.ContainsKey(movie.MovieId);
                             _movieLock.ExitReadLock();
 
                             while (!_movieLock.TryEnterWriteLock(10)) ;
                             if (!hasMovie)
-                                _movies.Add(temp.MovieId, temp);
+                                _movies.Add(movie.MovieId, movie);
                             else
-                                _movies[temp.MovieId] = temp;
+                                _movies[movie.MovieId] = movie;
                             _movieLock.ExitWriteLock();
+                            _db.UpdateMovie(movie);
                         });
 
                         _db.UpdateMovies(movies.ToArray());
