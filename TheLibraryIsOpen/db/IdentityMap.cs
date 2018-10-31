@@ -106,8 +106,199 @@ namespace TheLibraryIsOpen.db
                 }
             });
         }
-        
-        // TODO: EditAsync needed
+
+        //EditAsync method
+
+        public Task<bool> EditAsync(params object[] objectsToEdit)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                List<Book> books = new List<Book>();
+                List<Magazine> mags = new List<Magazine>();
+                List<Movie> movies = new List<Movie>();
+                List<Music> music = new List<Music>();
+                List<Person> people = new List<Person>();
+                foreach (var item in objectsToEdit)
+                {
+                    switch (GetTypeNum(item.GetType()))
+                    {
+                        case TypeEnum.Book:
+                            {
+                                books.Add((Book)item);
+                                break;
+                            }
+                        case TypeEnum.Magazine:
+                            {
+                                mags.Add((Magazine)item);
+                                break;
+                            }
+                        case TypeEnum.Movie:
+                            {
+                                movies.Add((Movie)item);
+                                break;
+                            }
+                        case TypeEnum.Music:
+                            {
+                                music.Add((Music)item);
+                                break;
+                            }
+                        case TypeEnum.Person:
+                            {
+                                people.Add((Person)item);
+                                break;
+                            }
+                        default:
+                            {
+                                return false;
+                            }
+                    }
+                }
+                try
+                {
+                    if (books.Count > 0)
+                    {
+                        books.ForEach(temp =>
+                        {
+                            while (!_bookLock.TryEnterReadLock(10)) ;
+                            bool hasBook = _books.ContainsKey(temp.BookId);
+                            _bookLock.ExitReadLock();
+
+                            while (!_bookLock.TryEnterWriteLock(10)) ;
+                            if (!hasBook)
+                                _books.Add(temp.BookId, temp);
+                            else
+                                _books[temp.BookId] = temp;
+                            _bookLock.ExitWriteLock();
+                        });
+
+                        _db.UpdateBooks(books.ToArray());
+                    }
+                    if (mags.Count > 0)
+                    {
+                        mags.ForEach(temp =>
+                        {
+                            while (!_magLock.TryEnterReadLock(10)) ;
+                            bool hasMag = _mags.ContainsKey(temp.MagazineId);
+                            _bookLock.ExitReadLock();
+
+                            while (!_magLock.TryEnterWriteLock(10)) ;
+                            if (!hasMag)
+                                _mags.Add(temp.MagazineId, temp);
+                            else
+                                _mags[temp.MagazineId] = temp;
+                            _magLock.ExitWriteLock();
+                        });
+
+                        _db.UpdateMagazines(mags.ToArray());
+                    }
+                       
+                    if (movies.Count > 0)
+                    {
+                        movies.ForEach(movie =>
+                        {
+                            var prevMovie = FindMovie(movie.MovieId);
+                            if(prevMovie.Actors == null)
+                                prevMovie.Actors = _db.GetAllMovieActors(movie.MovieId);
+                            if(prevMovie.Producers == null)
+                                prevMovie.Producers = _db.GetAllMovieProducers(movie.MovieId);
+
+                            var actorsToAdd = movie.Actors?
+                                                    .Select(a => a.PersonId)?
+                                                    .Except(prevMovie.Actors?
+                                                        .Select(a => a.PersonId) ?? new List<int>())
+                                                   .ToArray()
+                                                    ?? new int[0];
+
+                            _db.CreateMovieActors(movie.MovieId, actorsToAdd);
+
+
+                            var actorsToRemove = prevMovie.Actors?
+                                                    .Select(a => a.PersonId)?
+                                                    .Except(movie.Actors?
+                                                        .Select(a => a.PersonId) ?? new List<int>())
+                                                    .ToArray()
+                                                    ?? new int[0];
+
+                            _db.DeleteMovieActors(movie.MovieId, actorsToRemove);
+
+                            var producersToAdd = movie.Producers?
+                                                        .Select(a => a.PersonId)?
+                                                        .Except(prevMovie.Producers?
+                                                            .Select(p => p.PersonId) ?? new List<int>())
+                                                      .ToArray()
+                                                        ?? new int[0];
+
+                            _db.CreateMovieProducers(movie.MovieId, producersToAdd);
+
+
+                            var producersToRemove = prevMovie.Producers?
+                                                        .Select(a => a.PersonId)?
+                                                        .Except(movie.Producers?
+                                                            .Select(p => p.PersonId) ?? new List<int>())
+                                                       .ToArray()
+                                                        ?? new int[0];
+
+                            _db.DeleteMovieProducers(movie.MovieId, producersToRemove);
+                         
+
+                            while (!_movieLock.TryEnterReadLock(10)) ;
+                            bool hasMovie = _mags.ContainsKey(movie.MovieId);
+                            _movieLock.ExitReadLock();
+
+                            while (!_movieLock.TryEnterWriteLock(10)) ;
+                            if (!hasMovie)
+                                _movies.Add(movie.MovieId, movie);
+                            else
+                                _movies[movie.MovieId] = movie;
+                            _movieLock.ExitWriteLock();
+                        });
+
+                        _db.UpdateMovies(movies.ToArray());
+                    }
+                    if (music.Count > 0)
+                    {
+                        music.ForEach(temp =>
+                        {
+                            while (!_musicLock.TryEnterReadLock(10)) ;
+                            bool hasMusic = _music.ContainsKey(temp.MusicId);
+                            _musicLock.ExitReadLock();
+
+                            while (!_musicLock.TryEnterWriteLock(10)) ;
+                            if (!hasMusic)
+                                _music.Add(temp.MusicId, temp);
+                            else
+                                _music[temp.MusicId] = temp;
+                            _musicLock.ExitWriteLock();
+                        });
+
+                        _db.UpdateMusic(music.ToArray());
+                    }
+                    if (people.Count > 0)
+                    {
+                        people.ForEach(temp =>
+                        {
+                            while (!_peopleLock.TryEnterReadLock(10)) ;
+                            bool hasPerson = _people.ContainsKey(temp.PersonId);
+                            _peopleLock.ExitReadLock();
+
+                            while (!_peopleLock.TryEnterWriteLock(10)) ;
+                            if (!hasPerson)
+                                _people.Add(temp.PersonId, temp);
+                            else
+                                _people[temp.PersonId] = temp;
+                            _peopleLock.ExitWriteLock();
+                        });
+
+                        _db.UpdatePeople(people.ToArray());
+                    }
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            });
+        }
 
         public Task<bool> DeleteAsync(params object[] objectsToDelete)
         {
@@ -202,6 +393,52 @@ namespace TheLibraryIsOpen.db
                     return false;
                 }
             });
+        }
+
+        public Movie FindMovie(int movieId)         {             Movie movieToFind;
+
+            while (!_movieLock.TryEnterReadLock(10)) ;
+            _movies.TryGetValue(movieId, out movieToFind);
+            _movieLock.ExitReadLock();
+
+            if(movieToFind == null)
+            {
+               movieToFind = _db.GetMovieById(movieId);
+
+                if (movieToFind != null)
+                {
+                    while (!_movieLock.TryEnterWriteLock(10)) ;
+                    _movies.TryAdd(movieId, movieToFind);
+                    _movieLock.ExitWriteLock();
+
+                }
+            }
+          
+            return movieToFind;
+        }
+
+        public Person FindPerson(int personId)
+        {
+            Person personToFind;
+
+            while (!_peopleLock.TryEnterReadLock(10)) ;
+            _people.TryGetValue(personId, out personToFind);
+            _peopleLock.ExitReadLock();
+
+            if (personToFind == null)
+            {
+                personToFind = _db.GetPersonById(personId);
+
+                if (personToFind != null)
+                {
+                    while (!_peopleLock.TryEnterWriteLock(10)) ;
+                    _people.TryAdd(personId, personToFind);
+                    _peopleLock.ExitWriteLock();
+
+                }
+            }
+
+            return personToFind;
         }
     }
 }
