@@ -203,5 +203,60 @@ namespace TheLibraryIsOpen.db
                 }
             });
         }
+
+
+        #region Magazine
+        //get magazine if found else return null
+        public Magazine getMagazine(int id)
+        {
+
+            Magazine magazine;
+            _mags.TryGetValue(id, out magazine);
+            if (magazine != null)
+            {
+                return magazine;
+            }
+            else
+            {
+                return null;
+            }
+
+
+        }
+
+        //add a magazine to local map if there is not such item
+        public bool addMagazine(int id, Magazine magazine)
+        {
+            return _mags.TryAdd(id, magazine);
+        }
+        
+        #endregion
+
+        #region Book
+        //get book if found else return null
+        public Book getBook(int id)
+        {
+
+            Book book;
+            _books.TryGetValue(id, out book);
+            if (book != null)
+            {
+                return book;
+            }
+            else
+            {
+                return null;
+            }
+
+
+        }
+
+        //add a book to local map if there is not such item
+        public bool addBook(int id, Book book)
+        {
+            return _books.TryAdd(id, book);
+        }
+        
+        #endregion
     }
 }
