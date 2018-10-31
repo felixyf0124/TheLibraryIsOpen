@@ -53,7 +53,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Create(Book book)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Date,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Edit(string id, Book book)
         {
             if (int.Parse(id) != book.BookId)
             {

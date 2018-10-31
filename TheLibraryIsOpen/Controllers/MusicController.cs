@@ -47,7 +47,7 @@ namespace TheLibraryIsOpen.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MusicId,Type,Title,Artist,Label,ReleaseDate,aSIN")] Music music)
+        public async Task<IActionResult> Create(Music music)
         {
             if (ModelState.IsValid)
             {

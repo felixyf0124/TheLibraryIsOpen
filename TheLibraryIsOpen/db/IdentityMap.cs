@@ -12,7 +12,7 @@ namespace TheLibraryIsOpen.db
 {
     public class IdentityMap
     {
-        
+
         private readonly Db _db;
         private readonly ReaderWriterLockSlim _bookLock;
         private readonly ReaderWriterLockSlim _magLock;
@@ -191,15 +191,15 @@ namespace TheLibraryIsOpen.db
 
                         _db.UpdateMagazines(mags.ToArray());
                     }
-                       
+
                     if (movies.Count > 0)
                     {
                         movies.ForEach(movie =>
                         {
                             var prevMovie = FindMovie(movie.MovieId);
-                            if(prevMovie.Actors == null)
+                            if (prevMovie.Actors == null)
                                 prevMovie.Actors = _db.GetAllMovieActors(movie.MovieId);
-                            if(prevMovie.Producers == null)
+                            if (prevMovie.Producers == null)
                                 prevMovie.Producers = _db.GetAllMovieProducers(movie.MovieId);
 
                             var actorsToAdd = movie.Actors?
@@ -239,7 +239,7 @@ namespace TheLibraryIsOpen.db
                                                         ?? new int[0];
 
                             _db.DeleteMovieProducers(movie.MovieId, producersToRemove);
-                         
+
 
                             while (!_movieLock.TryEnterReadLock(10)) ;
                             bool hasMovie = _mags.ContainsKey(movie.MovieId);
@@ -311,7 +311,7 @@ namespace TheLibraryIsOpen.db
                 List<Person> people = new List<Person>();
                 foreach (var item in objectsToDelete)
                 {
-                    switch(GetTypeNum(item.GetType()))
+                    switch (GetTypeNum(item.GetType()))
                     {
                         case TypeEnum.Book:
                             {
@@ -401,9 +401,9 @@ namespace TheLibraryIsOpen.db
             _movies.TryGetValue(movieId, out movieToFind);
             _movieLock.ExitReadLock();
 
-            if(movieToFind == null)
+            if (movieToFind == null)
             {
-               movieToFind = _db.GetMovieById(movieId);
+                movieToFind = _db.GetMovieById(movieId);
 
                 if (movieToFind != null)
                 {
@@ -413,7 +413,7 @@ namespace TheLibraryIsOpen.db
 
                 }
             }
-          
+
             return movieToFind;
         }
 

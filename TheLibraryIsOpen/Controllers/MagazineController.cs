@@ -49,7 +49,7 @@ namespace TheLibraryIsOpen.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MagazineId,Title,Publisher,Language,Date,Isbn10,Isbn13")] Magazine magazine)
+        public async Task<IActionResult> Create(Magazine magazine)
         {
             if (ModelState.IsValid)
             {
