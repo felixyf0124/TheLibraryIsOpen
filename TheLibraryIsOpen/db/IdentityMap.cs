@@ -395,7 +395,9 @@ namespace TheLibraryIsOpen.db
             });
         }
 
-        public Movie FindMovie(int movieId)         {             Movie movieToFind;
+        public Movie FindMovie(int movieId)
+        {
+            Movie movieToFind;
 
             while (!_movieLock.TryEnterReadLock(10)) ;
             _movies.TryGetValue(movieId, out movieToFind);
