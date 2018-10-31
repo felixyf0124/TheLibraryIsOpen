@@ -71,15 +71,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                Magazine magazine = _im.getMagazine(int.Parse(magazineId));
-                if(magazine == null)
-                {
-                    magazine = _db.GetMagazineById(int.Parse(magazineId));
-                    if(magazine != null)
-                    {
-                        _im.addMagazine(int.Parse(magazineId), magazine);
-                    }
-                }
+                Magazine magazine = _im.FindMagazine(int.Parse(magazineId));
+                
                 return magazine;
             });
             throw new ArgumentNullException("magazineId");

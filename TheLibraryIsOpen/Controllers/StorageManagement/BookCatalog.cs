@@ -73,15 +73,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                Book book = _im.getBook(int.Parse(bookId));
-                if (book == null)
-                {
-                    book = _db.GetBookById((int.Parse(bookId)));
-                    if (book != null)
-                    {
-                        _im.addBook(int.Parse(bookId), book);
-                    }
-                }
+                Book book = _im.FindBook(int.Parse(bookId));
+                
                 return book;
             });
             throw new ArgumentNullException("bookId");

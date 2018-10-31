@@ -206,57 +206,49 @@ namespace TheLibraryIsOpen.db
 
 
         #region Magazine
-        //get magazine if found else return null
-        public Magazine getMagazine(int id)
+        //get magazine if found
+        public Magazine FindMagazine(int magazineID)
         {
 
-            Magazine magazine;
-            _mags.TryGetValue(id, out magazine);
-            if (magazine != null)
+            Magazine magazineToFind;
+            while (!_magLock.TryEnterReadLock(10)) ;
+            _mags.TryGetValue(magazineID, out magazineToFind);
+            if (magazineToFind == null)
             {
-                return magazine;
+                magazineToFind = _db.GetMagazineById(magazineID);
+                if (magazineToFind != null)
+                {
+                    while (!_magLock.TryEnterWriteLock(10)) ;
+                    _mags.TryAdd(magazineID, magazineToFind);
+                    _magLock.ExitWriteLock();
+                }
+
             }
-            else
-            {
-                return null;
-            }
-
-
+            return magazineToFind;
         }
-
-        //add a magazine to local map if there is not such item
-        public bool addMagazine(int id, Magazine magazine)
-        {
-            return _mags.TryAdd(id, magazine);
-        }
-        
         #endregion
 
         #region Book
-        //get book if found else return null
-        public Book getBook(int id)
+        //get book if found
+        public Book FindBook(int bookID)
         {
 
-            Book book;
-            _books.TryGetValue(id, out book);
-            if (book != null)
+            Book bookToFind;
+            while (!_bookLock.TryEnterReadLock(10)) ;
+            _books.TryGetValue(bookID, out bookToFind);
+            if (bookToFind == null)
             {
-                return book;
+                bookToFind = _db.GetBookById(bookID);
+                if(bookToFind !=null)
+                {
+                    while (!_bookLock.TryEnterWriteLock(10)) ;
+                    _books.TryAdd(bookID, bookToFind);
+                    _bookLock.ExitWriteLock();
+                }
+               
             }
-            else
-            {
-                return null;
-            }
-
-
+            return bookToFind;
         }
-
-        //add a book to local map if there is not such item
-        public bool addBook(int id, Book book)
-        {
-            return _books.TryAdd(id, book);
-        }
-        
         #endregion
     }
 }
