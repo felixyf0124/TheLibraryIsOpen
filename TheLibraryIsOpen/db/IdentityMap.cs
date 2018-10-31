@@ -251,7 +251,6 @@ namespace TheLibraryIsOpen.db
                             else
                                 _movies[movie.MovieId] = movie;
                             _movieLock.ExitWriteLock();
-                            _db.UpdateMovie(movie);
                         });
 
                         _db.UpdateMovies(movies.ToArray());
