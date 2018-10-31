@@ -1123,6 +1123,18 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        //update books information
+        public void UpdateBooks(params Book[] books)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE books SET ");
+            for (int i = 0; i < books.Length; ++i)
+            {
+                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", Language = \"{books[i].Language}\" ISBN-10 = \"{books[i].Isbn10}\", ISBN-13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
+            }
+
+            QuerySend(sb.ToString());
+        }
+
         // Update a book information in the database by isbn10
         public void UpdateBookByIsbn(Book book, string isbn10)
         {
