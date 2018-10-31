@@ -279,7 +279,7 @@ namespace TheLibraryIsOpen.Database
        
         public void CreateMagazines(params Magazine[] magazines)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO magazines ((title, publisher, language, date, isbn10, isbn13) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES");
             for (int i = 0; i < magazines.Length; ++i)
             {
                 sb.Append($"(\"{magazines[i].Title}\",\"{magazines[i].Publisher}\",\"{magazines[i].Language}\",\"{magazines[i].Date}\",\"{magazines[i].Isbn10}\",\"{magazines[i].Isbn13}\"){(i + 1 < magazines.Length ? "," : ";")}");
