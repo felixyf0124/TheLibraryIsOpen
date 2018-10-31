@@ -15,13 +15,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly Db _db; // TODO: delete this when db code is removed
+        private readonly IdentityMap _im;
 
 
-        public MagazineCatalog(UnitOfWork unitOfWork, Db db)
+        public MagazineCatalog(UnitOfWork unitOfWork, Db db, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _db = db; // TODO: delete this when db code is removed
-
+            _im = im;
         }
 
         //Create Magazine
@@ -70,7 +71,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetMagazineById(int.Parse(magazineId));
+                Magazine magazine = _im.FindMagazine(int.Parse(magazineId));
+                
+                return magazine;
             });
             throw new ArgumentNullException("magazineId");
         }

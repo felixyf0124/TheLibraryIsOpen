@@ -15,11 +15,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly Db _db; // TODO: delete this when db code is removed
+        private readonly IdentityMap _im;
 
-        public BookCatalog(UnitOfWork unitOfWork, Db db)
+
+        public BookCatalog(UnitOfWork unitOfWork, Db db, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _db = db; // TODO: delete this when db code is removed
+            _im = im;
         }
 
         //Create Book
@@ -70,7 +73,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetBookById((int.Parse(bookId)));
+                Book book = _im.FindBook(int.Parse(bookId));
+                
+                return book;
             });
             throw new ArgumentNullException("bookId");
         }

@@ -442,5 +442,45 @@ namespace TheLibraryIsOpen.db
 
             return personToFind;
         }
+
+        public Magazine FindMagazine(int magazineID)
+        {
+            Magazine magazineToFind;
+            while (!_magLock.TryEnterReadLock(10)) ;
+            _mags.TryGetValue(magazineID, out magazineToFind);
+            _magLock.ExitReadLock();
+            if (magazineToFind == null)
+            {
+                magazineToFind = _db.GetMagazineById(magazineID);
+                if (magazineToFind != null)
+                {
+                    while (!_magLock.TryEnterWriteLock(10)) ;
+                    _mags.TryAdd(magazineID, magazineToFind);
+                    _magLock.ExitWriteLock();
+                }
+
+            }
+            return magazineToFind;
+        }
+        
+        public Book FindBook(int bookID)
+        {
+            Book bookToFind;
+            while (!_bookLock.TryEnterReadLock(10)) ;
+            _books.TryGetValue(bookID, out bookToFind);
+            _bookLock.ExitReadLock();
+            if (bookToFind == null)
+            {
+                bookToFind = _db.GetBookById(bookID);
+                if(bookToFind !=null)
+                {
+                    while (!_bookLock.TryEnterWriteLock(10)) ;
+                    _books.TryAdd(bookID, bookToFind);
+                    _bookLock.ExitWriteLock();
+                }
+               
+            }
+            return bookToFind;
+        }
     }
 }
