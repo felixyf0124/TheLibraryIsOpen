@@ -90,6 +90,7 @@ namespace TheLibraryIsOpen.Controllers
                 try
                 {
                     await _cs.UpdateAsync(magazine);
+                    await _cs.CommitAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -132,6 +133,7 @@ namespace TheLibraryIsOpen.Controllers
         {
             var magazine = await _cs.FindByIdAsync(id);
             await _cs.DeleteAsync(magazine);
+            await _cs.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 

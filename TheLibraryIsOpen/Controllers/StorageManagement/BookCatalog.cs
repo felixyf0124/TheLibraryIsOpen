@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.db;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
@@ -14,14 +13,12 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     public class BookCatalog
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly Db _db; // TODO: delete this when db code is removed
         private readonly IdentityMap _im;
 
 
-        public BookCatalog(UnitOfWork unitOfWork, Db db, IdentityMap im)
+        public BookCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
-            _db = db; // TODO: delete this when db code is removed
             _im = im;
         }
 
@@ -53,7 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // _unitOfWork.RegisterDelete(book);
+                    _unitOfWork.RegisterDeleted(book);
                     return IdentityResult.Success;
                 });
             }
@@ -74,7 +71,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return Task.Factory.StartNew(() =>
             {
                 Book book = _im.FindBook(int.Parse(bookId));
-                
+
                 return book;
             });
             throw new ArgumentNullException("bookId");
@@ -86,7 +83,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    return _db.GetBookByIsbn10(isbn10);
+                    // TODO: add to idmap
+                    return _im.GetBookByIsbn10(isbn10);
                 });
             }
             throw new ArgumentNullException("isbn10");
@@ -98,7 +96,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    return _db.GetBookByIsbn13(isbn13);
+                    // TODO: add to idmap
+                    return _im.GetBookByIsbn13(isbn13);
                 });
             }
             throw new ArgumentNullException("isbn13");
@@ -114,7 +113,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Title = title;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -127,7 +126,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Author = author;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -140,7 +139,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Format = format;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -153,7 +152,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Pages = pages;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -166,7 +165,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Publisher = publisher;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -179,7 +178,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Date = date;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -192,7 +191,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Language = language;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -207,7 +206,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Isbn10 = isbn10;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -220,7 +219,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     book.Isbn13 = isbn13;
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                 });
             }
             throw new ArgumentNullException("book");
@@ -232,7 +231,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                     return IdentityResult.Success;
                 });
             }
@@ -248,7 +247,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllBooks();
+                return _im.GetAllBooks();
             });
         }
 

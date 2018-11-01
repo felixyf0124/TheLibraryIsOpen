@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
@@ -13,13 +12,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     public class MovieCatalog
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly Db _db; // TODO: delete this when db code is removed
+        private readonly IdentityMap _im;
 
 
-        public MovieCatalog(UnitOfWork unitOfWork, Db db)
+        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
-            _db = db; // TODO: delete this when db code is removed
+            _im = im;
 
         }
 
@@ -108,7 +107,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // _unitOfWork.RegisterDelete(movie);
+                    _unitOfWork.RegisterDeleted(movie);
                     return IdentityResult.Success;
                 });
             }
@@ -122,7 +121,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllMovies();
+                return _im.GetAllMovies();
             });
         }
 
@@ -130,7 +129,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetMovieById(movieId);
+                return _im.FindMovie(movieId);
             });
             throw new ArgumentNullException("movieId");
         }
@@ -146,7 +145,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.CreatePerson(person);
+                    _unitOfWork.RegisterNew(person);
                     return IdentityResult.Success;
                 });
             }
@@ -162,7 +161,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.UpdatePerson(person);
+                    _unitOfWork.RegisterDirty(person);
                 });
             }
             throw new ArgumentNullException("person");
@@ -174,7 +173,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.DeletePerson(person);
+                    _unitOfWork.RegisterDeleted(person);
                     return IdentityResult.Success;
                 });
             }
@@ -188,7 +187,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllPerson();
+                return _im.GetAllPerson();
             });
         }
 
@@ -196,7 +195,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetPersonById(personId);
+                return _im.FindPerson(personId);
             });
             throw new ArgumentNullException("personId");
         }
@@ -205,43 +204,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
          * The following functions are made for the movie producer table
          */
 
-        public Task<IdentityResult> CreateMovieProducerAsync(string mid, string pid)
-        {
-            if (mid != null && pid != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _db.CreateMovieProducer(mid, pid);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "MovieProducer object was null" });
-            });
-        }
-
-        public Task<IdentityResult> DeleteMovieProducerAsync(string mid, string pid)
-        {
-            if (mid != null && pid != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _db.DeleteMovieProducer(mid, pid);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "MovieProducer object was null" });
-            });
-        }
-
         public Task<List<Person>> GetAllMovieProducerDataAsync(int movieID)
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllMovieProducers(movieID);
+                return _im.GetAllMovieProducers(movieID);
             });
         }
 
@@ -249,43 +216,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
          * The following functions are made for the movie actor table
          */
 
-        public Task<IdentityResult> CreateMovieActorAsync(string mid, string pid)
-        {
-            if (mid != null && pid != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _db.CreateMovieActor(mid, pid);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "MovieActor object was null" });
-            });
-        }
-
-        public Task<IdentityResult> DeleteMovieActorAsync(string mid, string pid)
-        {
-            if (mid != null && pid != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _db.DeleteMovieActor(mid, pid);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "MovieActor object was null" });
-            });
-        }
-
         public Task<List<Person>> GetAllMovieActorDataAsync(int movieID)
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetAllMovieActors(movieID);
+                return _im.GetAllMovieActors(movieID);
             });
         }
         public Task<bool> CommitAsync()

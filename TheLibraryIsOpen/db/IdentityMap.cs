@@ -8,6 +8,7 @@ using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
+
 namespace TheLibraryIsOpen.db
 {
     public class IdentityMap
@@ -419,6 +420,30 @@ namespace TheLibraryIsOpen.db
             return movieToFind;
         }
 
+        public Music FindMusic(int musicId)
+        {
+            Music musicToFind;
+
+            while (!_musicLock.TryEnterReadLock(10)) ;
+            _music.TryGetValue(musicId, out musicToFind);
+            _musicLock.ExitReadLock();
+
+            if (musicToFind == null)
+            {
+                musicToFind = _db.GetMusicById(musicId);
+
+                if (musicToFind != null)
+                {
+                    while (!_musicLock.TryEnterWriteLock(10)) ;
+                    _music.TryAdd(musicId, musicToFind);
+                    _musicLock.ExitWriteLock();
+
+                }
+            }
+
+            return musicToFind;
+        }
+
         public Person FindPerson(int personId)
         {
             Person personToFind;
@@ -462,7 +487,7 @@ namespace TheLibraryIsOpen.db
             }
             return magazineToFind;
         }
-        
+
         public Book FindBook(int bookID)
         {
             Book bookToFind;
@@ -472,15 +497,23 @@ namespace TheLibraryIsOpen.db
             if (bookToFind == null)
             {
                 bookToFind = _db.GetBookById(bookID);
-                if(bookToFind !=null)
+                if (bookToFind != null)
                 {
                     while (!_bookLock.TryEnterWriteLock(10)) ;
                     _books.TryAdd(bookID, bookToFind);
                     _bookLock.ExitWriteLock();
                 }
-               
+
             }
             return bookToFind;
         }
+
+        // TODO: BOOK find by isbn 13, isbn 10 and GetAllBooks
+
+        // TODO: MAGAZINE find by isbn 13, isbn 10 and GetAllMagazines
+
+        // TODO: MOVIE GetAllMovies, getAllPerson, GetAllMovieProducers, GetAllMovieActors
+
+        // TODO: MUSIC GetAllMusic
     }
 }
