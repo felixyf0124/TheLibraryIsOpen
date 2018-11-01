@@ -6,20 +6,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TheLibraryIsOpen.db;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class MusicCatalog : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly IdentityMap _im;
         private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public MusicCatalog(UnitOfWork unitOfWork, Db db)
+        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
+            _im = im;
             _db = db; // TODO: delete this when db code is removed
 
         }
@@ -49,7 +51,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // _unitOfWork.RegisterDelete(music);
+                    _unitOfWork.RegisterDeleted(music);
                     return IdentityResult.Success;
                 });
             }
@@ -64,7 +66,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetMusicById((int.Parse(musicId)));
+                return _im.FindMusic((int.Parse(musicId)));
             });
             throw new ArgumentNullException("musicId");
         }
@@ -79,7 +81,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     music.Title = title;
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                 });
             }
             throw new ArgumentNullException("music");
@@ -92,7 +94,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     music.Type = type;
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                 });
             }
             throw new ArgumentNullException("music");
@@ -105,7 +107,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     music.Artist = artist;
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                 });
             }
             throw new ArgumentNullException("music");
@@ -118,7 +120,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     music.Label = label;
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                 });
             }
             throw new ArgumentNullException("music");
@@ -131,7 +133,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     music.ReleaseDate = releaseDate;
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                 });
             }
             throw new ArgumentNullException("music");
@@ -144,7 +146,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     music.Asin = aSIN;
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                 });
             }
             throw new ArgumentNullException("music");
@@ -156,7 +158,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.UpdateMusic(music);
+                    _unitOfWork.RegisterDirty(music);
                     return IdentityResult.Success;
                 });
             }
@@ -170,6 +172,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
+                //TODO: replace with_im
                 return _db.GetAllMusic();
             });
         }

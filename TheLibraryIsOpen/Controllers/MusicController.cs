@@ -88,6 +88,7 @@ namespace TheLibraryIsOpen.Controllers
                 try
                 {
                     await _mc.UpdateMusicAsync(music);
+                    await _mc.CommitAsync();
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -131,6 +132,7 @@ namespace TheLibraryIsOpen.Controllers
         {
             var music = await _mc.FindMusicByIdAsync(id);
             await _mc.DeleteMusicAsync(music);
+            await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 

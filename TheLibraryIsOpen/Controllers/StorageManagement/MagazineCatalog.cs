@@ -8,21 +8,20 @@ using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
-
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class MagazineCatalog
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly Db _db; // TODO: delete this when db code is removed
         private readonly IdentityMap _im;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public MagazineCatalog(UnitOfWork unitOfWork, Db db, IdentityMap im)
+        public MagazineCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
-            _db = db; // TODO: delete this when db code is removed
             _im = im;
+            _db = db; // TODO: delete this when db code is removed
         }
 
         //Create Magazine
@@ -51,7 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // _unitOfWork.RegisterDelete(magazine);
+                    _unitOfWork.RegisterDeleted(magazine);
                     return IdentityResult.Success;
                 });
             }
@@ -72,7 +71,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return Task.Factory.StartNew(() =>
             {
                 Magazine magazine = _im.FindMagazine(int.Parse(magazineId));
-                
+
                 return magazine;
             });
             throw new ArgumentNullException("magazineId");
@@ -84,6 +83,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
+                    // TODO: replace with _im
                     return _db.GetMagazineByIsbn10(isbn10);
                 });
             }
@@ -96,6 +96,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
+                    // TODO: replace with _im
                     return _db.GetMagazineByIsbn13(isbn13);
                 });
             }
@@ -112,7 +113,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     magazine.Title = title;
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                 });
             }
             throw new ArgumentNullException("magazine");
@@ -126,7 +127,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     magazine.Publisher = publisher;
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                 });
             }
             throw new ArgumentNullException("magazine");
@@ -139,7 +140,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     magazine.Language = language;
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                 });
             }
             throw new ArgumentNullException("magazine");
@@ -152,7 +153,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     magazine.Date = date;
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                 });
             }
             throw new ArgumentNullException("magazine");
@@ -165,7 +166,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     magazine.Isbn10 = isbn10;
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                 });
             }
             throw new ArgumentNullException("magazine");
@@ -178,7 +179,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return Task.Factory.StartNew(() =>
                 {
                     magazine.Isbn13 = isbn13;
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                 });
             }
             throw new ArgumentNullException("magazine");
@@ -190,7 +191,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.UpdateMagazine(magazine);
+                    _unitOfWork.RegisterDirty(magazine);
                     return IdentityResult.Success;
                 });
             }
@@ -206,6 +207,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
+                // TODO: replace with _im
                 return _db.GetAllMagazines();
             });
         }

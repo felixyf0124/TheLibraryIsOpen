@@ -106,6 +106,7 @@ namespace TheLibraryIsOpen.Controllers
             try
             {
                 await _mc.UpdateMovieAsync(edit.ToMovie());
+                await _mc.CommitAsync();
 
                 return RedirectToAction(nameof(Index));
             }

@@ -50,7 +50,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return View();
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Book book)
@@ -59,7 +59,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 await _bc.CreateAsync(book);
                 await _bc.CommitAsync();
-                
+
                 return RedirectToAction(nameof(Index));
             }
             return View(book);
@@ -83,7 +83,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         // POST: Books/Edit/5
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, Book book)
@@ -98,6 +98,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 try
                 {
                     await _bc.UpdateAsync(book);
+                    await _bc.CommitAsync();
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -143,6 +144,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             var book = await _bc.FindByIdAsync(id);
 
             await _bc.DeleteAsync(book);
+            await _bc.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 
