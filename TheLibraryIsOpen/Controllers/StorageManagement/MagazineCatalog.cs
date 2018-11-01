@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -13,12 +14,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public MagazineCatalog(UnitOfWork unitOfWork, IdentityMap im)
+        public MagazineCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
             _im = im;
+            _db = db; // TODO: delete this when db code is removed
         }
 
         //Create Magazine
@@ -80,7 +83,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    return _im.GetMagazineByIsbn10(isbn10);
+                    // TODO: replace with _im
+                    return _db.GetMagazineByIsbn10(isbn10);
                 });
             }
             throw new ArgumentNullException("isbn10");
@@ -92,7 +96,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    return _im.GetMagazineByIsbn13(isbn13);
+                    // TODO: replace with _im
+                    return _db.GetMagazineByIsbn13(isbn13);
                 });
             }
             throw new ArgumentNullException("isbn13");
@@ -202,7 +207,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllMagazines();
+                // TODO: replace with _im
+                return _db.GetAllMagazines();
             });
         }
 

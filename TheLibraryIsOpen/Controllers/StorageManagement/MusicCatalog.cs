@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -14,12 +15,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im)
+        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
             _im = im;
+            _db = db; // TODO: delete this when db code is removed
 
         }
 
@@ -169,7 +172,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllMusic();
+                //TODO: replace with_im
+                return _db.GetAllMusic();
             });
         }
 

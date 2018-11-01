@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
@@ -13,12 +14,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im)
+        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
             _im = im;
+            _db = db; // TODO: delete this when db code is removed
 
         }
 
@@ -47,55 +50,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             if (movie != null)
             {
-                return Task.Factory.StartNew(async () =>
+                return Task.Factory.StartNew(() =>
                 {
-                    var prevMovie = _db.GetMovieById(movie.MovieId);
-                    prevMovie.Actors = _db.GetAllMovieActors(movie.MovieId);
-                    prevMovie.Producers = _db.GetAllMovieProducers(movie.MovieId);
-
-                    var actorsToAdd = movie.Actors?
-                                            .Select(a => a.PersonId)?
-                                            .Except(prevMovie.Actors?
-                                                .Select(a => a.PersonId) ?? new List<int>())
-                                            ?? new List<int>();
-                    var actorsToRemove = prevMovie.Actors?
-                                            .Select(a => a.PersonId)?
-                                            .Except(movie.Actors?
-                                                .Select(a => a.PersonId) ?? new List<int>())
-                                            ?? new List<int>();
-
-                    foreach (var actor in actorsToRemove)
-                    {
-                        await DeleteMovieActorAsync(movie.MovieId.ToString(), actor.ToString());
-                    }
-
-                    foreach (var actor in actorsToAdd)
-                    {
-                        await CreateMovieActorAsync(movie.MovieId.ToString(), actor.ToString());
-                    }
-
-                    var producersToAdd = movie.Producers?
-                                                .Select(a => a.PersonId)?
-                                                .Except(prevMovie.Producers?
-                                                    .Select(p => p.PersonId) ?? new List<int>())
-                                                ?? new List<int>();
-                    var producersToRemove = prevMovie.Producers?
-                                                .Select(a => a.PersonId)?
-                                                .Except(movie.Producers?
-                                                    .Select(p => p.PersonId) ?? new List<int>())
-                                                ?? new List<int>();
-
-                    foreach (var producer in producersToRemove)
-                    {
-                        await DeleteMovieProducerAsync(movie.MovieId.ToString(), producer.ToString());
-                    }
-
-                    foreach (var producer in producersToAdd)
-                    {
-                        await CreateMovieProducerAsync(movie.MovieId.ToString(), producer.ToString());
-                    }
-
-                    _db.UpdateMovie(movie);
+                    _unitOfWork.RegisterDirty(movie);
+                    return IdentityResult.Success;
                 });
             }
             throw new ArgumentNullException("movie");
@@ -121,7 +79,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllMovies();
+                return _db.GetAllMovies();
             });
         }
 
@@ -187,7 +145,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllPerson();
+                // TODO: replace with _im
+                return _db.GetAllPerson();
             });
         }
 
@@ -208,7 +167,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllMovieProducers(movieID);
+                // TODO: replace with _im
+                return _db.GetAllMovieProducers(movieID);
             });
         }
 
@@ -220,7 +180,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllMovieActors(movieID);
+                // TODO: replace with _im
+                return _db.GetAllMovieActors(movieID);
             });
         }
         public Task<bool> CommitAsync()

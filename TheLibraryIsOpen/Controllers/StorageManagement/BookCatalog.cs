@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
@@ -14,12 +15,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
+        private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public BookCatalog(UnitOfWork unitOfWork, IdentityMap im)
+        public BookCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
             _im = im;
+            _db = db; // TODO: delete this when db code is removed
         }
 
         //Create Book
@@ -83,8 +86,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: add to idmap
-                    return _im.GetBookByIsbn10(isbn10);
+                    // TODO: replace with _im
+                    return _db.GetBookByIsbn10(isbn10);
                 });
             }
             throw new ArgumentNullException("isbn10");
@@ -96,8 +99,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: add to idmap
-                    return _im.GetBookByIsbn13(isbn13);
+                    // TODO: replace with _im
+                    return _db.GetBookByIsbn13(isbn13);
                 });
             }
             throw new ArgumentNullException("isbn13");
@@ -247,7 +250,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                return _im.GetAllBooks();
+                // TODO: replace with _im
+                return _db.GetAllBooks();
             });
         }
 
