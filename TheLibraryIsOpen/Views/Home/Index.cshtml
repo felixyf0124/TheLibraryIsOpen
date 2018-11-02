@@ -5,7 +5,6 @@
 @{
     bool signedIn = User.Identity.IsAuthenticated;
 }
-
 @if (!signedIn)
 {
     //deleted default carousel
@@ -39,8 +38,8 @@
 }
 else
 {
-    <div>
-        <h3>Successfully Logged in</h3>
+    string customData = "col-xs-8 col-xs-offset-2";
+    <div class="row page-center">
+        <partial name="_SearchBar" model="customData" />
     </div>
-
 }

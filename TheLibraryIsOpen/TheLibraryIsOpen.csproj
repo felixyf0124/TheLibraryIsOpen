@@ -19,12 +19,14 @@
     <Folder Include="Views\Magazine\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="bundleconfig.json" />
     <Content Remove="Views\Magazine\Create.cshtml" />
     <Content Remove="Views\Magazine\Delete.cshtml" />
     <Content Remove="Views\Magazine\Edit.cshtml" />
     <Content Remove="Views\Magazine\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bundleconfig.json" />
     <None Include="Views\Magazine\Create.cshtml" />
     <None Include="Views\Magazine\Delete.cshtml" />
     <None Include="Views\Magazine\Edit.cshtml" />
@@ -33,5 +35,8 @@
   <ItemGroup>
     <Compile Remove="Data\TheLibraryIsOpenContext.cs" />
     <Compile Remove="Models\DBModels\MovieDirector.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="bundleconfig.json" />
   </ItemGroup>
 </Project>

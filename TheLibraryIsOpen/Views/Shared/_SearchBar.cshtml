@@ -1,0 +1,24 @@
+﻿@{
+    string customClasses = Model ?? "";
+    string modelType = (string)TempData["ModelType"];
+    string query = (string)TempData["Query"];
+}
+<form asp-controller="Home" asp-action="Search" method="post">
+    <div class="@customClasses">
+        <select name="modeltype" class="form-control">
+            <!option value="all" @(modelType is null ? "selected" : "")>All</!option>
+            <!option value="book" @(modelType == "book" ? "selected" : "")>Books</!option>
+            <!option value="movie" @(modelType == "movie" ? "selected" : "")>Movies</!option>
+            <!option value="music" @(modelType == "music" ? "selected" : "")>Music</!option>
+            <!option value="magazine" @(modelType == "magazine" ? "selected" : "")>Magazine</!option>
+        </select>
+        <div class="input-group stylish-input-group">
+            <input name="query" type="text" class="form-control" placeholder="Search" value="@query">
+            <span class="input-group-addon">
+                <button type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+</form>

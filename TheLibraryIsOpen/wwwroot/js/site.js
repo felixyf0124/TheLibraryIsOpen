@@ -2,3 +2,11 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+$(function () {
+    $('.dropdown').hover(function () {
+        $(this).addClass('open');
+    },
+        function () {
+            $(this).removeClass('open');
+        });
+});
