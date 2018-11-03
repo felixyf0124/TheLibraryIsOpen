@@ -5,6 +5,13 @@
 @{
     bool signedIn = User.Identity.IsAuthenticated;
 }
+
+<div class="row text-center" style="margin-top: 10vh;">
+    <img style="width: 45%;height: auto;" src="~/images/thelibraryisopen.gif" alt="The Library is Open, Okay?" />
+</div>
+<br />
+<br />
+
 @if (!signedIn)
 {
     //deleted default carousel
@@ -39,7 +46,7 @@
 else
 {
     string customData = "col-xs-8 col-xs-offset-2";
-    <div class="row page-center">
+    <div class="row">
         <partial name="_SearchBar" model="customData" />
     </div>
 }
