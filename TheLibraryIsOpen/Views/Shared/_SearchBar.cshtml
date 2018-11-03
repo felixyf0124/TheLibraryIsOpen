@@ -5,6 +5,11 @@
 }
 <form asp-controller="Home" asp-action="Search" method="post">
     <div class="@customClasses">
+
+        @if (customClasses != "")
+        {
+            @Html.Raw("<div class='col-sm-2 padding-0'>")
+        }
         <select name="modeltype" class="form-control">
             <!option value="all" @(modelType is null ? "selected" : "")>All</!option>
             <!option value="book" @(modelType == "book" ? "selected" : "")>Books</!option>
@@ -12,6 +17,11 @@
             <!option value="music" @(modelType == "music" ? "selected" : "")>Music</!option>
             <!option value="magazine" @(modelType == "magazine" ? "selected" : "")>Magazine</!option>
         </select>
+        @if (customClasses != "")
+        {
+            @Html.Raw("</div>")
+            @Html.Raw("<div class='col-sm-10 padding-0'>")
+        }
         <div class="input-group stylish-input-group">
             <input name="query" type="text" class="form-control" placeholder="Search" value="@query">
             <span class="input-group-addon">
@@ -20,5 +30,9 @@
                 </button>
             </span>
         </div>
+        @if (customClasses != "")
+        {
+            @Html.Raw("</div>")
+        }
     </div>
 </form>
