@@ -75,3 +75,8 @@ footer {
         border: 0;
         background: transparent;
     }
+
+.padding-0 {
+    padding-right: 0;
+    padding-left: 0;
+}
