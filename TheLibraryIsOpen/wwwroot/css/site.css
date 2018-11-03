@@ -1,8 +1,29 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
+
+html {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
 body {
     padding-top: 50px;
     padding-bottom: 20px;
+    position: relative;
+    min-height: 100%;
+}
+
+footer {
+    bottom: 0;
+    margin-bottom: 0px;
+    position: absolute;
+    bottom: 0;
 }
 
 /* Wrapping element */
@@ -35,3 +56,22 @@ body {
         display: none;
     }
 }
+
+.stylish-input-group {
+    box-shadow: rgba(0,0,0,0.1) 2px 2px 1px 1px;
+}
+
+    .stylish-input-group .input-group-addon {
+        background: white !important;
+    }
+
+    .stylish-input-group .form-control {
+        border-right: 0;
+        box-shadow: 0 0 0;
+        border-color: #ccc;
+    }
+
+    .stylish-input-group button {
+        border: 0;
+        background: transparent;
+    }

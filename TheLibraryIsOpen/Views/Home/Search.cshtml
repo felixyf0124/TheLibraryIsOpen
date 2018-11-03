@@ -1,0 +1,26 @@
+﻿@model string[]
+@*
+    This is a test page, it doesn't do anything yet    
+*@
+@{
+    ViewData["Title"] = "Search Results";
+
+    string customData = "col-xs-8 col-xs-offset-2";
+    string modelType = (string)TempData["ModelType"];
+    string query = (string)TempData["Query"];
+}
+
+<h2>Search Results</h2>
+
+<br />
+<div class="row">
+    <partial name="_SearchBar" model="customData" />
+</div>
+
+<p>
+    <b>Model Type:</b> @modelType
+</p>
+<p>
+    <b>Query:</b> @query
+</p>
+
