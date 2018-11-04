@@ -11,10 +11,6 @@ namespace TheLibraryIsOpen.Models.Search
     {
         private readonly Db _db;
 
-        public Search(Db db)
-        {
-            _db = db;
-        }
         public static Task<List<SearchResult>> SearchAllAsync(string searchString)
         {
             throw new NotImplementedException();
