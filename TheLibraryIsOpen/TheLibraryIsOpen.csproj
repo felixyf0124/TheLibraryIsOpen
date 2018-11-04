@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Magazine\" />
+    <Folder Include="Models\Search\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
