@@ -17,26 +17,26 @@ namespace TheLibraryIsOpen.Models.Search
         }
 
 
-        public static Task<List<SearchResult>> SearchAllAsync(string searchString)
+        public Task<List<SearchResult>> SearchAllAsync(string searchString)
         {
             throw new NotImplementedException();
 
         }
 
-        public static Task<List<SearchResult>> SearchBooksAsync(string searchString)
+        public Task<List<SearchResult>> SearchBooksAsync(string searchString)
         {
             throw new NotImplementedException();
 
         }
-        public static Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
+        public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
-        public static Task<List<SearchResult>> SearchMoviesAsync(string searchString)
+        public Task<List<SearchResult>> SearchMoviesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
-        public static Task<List<SearchResult>> SearchMusicAsync(string searchString)
+        public Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
             throw new NotImplementedException();
         }
