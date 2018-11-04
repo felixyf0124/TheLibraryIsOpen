@@ -59,6 +59,7 @@ footer {
 
 .stylish-input-group {
     box-shadow: rgba(0,0,0,0.1) 2px 2px 1px 1px;
+    border-radius: 3em;
 }
 
     .stylish-input-group .input-group-addon {
@@ -74,6 +75,16 @@ footer {
     .stylish-input-group button {
         border: 0;
         background: transparent;
+    }
+
+    .rounded-left {
+        border-bottom-left-radius: 3em;
+        border-top-left-radius: 3em;
+    }
+
+    .rounded-right {
+        border-bottom-right-radius: 3em;
+        border-top-right-radius: 3em;
     }
 
 .padding-0 {

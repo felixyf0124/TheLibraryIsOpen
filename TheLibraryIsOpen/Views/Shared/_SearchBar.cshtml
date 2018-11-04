@@ -9,8 +9,9 @@
         @if (customClasses != "")
         {
             @Html.Raw("<div class='col-sm-2 padding-0'>")
+            @Html.Raw("<div class='stylish-input-group'>")
         }
-        <select name="modeltype" class="form-control">
+        <select name="modeltype" class="form-control rounded-left rounded-right">
             <!option value="all" @(modelType is null ? "selected" : "")>All</!option>
             <!option value="book" @(modelType == "book" ? "selected" : "")>Books</!option>
             <!option value="movie" @(modelType == "movie" ? "selected" : "")>Movies</!option>
@@ -20,11 +21,12 @@
         @if (customClasses != "")
         {
             @Html.Raw("</div>")
+            @Html.Raw("</div>")
             @Html.Raw("<div class='col-sm-10 padding-0'>")
         }
-        <div class="input-group stylish-input-group">
-            <input name="query" type="text" class="form-control" placeholder="Search" value="@query">
-            <span class="input-group-addon">
+        <div class="input-group stylish-input-group" style="margin-left:0.5em;">
+            <input name="query" type="text" class="form-control rounded-left" placeholder="Search" value="@query">
+            <span class="input-group-addon rounded-right">
                 <button type="submit">
                     <span class="glyphicon glyphicon-search"></span>
                 </button>
