@@ -1,6 +1,6 @@
 ﻿using static TheLibraryIsOpen.Constants.TypeConstants;
 
-namespace TheLibraryIsOpen.Models
+namespace TheLibraryIsOpen.Models.Search
 {
     public class SearchResult
     {
