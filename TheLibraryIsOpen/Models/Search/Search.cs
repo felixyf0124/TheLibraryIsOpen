@@ -10,15 +10,6 @@ namespace TheLibraryIsOpen.Models.Search
     public sealed class Search
     {
         private readonly Db _db;
-        private static readonly Lazy<Search> lazy = new Lazy<Search>(() => new Search());
-        private Task<List<SearchResult>> searchString;
-
-        public static Search Instance { get { return lazy.Value; }}
-
-        private Search()
-        {
-
-        }
 
         public static Task<List<SearchResult>> SearchAllAsync(string searchString)
         {
