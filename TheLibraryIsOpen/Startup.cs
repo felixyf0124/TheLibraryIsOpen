@@ -18,6 +18,7 @@ using TheLibraryIsOpen.Models.DBModels;
 using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Models.Search;
 
 namespace TheLibraryIsOpen
 {
@@ -49,6 +50,7 @@ namespace TheLibraryIsOpen
                 .AddCookie();
 
             services.AddSingleton(typeof(Db));
+            services.AddSingleton(typeof(Search));
             services.AddScoped(typeof(UnitOfWork));
             services.AddScoped(typeof(IdentityMap));
 
