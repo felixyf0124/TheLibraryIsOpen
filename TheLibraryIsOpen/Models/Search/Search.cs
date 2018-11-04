@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Models.Search
@@ -41,6 +41,8 @@ namespace TheLibraryIsOpen.Models.Search
             throw new NotImplementedException();
         }
 
+        #region books
+
         private Task<List<SearchResult>> SearchBooksTitlesAsync(string searhString)
         {
             throw new NotImplementedException();
@@ -73,12 +75,13 @@ namespace TheLibraryIsOpen.Models.Search
         {
             throw new NotImplementedException();
         }
-        private  Task <List<SearchResult>> SearchBooksIsbn13Async (string searhString)
+        private Task<List<SearchResult>> SearchBooksIsbn13Async(string searhString)
         {
             throw new NotImplementedException();
         }
 
-
+        #endregion
+        #region magazines
 
         private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searhString)
         {
@@ -105,7 +108,8 @@ namespace TheLibraryIsOpen.Models.Search
             throw new NotImplementedException();
         }
 
-
+        #endregion
+        #region movies
 
         private Task<List<SearchResult>> SearchMoviesTitlesAsync(string searhString)
         {
@@ -151,6 +155,8 @@ namespace TheLibraryIsOpen.Models.Search
             throw new NotImplementedException();
         }
 
+        #endregion
+        #region music
 
         private Task<List<SearchResult>> SearchMusicTypesAsync(string searhString)
         {
@@ -178,5 +184,7 @@ namespace TheLibraryIsOpen.Models.Search
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }
