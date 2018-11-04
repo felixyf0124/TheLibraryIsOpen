@@ -1,7 +1,16 @@
-﻿@model string[]
+﻿@model IEnumerable<TheLibraryIsOpen.Models.Search.SearchResult>
+@using TheLibraryIsOpen.Constants
+@using static TheLibraryIsOpen.Constants.TypeConstants
 @*
-    This is a test page, it doesn't do anything yet    
+    This is a test page, it doesn't do anything yet
 *@
+
+<style type="text/css">
+    .cust {
+        font-size: 10em;
+    }
+</style>
+
 @{
     ViewData["Title"] = "Search Results";
 
@@ -24,3 +33,46 @@
     <b>Query:</b> @query
 </p>
 
+@foreach (var item in Model)
+{
+    string controller = "";
+
+    <div class="row table-bordered rounded-left rounded-right" style="padding:1em 1em 1em 1em;">
+        <div class="col-md-2">
+            @switch (item.Type)
+            {
+                case TypeEnum.Book:
+                    controller = "Books";
+                    <label class="glyphicon cust glyphicon-book"></label>
+                    break;
+                case TypeEnum.Magazine:
+                    controller = "Magazine";
+                    <label class="glyphicon cust glyphicon-file"></label>
+                    break;
+                case TypeEnum.Movie:
+                    controller = "Movie";
+                    <label class="glyphicon cust glyphicon-film"></label>
+                    break;
+                case TypeEnum.Music:
+                    controller = "Music";
+                    <label class="glyphicon  custglyphicon-music"></label>
+                    break;
+            }
+        </div>
+        <div class="col-md-8">
+            <h3>@item.Name</h3>
+            <p>
+                <ul class="list-group">
+                    @foreach (var desc in item.Description)
+                    {
+                        <li class="list-group-item">@desc</li>
+                    }
+                </ul>
+            </p>
+        </div>
+        <div class="col-md-2" style="text-align:center; margin-top:5em;">
+            <a asp-controller="@controller" asp-action="Details" asp-route-id="@item.ModelId" class="btn btn-info"><label class="glyphicon glyphicon-list"></label>&nbsp;Details</a>
+        </div>
+    </div>
+    <br />
+}
