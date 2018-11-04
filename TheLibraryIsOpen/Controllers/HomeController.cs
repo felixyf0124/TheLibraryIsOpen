@@ -9,7 +9,7 @@ using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
-
+using TheLibraryIsOpen.Models.Search;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -20,8 +20,9 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MusicCatalog _musicc;
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
+        private readonly Search _search;
 
-        public HomeController(ClientStore cs, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac)
+        public HomeController(ClientStore cs, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, Search search)
         {
             _cs = cs;
             _bookc = bc;
@@ -89,7 +90,7 @@ namespace TheLibraryIsOpen.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search()
+        public async Task<IActionResult> Search()
         {
             var form = HttpContext.Request.Form;
             string modeltype = form["modeltype"];
@@ -98,9 +99,62 @@ namespace TheLibraryIsOpen.Controllers
             TempData["ModelType"] = modeltype;
             TempData["Query"] = query;
 
-            //method not complete
+            // TODO: uncomment the following and put it in the View() once the methods are ready
 
-            return View();
+            /*string[] querySplit = query.Split(';');
+
+            var queryTask = new Task<List<SearchResult>>[querySplit.Length];
+
+            for (int i = 0; i < querySplit.Length; i++)
+            {
+                switch (modeltype)
+                {
+                    case "book":
+                        queryTask[i] = _search.SearchBooksAsync(querySplit[i]);
+                        break;
+                    case "movie":
+                        queryTask[i] = _search.SearchMoviesAsync(querySplit[i]);
+                        break;
+                    case "magazine":
+                        queryTask[i] = _search.SearchMagazinesAsync(querySplit[i]);
+                        break;
+                    case "music":
+                        queryTask[i] = _search.SearchMusicAsync(querySplit[i]);
+                        break;
+                    default:
+                        queryTask[i] = _search.SearchAllAsync(querySplit[i]);
+                        break;
+                }
+            }
+
+            var searchResults = new List<SearchResult>[queryTask.Length];
+
+            for (int i = 0; i < queryTask.Length; i++)
+            {
+                searchResults[i] = await queryTask[i];
+            }
+
+            IEnumerable<SearchResult> matchingSearchResults = new List<SearchResult>(searchResults[0]);
+
+            if (searchResults.Length > 1)
+            {
+                for (int i = 1; i < searchResults.Length; i++)
+                {
+                    matchingSearchResults = matchingSearchResults.Intersect(searchResults[i]);
+                }
+            }*/
+            return View(new List<SearchResult> {
+                new SearchResult(
+                    Constants.TypeConstants.TypeEnum.Book,
+                    7,
+                    "A book title (and its date)",
+                    new string[] { "Author: me", "About a book" }),
+                 new SearchResult(
+                     Constants.TypeConstants.TypeEnum.Movie,
+                     14,
+                     "Some kind of movie title (and its date)",
+                     new string[] { "Director: not me", "About the movie", "the language, I guess" })
+            });
         }
     }
 }
