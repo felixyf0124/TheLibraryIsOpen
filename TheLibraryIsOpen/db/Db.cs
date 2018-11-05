@@ -1645,12 +1645,6 @@ namespace TheLibraryIsOpen.Database
             return books;
         }
         #endregion
-
-
-
-
-
-
         #endregion
     }
 }
