@@ -733,6 +733,285 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        #region SearchMoives
+
+        // search movie methods
+        public List<Movie> SearchMoviesByTitle(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(title) LIKE LOWER(%\" { MovieString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByDirector(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(director) LIKE LOWER(%\" { MovieString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByLanguage(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(language) LIKE LOWER(%\" { MovieString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesBySubtitles(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(subtitles) LIKE LOWER(%\" { MovieString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByDubbed(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(dubbed) LIKE LOWER(%\" { MovieString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByReleasedate(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE releasedate = \" { MovieString } \";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByRuntime(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE runtime = \" { MovieString } \";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        #endregion
+        #endregion
+
         #region person
         /*
          * The following methods are made for the person table
@@ -1037,7 +1316,7 @@ namespace TheLibraryIsOpen.Database
         }
         #endregion
         #endregion
-        #endregion
+   
         #region books
         public void DeleteBook(Book book)
         {
@@ -1648,282 +1927,10 @@ namespace TheLibraryIsOpen.Database
         #endregion
 
 
-        #region SearchMoives
+        
 
-        // search movie methods
-        public List<Movie> SearchMoviesByTitle(string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(title) LIKE LOWER(%\" { MovieString } \"%);";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        public List<Movie> SearchMoviesByDirector(string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(director) LIKE LOWER(%\" { MovieString } \"%);";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        public List<Movie> SearchMoviesByLanguage(string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(language) LIKE LOWER(%\" { MovieString } \"%);";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        public List<Movie> SearchMoviesBySubtitles(string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(subtitles) LIKE LOWER(%\" { MovieString } \"%);";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        public List<Movie> SearchMoviesByDubbed(string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(dubbed) LIKE LOWER(%\" { MovieString } \"%);";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        public List<Movie> SearchMoviesByReleasedate(string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE releasedate = \" { MovieString } \";";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        public List<Movie> SearchMoviesByRuntime (string MovieString)
-        {
-            //Create a list of unknown size to store the result
-            List<Movie> list = new List<Movie>();
-            Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE runtime = \" { MovieString } \";";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create movie object and store in list
-                        while (dr.Read())
-                        {
-                            int movieId = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
-                            list.Add(movie);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return list;
-        }
-
-        #endregion
+        
     }
+
+
 }
