@@ -170,7 +170,7 @@ namespace TheLibraryIsOpen.Models.Search
                 {
                     string[] description =
                     {
-                        "Release in " + result.ReleaseDate,
+                        "Released in " + result.ReleaseDate,
                         "\nPerformed by " + result.Artist,
                         "\nProduced by" + result.Label,
                         "\nASIN: " + result.Asin
@@ -194,7 +194,7 @@ namespace TheLibraryIsOpen.Models.Search
                 {
                     string[] description =
                     {
-                        "Release in " + result.ReleaseDate,
+                        "Released in " + result.ReleaseDate,
                         "\nPerformed by " + result.Artist,
                         "\nProduced by" + result.Label,
                         "\nASIN: " + result.Asin
@@ -218,7 +218,7 @@ namespace TheLibraryIsOpen.Models.Search
                 {
                     string[] description =
                     {
-                        "Release in " + result.ReleaseDate,
+                        "Released in " + result.ReleaseDate,
                         "\nPerformed by " + result.Artist,
                         "\nProduced by" + result.Label,
                         "\nASIN: " + result.Asin
@@ -243,7 +243,7 @@ namespace TheLibraryIsOpen.Models.Search
                 {
                     string[] description =
                     {
-                        "Release in " + result.ReleaseDate,
+                        "Released in " + result.ReleaseDate,
                         "\nPerformed by " + result.Artist,
                         "\nProduced by" + result.Label,
                         "\nASIN: " + result.Asin
@@ -268,7 +268,7 @@ namespace TheLibraryIsOpen.Models.Search
                 {
                     string[] description =
                     {
-                        "Release in " + result.ReleaseDate,
+                        "Released in " + result.ReleaseDate,
                         "\nPerformed by " + result.Artist,
                         "\nProduced by" + result.Label,
                         "\nASIN: " + result.Asin
@@ -292,7 +292,7 @@ namespace TheLibraryIsOpen.Models.Search
                 {
                     string[] description =
                     {
-                        "Release in " + result.ReleaseDate,
+                        "Released in " + result.ReleaseDate,
                         "\nPerformed by " + result.Artist,
                         "\nProduced by" + result.Label,
                         "\nASIN: " + result.Asin
