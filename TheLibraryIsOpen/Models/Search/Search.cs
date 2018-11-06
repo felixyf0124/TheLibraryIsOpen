@@ -42,7 +42,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -73,7 +73,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -89,7 +89,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -106,7 +106,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -122,7 +122,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -138,7 +138,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -154,7 +154,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -170,7 +170,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
@@ -186,7 +186,7 @@ namespace TheLibraryIsOpen.Models.Search
                 foreach (Book book in books)
                 {
                     string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(0, book.BookId, book.Title, resultDescription);
+                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
                     results.Add(result);
                 }
                 return results;
