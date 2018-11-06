@@ -30,7 +30,7 @@ namespace TheLibraryIsOpen.Models.Search
                 List<SearchResult> results = new List<SearchResult>();
 
                 List<Book> books = new List<Book>();
-                foreach (Book book in _db.SearchBooksByIsbn10(searchString)) { books.Add(book); }
+                foreach (Book book in _db.SearchBooksByIsbn10(searchString)) { if (!books.Contains(book)) books.Add(book); }
                 foreach (Book book in _db.SearchBooksByIsbn13(searchString)) { if (!books.Contains(book)) books.Add(book); }
                 foreach (Book book in _db.SearchBooksByTitle(searchString)) { if (!books.Contains(book)) books.Add(book); }
                 foreach (Book book in _db.SearchBooksByAuthor(searchString)) { if (!books.Contains(book)) books.Add(book); }
