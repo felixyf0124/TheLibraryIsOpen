@@ -1403,7 +1403,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(title) = LOWER(\" { SearchString } \");";
+            string query = $"SELECT * FROM books WHERE LOWER(title) LIKE LOWER(%\" { SearchString } \"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1444,7 +1444,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(author) = LOWER(\" { SearchString } \");";
+            string query = $"SELECT * FROM books WHERE LOWER(author) LIKE LOWER(%\" { SearchString } \"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1485,7 +1485,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(format) = LOWER(\" { SearchString } \");";
+            string query = $"SELECT * FROM books WHERE LOWER(format) LIKE LOWER(%\" { SearchString } \"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1567,7 +1567,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(publisher) = LOWER(\" { SearchString } \");";
+            string query = $"SELECT * FROM books WHERE LOWER(publisher) LIKE LOWER(%\" { SearchString } \"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1608,7 +1608,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(language) = LOWER(\" { SearchString } \");";
+            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\" { SearchString } \"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
