@@ -43,39 +43,39 @@ namespace TheLibraryIsOpen.Models.Search
 
         #region books
 
-        private Task<List<SearchResult>> SearchBooksTitlesAsync(string searhString)
+        private Task<List<SearchResult>> SearchBooksTitlesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
-        private Task<List<SearchResult>> SearchBooksAuthorsAsync(string searhString)
-        {
-            throw new NotImplementedException();
-        }
-
-        private Task<List<SearchResult>> SearchBooksFormatsAsync(string searhString)
+        private Task<List<SearchResult>> SearchBooksAuthorsAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchBooksPagesAsync(string searhString)
+        private Task<List<SearchResult>> SearchBooksFormatsAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchBooksPublishersAsync(string searhString)
-        {
-            throw new NotImplementedException();
-        }
-        private Task<List<SearchResult>> SearchBooksLanguagesAsync(string searhString)
+        private Task<List<SearchResult>> SearchBooksPagesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchBooksIsbn10Async(string searhString)
+        private Task<List<SearchResult>> SearchBooksPublishersAsync(string searchString)
         {
             throw new NotImplementedException();
         }
-        private Task<List<SearchResult>> SearchBooksIsbn13Async(string searhString)
+        private Task<List<SearchResult>> SearchBooksLanguagesAsync(string searchString)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task<List<SearchResult>> SearchBooksIsbn10Async(string searchString)
+        {
+            throw new NotImplementedException();
+        }
+        private Task<List<SearchResult>> SearchBooksIsbn13Async(string searchString)
         {
             throw new NotImplementedException();
         }
@@ -83,27 +83,27 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region magazines
 
-        private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesPublishersAsync(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesPublishersAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesLanguagesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesLanguagesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesIsbn10Async(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesIsbn10Async(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesIsbn13Async(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesIsbn13Async(string searchString)
         {
             throw new NotImplementedException();
         }
@@ -111,46 +111,46 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region movies
 
-        private Task<List<SearchResult>> SearchMoviesTitlesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesTitlesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMoviesDirectorsAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesDirectorsAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMoviesProducersAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesProducersAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMoviesActorsAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesActorsAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMoviesLanguagesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesLanguagesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMoviesSubtitlesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesSubtitlesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
-        private Task<List<SearchResult>> SearchMoviesDubbedAsync(string searhString)
-        {
-            throw new NotImplementedException();
-        }
-
-        private Task<List<SearchResult>> SearchMoviesReleaseDateAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesDubbedAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMoviesRunTimeAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesReleaseDateAsync(string searchString)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task<List<SearchResult>> SearchMoviesRunTimeAsync(string searchString)
         {
             throw new NotImplementedException();
         }
@@ -158,31 +158,133 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region music
 
-        private Task<List<SearchResult>> SearchMusicTypesAsync(string searhString)
+        private async Task<List<SearchResult>> SearchMusicTypesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> sr = new List<SearchResult>();
+
+            List<Music> results = await _db.SearchMusicByType(searchString);
+
+            foreach(Music result in results)
+            {
+                string[] description =
+                {
+                    "Release in " + result.ReleaseDate,
+                    "\nPerformed by " + result.Artist,
+                    "\nProduced by" + result.Label,
+                    "\nASIN: " + result.Asin
+                };
+
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+            }
+
+            return sr;
         }
-        private Task<List<SearchResult>> SearchMusicTitlesAsync(string searhString)
+        private async Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> sr = new List<SearchResult>();
+
+            List<Music> results = await _db.SearchMusicByTitle(searchString);
+
+            foreach (Music result in results)
+            {
+                string[] description =
+                {
+                    "Release in " + result.ReleaseDate,
+                    "\nPerformed by " + result.Artist,
+                    "\nProduced by" + result.Label,
+                    "\nASIN: " + result.Asin
+                };
+
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+            }
+
+            return sr;
         }
-        private Task<List<SearchResult>> SearchMusicArtistsAsync(string searhString)
+        private async Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> sr = new List<SearchResult>();
+
+            List<Music> results = await _db.SearchMusicByArtist(searchString);
+
+            foreach (Music result in results)
+            {
+                string[] description =
+                {
+                    "Release in " + result.ReleaseDate,
+                    "\nPerformed by " + result.Artist,
+                    "\nProduced by" + result.Label,
+                    "\nASIN: " + result.Asin
+                };
+
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+            }
+
+            return sr;
         }
 
-        private Task<List<SearchResult>> SearchMusicLabelsAsync(string searhString)
+        private async Task<List<SearchResult>> SearchMusicLabelsAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> sr = new List<SearchResult>();
+
+            List<Music> results = await _db.SearchMusicByLabel(searchString);
+
+            foreach (Music result in results)
+            {
+                string[] description =
+                {
+                    "Release in " + result.ReleaseDate,
+                    "\nPerformed by " + result.Artist,
+                    "\nProduced by" + result.Label,
+                    "\nASIN: " + result.Asin
+                };
+
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+            }
+
+            return sr;
         }
 
-        private Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searhString)
+        private async Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> sr = new List<SearchResult>();
+
+            List<Music> results = await _db.SearchMusicByReleaseDate(searchString);
+
+            foreach (Music result in results)
+            {
+                string[] description =
+                {
+                    "Release in " + result.ReleaseDate,
+                    "\nPerformed by " + result.Artist,
+                    "\nProduced by" + result.Label,
+                    "\nASIN: " + result.Asin
+                };
+
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+            }
+
+            return sr;
         }
-        private Task<List<SearchResult>> SearchMusicAsinAsync(string searhString)
+        private async Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> sr = new List<SearchResult>();
+
+            List<Music> results = await _db.SearchMusicByAsin(searchString);
+
+            foreach (Music result in results)
+            {
+                string[] description =
+                {
+                    "Release in " + result.ReleaseDate,
+                    "\nPerformed by " + result.Artist,
+                    "\nProduced by" + result.Label,
+                    "\nASIN: " + result.Asin
+                };
+
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+            }
+
+            return sr;
         }
 
         #endregion
