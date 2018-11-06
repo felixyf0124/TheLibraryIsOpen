@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Constants;
 
 namespace TheLibraryIsOpen.Models.Search
 {
@@ -83,27 +84,61 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region magazines
 
-        private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searhString)
+        public Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                List<SearchResult> convertedResult = new List<SearchResult>();
+                List<Magazine> result = _db.SearchMagazinesByTitle(searchString);
+                if(result.Count != 0) 
+                {
+                    foreach(Magazine magazine in result)
+                    {
+                        String[] description = {
+                            "publisher:" + magazine.Publisher,
+                            "language:" + magazine.Language,
+                            "date:"+ magazine.Date,
+                            "isbn10:" + magazine.Isbn10,
+                            "isbn13" + magazine.Isbn13
+                        };
+                        convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, description));
+                    }
+                } else {
+                    String[] description = { "nothing", "nothing", "nothing", "nothing", "nothing" };
+                    convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, 0, "none", description));
+                }
+                for (int i = 0; i < convertedResult.Count; i++)
+                {
+                    Console.WriteLine("---------Start---------------------------");
+                    Console.WriteLine(convertedResult[i].Type);
+                    Console.WriteLine(convertedResult[i].Name);
+                    Console.WriteLine(convertedResult[i].ModelId);
+                    Console.WriteLine(convertedResult[i].Description[0]);
+                    Console.WriteLine(convertedResult[i].Description[1]);
+                    Console.WriteLine(convertedResult[i].Description[2]);
+                    Console.WriteLine(convertedResult[i].Description[3]);
+                    Console.WriteLine(convertedResult[i].Description[4]);
+                }
+                return convertedResult;
+            });
+        }
+
+        private Task<List<SearchResult>> SearchMagazinesPublishersAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesPublishersAsync(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesLanguagesAsync(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesLanguagesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesIsbn10Async(string searchString)
         {
             throw new NotImplementedException();
         }
 
-        private Task<List<SearchResult>> SearchMagazinesIsbn10Async(string searhString)
-        {
-            throw new NotImplementedException();
-        }
-
-        private Task<List<SearchResult>> SearchMagazinesIsbn13Async(string searhString)
+        private Task<List<SearchResult>> SearchMagazinesIsbn13Async(string searchString)
         {
             throw new NotImplementedException();
         }
