@@ -2079,7 +2079,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE isbn10 = \" { SearchString } \";";
+            string query = $"SELECT * FROM books WHERE isbn10 = \"{SearchString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2120,7 +2120,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE isbn13 = \" { SearchString } \";";
+            string query = $"SELECT * FROM books WHERE isbn13 = \"{SearchString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2161,7 +2161,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(title) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(title) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2202,7 +2202,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(author) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(author) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2243,7 +2243,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(format) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(format) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2284,7 +2284,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE pages = \" { SearchString } \";";
+            string query = $"SELECT * FROM books WHERE pages = \"{SearchString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2325,7 +2325,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(publisher) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(publisher) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2366,7 +2366,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\" {SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
