@@ -160,131 +160,149 @@ namespace TheLibraryIsOpen.Models.Search
 
         private async Task<List<SearchResult>> SearchMusicTypesAsync(string searchString)
         {
-            List<SearchResult> sr = new List<SearchResult>();
-
-            List<Music> results = await _db.SearchMusicByType(searchString);
-
-            foreach(Music result in results)
+            return await Task.Factory.StartNew(() =>
             {
-                string[] description =
+                List<SearchResult> sr = new List<SearchResult>();
+
+                List<Music> results = _db.SearchMusicByType(searchString);
+
+                foreach (Music result in results)
                 {
-                    "Release in " + result.ReleaseDate,
-                    "\nPerformed by " + result.Artist,
-                    "\nProduced by" + result.Label,
-                    "\nASIN: " + result.Asin
-                };
+                    string[] description =
+                    {
+                        "Release in " + result.ReleaseDate,
+                        "\nPerformed by " + result.Artist,
+                        "\nProduced by" + result.Label,
+                        "\nASIN: " + result.Asin
+                    };
 
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
-            }
+                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                }
 
-            return sr;
+                return sr;
+            });
         }
         private async Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
         {
-            List<SearchResult> sr = new List<SearchResult>();
-
-            List<Music> results = await _db.SearchMusicByTitle(searchString);
-
-            foreach (Music result in results)
+            return await Task.Factory.StartNew(() =>
             {
-                string[] description =
+                List<SearchResult> sr = new List<SearchResult>();
+
+                List<Music> results = _db.SearchMusicByTitle(searchString);
+
+                foreach (Music result in results)
                 {
-                    "Release in " + result.ReleaseDate,
-                    "\nPerformed by " + result.Artist,
-                    "\nProduced by" + result.Label,
-                    "\nASIN: " + result.Asin
-                };
+                    string[] description =
+                    {
+                        "Release in " + result.ReleaseDate,
+                        "\nPerformed by " + result.Artist,
+                        "\nProduced by" + result.Label,
+                        "\nASIN: " + result.Asin
+                    };
 
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
-            }
+                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                }
 
-            return sr;
+                return sr;
+            });
         }
         private async Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
         {
-            List<SearchResult> sr = new List<SearchResult>();
-
-            List<Music> results = await _db.SearchMusicByArtist(searchString);
-
-            foreach (Music result in results)
+            return await Task.Factory.StartNew(() =>
             {
-                string[] description =
+                List<SearchResult> sr = new List<SearchResult>();
+
+                List<Music> results = _db.SearchMusicByArtist(searchString);
+
+                foreach (Music result in results)
                 {
-                    "Release in " + result.ReleaseDate,
-                    "\nPerformed by " + result.Artist,
-                    "\nProduced by" + result.Label,
-                    "\nASIN: " + result.Asin
-                };
+                    string[] description =
+                    {
+                        "Release in " + result.ReleaseDate,
+                        "\nPerformed by " + result.Artist,
+                        "\nProduced by" + result.Label,
+                        "\nASIN: " + result.Asin
+                    };
 
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
-            }
+                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                }
 
-            return sr;
+                return sr;
+            });
         }
 
         private async Task<List<SearchResult>> SearchMusicLabelsAsync(string searchString)
         {
-            List<SearchResult> sr = new List<SearchResult>();
-
-            List<Music> results = await _db.SearchMusicByLabel(searchString);
-
-            foreach (Music result in results)
+            return await Task.Factory.StartNew(() =>
             {
-                string[] description =
+                List<SearchResult> sr = new List<SearchResult>();
+
+                List<Music> results = _db.SearchMusicByLabel(searchString);
+
+                foreach (Music result in results)
                 {
-                    "Release in " + result.ReleaseDate,
-                    "\nPerformed by " + result.Artist,
-                    "\nProduced by" + result.Label,
-                    "\nASIN: " + result.Asin
-                };
+                    string[] description =
+                    {
+                        "Release in " + result.ReleaseDate,
+                        "\nPerformed by " + result.Artist,
+                        "\nProduced by" + result.Label,
+                        "\nASIN: " + result.Asin
+                    };
 
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
-            }
+                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                }
 
-            return sr;
+                return sr;
+            });
         }
 
         private async Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searchString)
         {
-            List<SearchResult> sr = new List<SearchResult>();
-
-            List<Music> results = await _db.SearchMusicByReleaseDate(searchString);
-
-            foreach (Music result in results)
+            return await Task.Factory.StartNew(() =>
             {
-                string[] description =
+                List<SearchResult> sr = new List<SearchResult>();
+
+                List<Music> results = _db.SearchMusicByReleaseDate(searchString);
+
+                foreach (Music result in results)
                 {
-                    "Release in " + result.ReleaseDate,
-                    "\nPerformed by " + result.Artist,
-                    "\nProduced by" + result.Label,
-                    "\nASIN: " + result.Asin
-                };
+                    string[] description =
+                    {
+                        "Release in " + result.ReleaseDate,
+                        "\nPerformed by " + result.Artist,
+                        "\nProduced by" + result.Label,
+                        "\nASIN: " + result.Asin
+                    };
 
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
-            }
+                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                }
 
-            return sr;
+                return sr;
+            });
         }
         private async Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
         {
-            List<SearchResult> sr = new List<SearchResult>();
-
-            List<Music> results = await _db.SearchMusicByAsin(searchString);
-
-            foreach (Music result in results)
+            return await Task.Factory.StartNew(() =>
             {
-                string[] description =
+                List<SearchResult> sr = new List<SearchResult>();
+
+                List<Music> results = _db.SearchMusicByASIN(searchString);
+
+                foreach (Music result in results)
                 {
-                    "Release in " + result.ReleaseDate,
-                    "\nPerformed by " + result.Artist,
-                    "\nProduced by" + result.Label,
-                    "\nASIN: " + result.Asin
-                };
+                    string[] description =
+                    {
+                        "Release in " + result.ReleaseDate,
+                        "\nPerformed by " + result.Artist,
+                        "\nProduced by" + result.Label,
+                        "\nASIN: " + result.Asin
+                    };
 
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
-            }
+                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                }
 
-            return sr;
+                return sr;
+            });
         }
 
         #endregion
