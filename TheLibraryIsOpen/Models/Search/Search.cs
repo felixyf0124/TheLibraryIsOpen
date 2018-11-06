@@ -158,9 +158,9 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region music
 
-        private async Task<List<SearchResult>> SearchMusicTypesAsync(string searchString)
+        private Task<List<SearchResult>> SearchMusicTypesAsync(string searchString)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 List<SearchResult> sr = new List<SearchResult>();
 
@@ -182,9 +182,9 @@ namespace TheLibraryIsOpen.Models.Search
                 return sr;
             });
         }
-        private async Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
+        private Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 List<SearchResult> sr = new List<SearchResult>();
 
@@ -206,9 +206,9 @@ namespace TheLibraryIsOpen.Models.Search
                 return sr;
             });
         }
-        private async Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
+        private Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 List<SearchResult> sr = new List<SearchResult>();
 
@@ -231,9 +231,9 @@ namespace TheLibraryIsOpen.Models.Search
             });
         }
 
-        private async Task<List<SearchResult>> SearchMusicLabelsAsync(string searchString)
+        private Task<List<SearchResult>> SearchMusicLabelsAsync(string searchString)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 List<SearchResult> sr = new List<SearchResult>();
 
@@ -256,9 +256,9 @@ namespace TheLibraryIsOpen.Models.Search
             });
         }
 
-        private async Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searchString)
+        private Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searchString)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 List<SearchResult> sr = new List<SearchResult>();
 
@@ -280,9 +280,9 @@ namespace TheLibraryIsOpen.Models.Search
                 return sr;
             });
         }
-        private async Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
+        private Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 List<SearchResult> sr = new List<SearchResult>();
 
