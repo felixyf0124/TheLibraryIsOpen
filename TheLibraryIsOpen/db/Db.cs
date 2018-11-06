@@ -446,6 +446,247 @@ namespace TheLibraryIsOpen.Database
             }
             return magazine;
         }
+
+        #region SearchMagazines
+
+        // methods for searching magazines
+
+        public List<Magazine> SearchMagazinesByTitle(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(title) LIKE LOWER(%\" { MagazineString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Magazine> SearchMagazinesByPublisher(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(publisher) LIKE LOWER(%\" { MagazineString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Magazine> SearchMagazinesByLanguage(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(language) LIKE LOWER(%\" { MagazineString } \"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Magazine> SearchMagazinesByDate(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(date) = \" { MagazineString } \";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Magazine> SearchMagazinesByIsbn10(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(isbn10) = \" { MagazineString } \";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Magazine> SearchMagazinesByIsbn13(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(isbn13) = \" { MagazineString } \";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+        
+        #endregion
+
         #endregion
         #region music
         /*
