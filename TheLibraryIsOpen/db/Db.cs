@@ -581,14 +581,14 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        #region SearchBooks
+        #region SearchMusic
 
         public List<Music> SearchMusicByType(string musicType)
         {
             List<Music> list = new List<Music>();
             Music music = null;
 
-            string query = $"SELECT * FROM cds WHERE LOWER(type) LIKE LOWER(%\" {musicType} \"%);";
+            string query = $"SELECT * FROM cds WHERE LOWER(type) LIKE LOWER(%\"{musicType}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -627,7 +627,7 @@ namespace TheLibraryIsOpen.Database
             List<Music> list = new List<Music>();
             Music music = null;
 
-            string query = $"SELECT * FROM cds WHERE LOWER(title) LIKE LOWER(%\" {musicTitle} \"%);";
+            string query = $"SELECT * FROM cds WHERE LOWER(title) LIKE LOWER(%\"{musicTitle}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -666,7 +666,7 @@ namespace TheLibraryIsOpen.Database
             List<Music> list = new List<Music>();
             Music music = null;
 
-            string query = $"SELECT * FROM cds WHERE LOWER(artist) LIKE LOWER(%\" {musicArtist} \"%);";
+            string query = $"SELECT * FROM cds WHERE LOWER(artist) LIKE LOWER(%\"{musicArtist}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -705,7 +705,7 @@ namespace TheLibraryIsOpen.Database
             List<Music> list = new List<Music>();
             Music music = null;
 
-            string query = $"SELECT * FROM cds WHERE LOWER(label) LIKE LOWER(%\" {musicLabel} \"%);";
+            string query = $"SELECT * FROM cds WHERE LOWER(label) LIKE LOWER(%\"{musicLabel}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -744,7 +744,7 @@ namespace TheLibraryIsOpen.Database
             List<Music> list = new List<Music>();
             Music music = null;
 
-            string query = $"SELECT * FROM cds WHERE LOWER(releasedate) LIKE LOWER(%\" {musicReleaseDate} \"%);";
+            string query = $"SELECT * FROM cds WHERE LOWER(releasedate) LIKE LOWER(%\"{musicReleaseDate}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -783,7 +783,7 @@ namespace TheLibraryIsOpen.Database
             List<Music> list = new List<Music>();
             Music music = null;
 
-            string query = $"SELECT * FROM cds WHERE LOWER(ASIN) LIKE LOWER(%\" {musicASIN} \"%);";
+            string query = $"SELECT * FROM cds WHERE LOWER(ASIN) LIKE LOWER(%\"{musicASIN}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
