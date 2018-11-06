@@ -84,110 +84,204 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region magazines
 
-        public Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
+        private List<SearchResult> MagazineToSearchResult(List<Magazine> results)
+        {
+            //Initialization of a new list of search result
+            List<SearchResult> convertedResult = new List<SearchResult>();
+
+            foreach (Magazine magazine in results)
+            {
+                string[] description = {
+                        "title:" + magazine.Title,
+                        "publisher:" + magazine.Publisher,
+                        "language:" + magazine.Language,
+                        "date:"+ magazine.Date,
+                        "isbn10:" + magazine.Isbn10,
+                        "isbn13" + magazine.Isbn13
+                    };
+                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, description));
+            }
+
+            return convertedResult;
+        }
+
+        private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> convertedResult = new List<SearchResult>();
-                List<Magazine> result = _db.SearchMagazinesByTitle(searchString);
-                if(result.Count != 0) 
-                {
-                    foreach(Magazine magazine in result)
-                    {
-                        String[] description = {
-                            "publisher:" + magazine.Publisher,
-                            "language:" + magazine.Language,
-                            "date:"+ magazine.Date,
-                            "isbn10:" + magazine.Isbn10,
-                            "isbn13" + magazine.Isbn13
-                        };
-                        convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, description));
-                    }
-                } else {
-                    String[] description = { "nothing", "nothing", "nothing", "nothing", "nothing" };
-                    convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, 0, "none", description));
-                }
-                for (int i = 0; i < convertedResult.Count; i++)
-                {
-                    Console.WriteLine("---------Start---------------------------");
-                    Console.WriteLine(convertedResult[i].Type);
-                    Console.WriteLine(convertedResult[i].Name);
-                    Console.WriteLine(convertedResult[i].ModelId);
-                    Console.WriteLine(convertedResult[i].Description[0]);
-                    Console.WriteLine(convertedResult[i].Description[1]);
-                    Console.WriteLine(convertedResult[i].Description[2]);
-                    Console.WriteLine(convertedResult[i].Description[3]);
-                    Console.WriteLine(convertedResult[i].Description[4]);
-                }
-                return convertedResult;
+                //Retrieve all the corresponding magazines by title
+                List<Magazine> results = _db.SearchMagazinesByTitle(searchString);
+
+                return MagazineToSearchResult(results);
             });
         }
 
         private Task<List<SearchResult>> SearchMagazinesPublishersAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding magazines by publisher
+                List<Magazine> results = _db.SearchMagazinesByPublisher(searchString);
+
+                return MagazineToSearchResult(results);
+            });
         }
 
         private Task<List<SearchResult>> SearchMagazinesLanguagesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding magazines by language
+                List<Magazine> results = _db.SearchMagazinesByLanguage(searchString);
+
+                return MagazineToSearchResult(results);
+            });
+        }
+
+        private Task<List<SearchResult>> SearchMagazinesDateAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding magazines by date
+                List<Magazine> results = _db.SearchMagazinesByDate(searchString);
+
+                return MagazineToSearchResult(results);
+            });
         }
 
         private Task<List<SearchResult>> SearchMagazinesIsbn10Async(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding magazines by isbn 10
+                List<Magazine> results = _db.SearchMagazinesByIsbn10(searchString);
+
+                return MagazineToSearchResult(results);
+            });
         }
 
         private Task<List<SearchResult>> SearchMagazinesIsbn13Async(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding magazines by isbn 13
+                List<Magazine> results = _db.SearchMagazinesByIsbn13(searchString);
+
+                return MagazineToSearchResult(results);
+            });
         }
 
         #endregion
         #region movies
 
-        private Task<List<SearchResult>> SearchMoviesTitlesAsync(string searhString)
+        private List<SearchResult> MovieToSearchResult(List<DBModels.Movie> results)
         {
-            throw new NotImplementedException();
+            //Initialization of a new list of search result
+            List<SearchResult> convertedResult = new List<SearchResult>();
+
+            foreach (DBModels.Movie movie in results)
+            {
+                string[] description = {
+                    "title:" + movie.Title,
+                    "director:" + movie.Director,
+                    "language:" + movie.Language,
+                    "subtitles:" + movie.Subtitles,
+                    "dubbed:" + movie.Dubbed,
+                    "releaseDate:" + movie.ReleaseDate,
+                    "runTime:" + movie.RunTime
+                };
+                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, description));
+            }
+
+            return convertedResult;
         }
 
-        private Task<List<SearchResult>> SearchMoviesDirectorsAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesTitleAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by title
+                List<DBModels.Movie> results = _db.SearchMoviesByTitle(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
-        private Task<List<SearchResult>> SearchMoviesProducersAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesDirectorAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by director
+                List<DBModels.Movie> results = _db.SearchMoviesByDirector(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
-        private Task<List<SearchResult>> SearchMoviesActorsAsync(string searhString)
+        //// Not available
+        //private Task<List<SearchResult>> SearchMoviesProducersAsync(string searhString)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //private Task<List<SearchResult>> SearchMoviesActorsAsync(string searhString)
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //// Not available
+
+        private Task<List<SearchResult>> SearchMoviesLanguageAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by language
+                List<DBModels.Movie> results = _db.SearchMoviesByLanguage(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
-        private Task<List<SearchResult>> SearchMoviesLanguagesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesSubtitlesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by subtitle
+                List<DBModels.Movie> results = _db.SearchMoviesBySubtitles(searchString);
+
+                return MovieToSearchResult(results);
+            });
+        }
+        private Task<List<SearchResult>> SearchMoviesDubbedAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by subtitle
+                List<DBModels.Movie> results = _db.SearchMoviesByDubbed(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
-        private Task<List<SearchResult>> SearchMoviesSubtitlesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesReleaseDateAsync(string searchString)
         {
-            throw new NotImplementedException();
-        }
-        private Task<List<SearchResult>> SearchMoviesDubbedAsync(string searhString)
-        {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by release date
+                List<DBModels.Movie> results = _db.SearchMoviesByReleasedate(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
-        private Task<List<SearchResult>> SearchMoviesReleaseDateAsync(string searhString)
+        private Task<List<SearchResult>> SearchMoviesRunTimeAsync(string searchString)
         {
-            throw new NotImplementedException();
-        }
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by run time
+                List<DBModels.Movie> results = _db.SearchMoviesByRuntime(searchString);
 
-        private Task<List<SearchResult>> SearchMoviesRunTimeAsync(string searhString)
-        {
-            throw new NotImplementedException();
+                return MovieToSearchResult(results);
+            });
         }
 
         #endregion
