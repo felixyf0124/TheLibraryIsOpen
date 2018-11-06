@@ -456,7 +456,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(title) LIKE LOWER(%\" { MagazineString } \"%);";
+            string query = $"SELECT * FROM magazines WHERE LOWER(title) LIKE LOWER(%\"{MagazineString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -495,7 +495,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(publisher) LIKE LOWER(%\" { MagazineString } \"%);";
+            string query = $"SELECT * FROM magazines WHERE LOWER(publisher) LIKE LOWER(%\"{MagazineString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -534,7 +534,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(language) LIKE LOWER(%\" { MagazineString } \"%);";
+            string query = $"SELECT * FROM magazines WHERE LOWER(language) LIKE LOWER(%\"{MagazineString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -573,7 +573,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(date) = \" { MagazineString } \";";
+            string query = $"SELECT * FROM magazines WHERE LOWER(date) = \"{MagazineString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -612,7 +612,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(isbn10) = \" { MagazineString } \";";
+            string query = $"SELECT * FROM magazines WHERE LOWER(isbn10) = \"{MagazineString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -651,7 +651,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(isbn13) = \" { MagazineString } \";";
+            string query = $"SELECT * FROM magazines WHERE LOWER(isbn13) = \"{MagazineString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -982,7 +982,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(title) LIKE LOWER(%\" { MovieString } \"%);";
+            string query = $"SELECT * FROM movies WHERE LOWER(title) LIKE LOWER(%\"{MovieString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1021,7 +1021,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(director) LIKE LOWER(%\" { MovieString } \"%);";
+            string query = $"SELECT * FROM movies WHERE LOWER(director) LIKE LOWER(%\"{MovieString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1060,7 +1060,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(language) LIKE LOWER(%\" { MovieString } \"%);";
+            string query = $"SELECT * FROM movies WHERE LOWER(language) LIKE LOWER(%\"{MovieString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1099,7 +1099,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(subtitles) LIKE LOWER(%\" { MovieString } \"%);";
+            string query = $"SELECT * FROM movies WHERE LOWER(subtitles) LIKE LOWER(%\"{MovieString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1138,7 +1138,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE LOWER(dubbed) LIKE LOWER(%\" { MovieString } \"%);";
+            string query = $"SELECT * FROM movies WHERE LOWER(dubbed) LIKE LOWER(%\"{MovieString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1177,7 +1177,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE releasedate = \" { MovieString } \";";
+            string query = $"SELECT * FROM movies WHERE releasedate = \"{MovieString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1216,7 +1216,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE runtime = \" { MovieString } \";";
+            string query = $"SELECT * FROM movies WHERE runtime = \"{MovieString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2128,7 +2128,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\" {SearchString } \"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
