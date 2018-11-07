@@ -23,32 +23,20 @@ namespace TheLibraryIsOpen.Models.Search
 
         }
 
-        public Task<List<SearchResult>> SearchBooksAsync(string searchString)
+        public async Task<List<SearchResult>> SearchBooksAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-
-                List<Book> books = new List<Book>();
-                foreach (Book book in _db.SearchBooksByIsbn10(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByIsbn13(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByTitle(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByAuthor(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByFormat(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByPages(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByPublisher(searchString)) { if (!books.Contains(book)) books.Add(book); }
-                foreach (Book book in _db.SearchBooksByLanguage(searchString)) { if (!books.Contains(book)) books.Add(book); }
-
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
-            });
-
+            List<SearchResult> results = new List<SearchResult>();
+            foreach (SearchResult bookResult in (await SearchBooksIsbn10Async(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksIsbn13Async(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksTitlesAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksAuthorsAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksFormatsAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksPagesAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksPublishersAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            foreach (SearchResult bookResult in (await SearchBooksLanguagesAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
+            return results;
         }
+
         public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
         {
             throw new NotImplementedException();
@@ -67,32 +55,14 @@ namespace TheLibraryIsOpen.Models.Search
         private Task<List<SearchResult>> SearchBooksIsbn10Async(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByIsbn10(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByIsbn10(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksIsbn13Async(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByIsbn13(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByIsbn13(searchString));
 
             });
         }
@@ -100,97 +70,54 @@ namespace TheLibraryIsOpen.Models.Search
         private Task<List<SearchResult>> SearchBooksTitlesAsync(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByTitle(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByTitle(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksAuthorsAsync(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByAuthor(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByAuthor(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksFormatsAsync(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByFormat(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByFormat(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksPagesAsync(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByPages(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByPages(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksPublishersAsync(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByPublisher(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByPublisher(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksLanguagesAsync(string searchString)
         {
             return Task.Factory.StartNew(() => {
-
-                List<SearchResult> results = new List<SearchResult>();
-                List<Book> books = _db.SearchBooksByLanguage(searchString);
-                foreach (Book book in books)
-                {
-                    string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                    SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                    results.Add(result);
-                }
-                return results;
+                return ConvertBooksToSearchResults(_db.SearchBooksByLanguage(searchString));
             });
+        }
+
+        private List<SearchResult> ConvertBooksToSearchResults(List<Book> books) {
+            List<SearchResult> results = new List<SearchResult>();
+            foreach (Book book in books)
+            {
+                string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
+                SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
+                results.Add(result);
+            }
+            return results;
         }
 
         #endregion
