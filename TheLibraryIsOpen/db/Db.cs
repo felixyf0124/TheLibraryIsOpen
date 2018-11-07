@@ -1069,17 +1069,17 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new movie into the database
         public void CreateMovie(Movie movie)
         {
-            string query = $"INSERT INTO movies (title, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate}\", \"{movie.RunTime}\");";
+            string query = $"INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{movie.Director}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate}\", \"{movie.RunTime}\");";
             QuerySend(query);
         }
 
         //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
         public void CreateMovies(params Movie[] movies)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO movies (title, language, subtitles, dubbed, releasedate, runtime) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES");
             for (int i = 0; i < movies.Length; ++i)
             {
-                sb.Append($"(\"{movies[i].Title}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
+                sb.Append($"(\"{movies[i].Title}\", \"{movies[i].Director}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -1096,9 +1096,8 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE movies SET ");
             for (int i = 0; i < movies.Length; ++i)
             {
-                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\"WHERE cdID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
+                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\", releasedate = \"{movies[i].ReleaseDate}\", runtime = \"{movies[i].RunTime}\" WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
             }
-            Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 

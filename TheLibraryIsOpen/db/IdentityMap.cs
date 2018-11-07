@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -243,7 +243,7 @@ namespace TheLibraryIsOpen.db
 
 
                             while (!_movieLock.TryEnterReadLock(10)) ;
-                            bool hasMovie = _mags.ContainsKey(movie.MovieId);
+                            bool hasMovie = _movies.ContainsKey(movie.MovieId);
                             _movieLock.ExitReadLock();
 
                             while (!_movieLock.TryEnterWriteLock(10)) ;
