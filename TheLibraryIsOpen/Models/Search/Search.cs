@@ -417,7 +417,7 @@ namespace TheLibraryIsOpen.Models.Search
         }
         #endregion
 
-        private class SearchResultComparer : IEqualityComparer<SearchResult>
+        public class SearchResultComparer : IEqualityComparer<SearchResult>
         {
             public bool Equals(SearchResult x, SearchResult y) 
             {
