@@ -3,78 +3,79 @@
     Inspired from https://www.codeproject.com/Articles/43438/Connect-C-to-MySQL
     The database table looks like so:
     Table:      users
-    Columns:    clientID int(12) 
-                firstName varchar(255) 
-                lastName varchar(255) 
-                emailAddress varchar(255) 
-                homeAddress varchar(255) 
-                phoneNumber varchar(255) 
-                password varchar(255) 
+    Columns:    clientID int(12)
+                firstName varchar(255)
+                lastName varchar(255)
+                emailAddress varchar(255)
+                homeAddress varchar(255)
+                phoneNumber varchar(255)
+                password varchar(255)
                 isAdmin tinyint(1)
 
     Table: books
     Columns:
-            bookID int(11) AI PK 
-            title varchar(255) 
-            author varchar(255) 
-            format varchar(255) 
-            pages int(11) 
-            publisher varchar(255) 
-            date varchar(255) 
-            language varchar(255) 
-            isbn10 varchar(255) 
+            bookID int(11) AI PK
+            title varchar(255)
+            author varchar(255)
+            format varchar(255)
+            pages int(11)
+            publisher varchar(255)
+            date varchar(255)
+            language varchar(255)
+            isbn10 varchar(255)
             isbn13 varchar(255)
 
     Table: magazines
     Columns:
-            magazineID int(11) AI PK 
-            title varchar(255) 
-            publisher varchar(255) 
+            magazineID int(11) AI PK
+            title varchar(255)
+            publisher varchar(255)
             language varchar(255)
             date varchar(255)
-            isbn10 varchar(255) 
+            isbn10 varchar(255)
             isbn13 varchar(255)
 
     Table: movies
     Columns:
-            movieID int(11) AI PK 
-            title varchar(255) 
-            director varchar(255) 
-            language varchar(255) 
-            subtitles varchar(255) 
-            dubbed varchar(255) 
-            releasedate varchar(255) 
+            movieID int(11) AI PK
+            title varchar(255)
+            director varchar(255)
+            language varchar(255)
+            subtitles varchar(255)
+            dubbed varchar(255)
+            releasedate varchar(255)
             runtime varchar(255)
 
     Table: cds
     Columns:
-            cdID int(11) AI PK 
-            type varchar(255) 
-            title varchar(255) 
-            artist varchar(255) 
-            label varchar(255) 
-            releasedate varchar(255) 
-            asin varchar(255)   
+            cdID int(11) AI PK
+            type varchar(255)
+            title varchar(255)
+            artist varchar(255)
+            label varchar(255)
+            releasedate varchar(255)
+            asin varchar(255)
 
     Table: person
     Columns:
-            personID int(11) AI PK 
-            firstname varchar(255) 
-            lastname varchar(255) 
+            personID int(11) AI PK
+            firstname varchar(255)
+            lastname varchar(255)
 
     Table: movieactor , movieproducer
     Columns:
-            movieid int(11) 
+            movieid int(11)
             personid int(11)
 
     One things for query language:
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
  */
+
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Extensions.Logging;
 using System.Threading;
 using TheLibraryIsOpen.Models.DBModels;
 
@@ -102,6 +103,7 @@ namespace TheLibraryIsOpen.Database
         * For all types of tables
         * Method to send query to database for creating, updating and deleting
         */
+
         public void QuerySend(string query)
         {
             //open connection
@@ -119,8 +121,8 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
-
         #region clients
+
         // Returns a list of all clients in the db converted to client object.
         public List<Client> GetAllClients()
         {
@@ -208,7 +210,6 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM users WHERE emailAddress = \"{emailAddres}\";";
             Client client = null;
 
-
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 try
@@ -240,7 +241,6 @@ namespace TheLibraryIsOpen.Database
             return client;
         }
 
-
         // Inserts a new client into the db
         public void CreateClient(Client client)
         {
@@ -261,9 +261,11 @@ namespace TheLibraryIsOpen.Database
             string query = $"UPDATE users SET firstName = \"{client.FirstName}\", lastName = \"{client.LastName}\", emailAddress = \"{client.EmailAddress}\", homeAddress = \"{client.HomeAddress}\", phoneNumber = \"{client.PhoneNo}\", password = \"{client.Password}\", isAdmin = {client.IsAdmin} WHERE clientID = \"{client.clientId}\";";
             QuerySend(query);
         }
-        #endregion
+
+        #endregion clients
 
         #region magazines
+
         /*
          *  Magazine Table methods
          */
@@ -276,7 +278,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-
         public void CreateMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES");
@@ -286,7 +287,6 @@ namespace TheLibraryIsOpen.Database
             }
             QuerySend(sb.ToString());
         }
-
 
         public void UpdateMagazines(params Magazine[] magazines)
         {
@@ -305,7 +305,6 @@ namespace TheLibraryIsOpen.Database
             string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
 
             QuerySend(query);
-
         }
 
         // update magazine by ID
@@ -314,9 +313,7 @@ namespace TheLibraryIsOpen.Database
             string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
 
             QuerySend(query);
-
         }
-
 
         public void DeleteMagazines(params Magazine[] magazines)
         {
@@ -378,7 +375,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return magazines;
-
         }
 
         public Magazine GetMagazineById(int id)
@@ -396,10 +392,9 @@ namespace TheLibraryIsOpen.Database
             Magazine magazine = QueryRetrieveMaganize(query);
 
             return magazine;
-
         }
 
-        // 
+        //
         public Magazine GetMagazineByIsbn13(string isbn13)
         {
             string query = $"SELECT * FROM magazines WHERE isbn13 = \"{isbn13}\";";
@@ -413,6 +408,7 @@ namespace TheLibraryIsOpen.Database
     * For retrieving ONE object ONLY
     * Method to retrieve maganize information by id or isbn10 or isbn13
     */
+
         public Magazine QueryRetrieveMaganize(string query)
         {
             Magazine magazine = null;
@@ -487,7 +483,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
-
         }
 
         public List<Magazine> SearchMagazinesByPublisher(string MagazineString)
@@ -526,7 +521,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
-
         }
 
         public List<Magazine> SearchMagazinesByLanguage(string MagazineString)
@@ -565,7 +559,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
-
         }
 
         public List<Magazine> SearchMagazinesByDate(string MagazineString)
@@ -604,7 +597,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
-
         }
 
         public List<Magazine> SearchMagazinesByIsbn10(string MagazineString)
@@ -643,7 +635,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
-
         }
 
         public List<Magazine> SearchMagazinesByIsbn13(string MagazineString)
@@ -682,13 +673,14 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
-
         }
-        
-        #endregion
 
-        #endregion
+        #endregion SearchMagazines
+
+        #endregion magazines
+
         #region music
+
         /*
          * The following methods are made for the music table
          */
@@ -707,7 +699,6 @@ namespace TheLibraryIsOpen.Database
         // Update a music's information in the database by MusicId
         public void UpdateMusic(params Music[] music)
         {
-
             StringBuilder sb = new StringBuilder("UPDATE cds SET ");
             for (int i = 0; i < music.Length; ++i)
             {
@@ -743,11 +734,11 @@ namespace TheLibraryIsOpen.Database
             return QueryRetrieveMusic(query);
         }
 
-
         /*
          * For retrieving ONE object ONLY
-         * Method to retrieve music information by id or asin 
+         * Method to retrieve music information by id or asin
          */
+
         public Music QueryRetrieveMusic(string query)
         {
             Music music = null;
@@ -789,7 +780,6 @@ namespace TheLibraryIsOpen.Database
             List<Music> list = new List<Music>();
             Music music = null;
             string query = "SELECT * FROM cds;";
-
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1058,10 +1048,12 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        #endregion
+        #endregion SearchMusic
 
-        #endregion
+        #endregion music
+
         #region movies
+
         /*
          * The following methods are made for the movie table
          */
@@ -1104,7 +1096,6 @@ namespace TheLibraryIsOpen.Database
         // Delete movie by movieId from the database
         public void DeleteMovie(Movie movie)
         {
-
             DeleteMovieActors(movie);
             DeleteMovieProducers(movie);
             string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
@@ -1123,13 +1114,10 @@ namespace TheLibraryIsOpen.Database
 
             for (int i = 0; i < movies.Length; ++i)
             {
-
                 sb.Append($"WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
-
             }
 
             QuerySend(sb.ToString());
-
         }
 
         // Retrieve a movie information by id
@@ -1177,7 +1165,6 @@ namespace TheLibraryIsOpen.Database
             List<Movie> list = new List<Movie>();
             Movie movie = null;
             string query = "SELECT * FROM movies;";
-
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1575,10 +1562,12 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        #endregion
-        #endregion
+        #endregion SearchMovies
+
+        #endregion movies
 
         #region person
+
         /*
          * The following methods are made for the person table
          */
@@ -1705,7 +1694,9 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
+
         #region movieactor
+
         /*
          * The following methods are made for the movieActor table
          */
@@ -1719,7 +1710,6 @@ namespace TheLibraryIsOpen.Database
 
         public void CreateMovieActors(int movieId, params int[] actorIds)
         {
-
             StringBuilder ma = new StringBuilder($"INSERT INTO movieactor (movieID, personID) VALUES ");
             for (int i = 0; i < actorIds.Length; i++)
             {
@@ -1751,7 +1741,6 @@ namespace TheLibraryIsOpen.Database
             sb.Append(");");
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
-
         }
 
         // Get all movie actors from a specific movie
@@ -1779,7 +1768,6 @@ namespace TheLibraryIsOpen.Database
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
 
-
                             person = new Person(personId, firstname, lastname);
 
                             list.Add(person);
@@ -1790,8 +1778,11 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-        #endregion
+
+        #endregion movieactor
+
         #region movieproducer
+
         /*
          * The following methods are made for the movieProducer table
          */
@@ -1806,7 +1797,6 @@ namespace TheLibraryIsOpen.Database
         //insert producers into the database
         public void CreateMovieProducers(int movieId, params int[] producerIds)
         {
-
             StringBuilder mp = new StringBuilder($"INSERT INTO movieproducer (movieID, personID) VALUES ");
             for (int i = 0; i < producerIds.Length; i++)
             {
@@ -1824,13 +1814,11 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-
         // Delete all movieProducer by Movie object
         public void DeleteMovieProducers(Movie movie)
         {
             string query = $"DELETE FROM movieproducer WHERE (movieID = \"{movie.MovieId}\";";
             QuerySend(query);
-
         }
 
         public void DeleteMovieProducers(int movieId, params int[] producerIds)
@@ -1840,9 +1828,7 @@ namespace TheLibraryIsOpen.Database
             sb.Append(");");
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
-
         }
-
 
         // Get all movie producers from a specific movie
         public List<Person> GetAllMovieProducers(int movieId)
@@ -1869,7 +1855,6 @@ namespace TheLibraryIsOpen.Database
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
 
-
                             person = new Person(personId, firstname, lastname);
 
                             list.Add(person);
@@ -1880,10 +1865,13 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-        #endregion
-        #endregion
-   
+
+        #endregion movieproducer
+
+        #endregion person
+
         #region books
+
         public void DeleteBook(Book book)
         {
             string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
@@ -1944,7 +1932,6 @@ namespace TheLibraryIsOpen.Database
             return books;
         }
 
-
         // Return book get from isbn 10
         public Book GetBooksByIsbn(string isbn)
         {
@@ -1984,11 +1971,9 @@ namespace TheLibraryIsOpen.Database
             return book;
         }
 
-
         // Inserts a new book into the db
         public void CreateBook(Book book)
         {
-
             string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
 
             QuerySend(query);
@@ -2020,7 +2005,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE books SET ");
             for (int i = 0; i < books.Length; ++i)
             {
-                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", Language = \"{books[i].Language}\" ISBN-10 = \"{books[i].Isbn10}\", ISBN-13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
+                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", date = \"{books[i].Date}\",Language = \"{books[i].Language}\", ISBN10 = \"{books[i].Isbn10}\", ISBN13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
             }
 
             QuerySend(sb.ToString());
@@ -2041,7 +2026,6 @@ namespace TheLibraryIsOpen.Database
 
             QuerySend(query);
         }
-
 
         public Book GetBookById(int id)
         {
@@ -2160,8 +2144,8 @@ namespace TheLibraryIsOpen.Database
             return book;
         }
 
-
         #region SearchBooks
+
         public List<Book> SearchBooksByIsbn10(string SearchString)
         {
             //Create a list of unknown size to store the result
@@ -2489,14 +2473,9 @@ namespace TheLibraryIsOpen.Database
             }
             return books;
         }
-        #endregion
-        #endregion
 
+        #endregion SearchBooks
 
-        
-
-        
+        #endregion books
     }
-
-
 }

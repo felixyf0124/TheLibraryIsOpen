@@ -8,12 +8,10 @@ using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
-
 namespace TheLibraryIsOpen.db
 {
     public class IdentityMap
     {
-
         private readonly Db _db;
         private readonly ReaderWriterLockSlim _bookLock;
         private readonly ReaderWriterLockSlim _magLock;
@@ -212,7 +210,6 @@ namespace TheLibraryIsOpen.db
 
                             _db.CreateMovieActors(movie.MovieId, actorsToAdd);
 
-
                             var actorsToRemove = prevMovie.Actors?
                                                     .Select(a => a.PersonId)?
                                                     .Except(movie.Actors?
@@ -231,7 +228,6 @@ namespace TheLibraryIsOpen.db
 
                             _db.CreateMovieProducers(movie.MovieId, producersToAdd);
 
-
                             var producersToRemove = prevMovie.Producers?
                                                         .Select(a => a.PersonId)?
                                                         .Except(movie.Producers?
@@ -240,7 +236,6 @@ namespace TheLibraryIsOpen.db
                                                         ?? new int[0];
 
                             _db.DeleteMovieProducers(movie.MovieId, producersToRemove);
-
 
                             while (!_movieLock.TryEnterReadLock(10)) ;
                             bool hasMovie = _movies.ContainsKey(movie.MovieId);
@@ -294,8 +289,9 @@ namespace TheLibraryIsOpen.db
                     }
                     return true;
                 }
-                catch
+                catch (Exception e)
                 {
+                    Console.WriteLine(e.Message);
                     return false;
                 }
             });
@@ -413,7 +409,6 @@ namespace TheLibraryIsOpen.db
                     while (!_movieLock.TryEnterWriteLock(10)) ;
                     _movies.TryAdd(movieId, movieToFind);
                     _movieLock.ExitWriteLock();
-
                 }
             }
 
@@ -437,7 +432,6 @@ namespace TheLibraryIsOpen.db
                     while (!_musicLock.TryEnterWriteLock(10)) ;
                     _music.TryAdd(musicId, musicToFind);
                     _musicLock.ExitWriteLock();
-
                 }
             }
 
@@ -461,7 +455,6 @@ namespace TheLibraryIsOpen.db
                     while (!_peopleLock.TryEnterWriteLock(10)) ;
                     _people.TryAdd(personId, personToFind);
                     _peopleLock.ExitWriteLock();
-
                 }
             }
 
@@ -483,7 +476,6 @@ namespace TheLibraryIsOpen.db
                     _mags.TryAdd(magazineID, magazineToFind);
                     _magLock.ExitWriteLock();
                 }
-
             }
             return magazineToFind;
         }
@@ -503,7 +495,6 @@ namespace TheLibraryIsOpen.db
                     _books.TryAdd(bookID, bookToFind);
                     _bookLock.ExitWriteLock();
                 }
-
             }
             return bookToFind;
         }
