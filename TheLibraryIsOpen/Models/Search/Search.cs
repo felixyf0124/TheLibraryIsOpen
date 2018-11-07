@@ -19,10 +19,20 @@ namespace TheLibraryIsOpen.Models.Search
         }
 
 
-        public Task<List<SearchResult>> SearchAllAsync(string searchString)
+        public async Task<List<SearchResult>> SearchAllAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> results = new List<SearchResult>();
 
+            var books = SearchBooksAsync(searchString);
+            var magazines = SearchMagazinesAsync(searchString);
+            var movies = SearchMoviesAsync(searchString);
+            var musics = SearchMusicAsync(searchString);
+            results.AddRange(await books);
+            results.AddRange(await magazines);
+            results.AddRange(await movies);
+            results.AddRange(await musics);
+
+            return results;
         }
 
         public async Task<List<SearchResult>> SearchBooksAsync(string searchString)
