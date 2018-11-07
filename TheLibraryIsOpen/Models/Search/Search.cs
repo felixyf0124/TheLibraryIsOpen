@@ -39,13 +39,29 @@ namespace TheLibraryIsOpen.Models.Search
             return results.Distinct(new SearchResultComparer()).ToList();
         }
 
-        public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
+        public async Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> results = new List<SearchResult>();
+            results.AddRange(await SearchMagazinesTitlesAsync(searchString));
+            results.AddRange(await SearchMagazinesPublishersAsync(searchString));
+            results.AddRange(await SearchMagazinesLanguagesAsync(searchString));
+            results.AddRange(await SearchMagazinesDateAsync(searchString));
+            results.AddRange(await SearchMagazinesIsbn10Async(searchString));
+            results.AddRange(await SearchMagazinesIsbn13Async(searchString));
+            return results.Distinct(new SearchResultComparer()).ToList();
+
         }
-        public Task<List<SearchResult>> SearchMoviesAsync(string searchString)
+        public async Task<List<SearchResult>> SearchMoviesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> results = new List<SearchResult>();
+            results.AddRange(await SearchMoviesTitleAsync(searchString));
+            results.AddRange(await SearchMoviesDirectorAsync(searchString));
+            results.AddRange(await SearchMoviesLanguageAsync(searchString));
+            results.AddRange(await SearchMoviesSubtitlesAsync(searchString));
+            results.AddRange(await SearchMoviesDubbedAsync(searchString));
+            results.AddRange(await SearchMoviesReleaseDateAsync(searchString));
+            results.AddRange(await SearchMoviesRunTimeAsync(searchString));
+            return results.Distinct(new SearchResultComparer()).ToList();
         }
         public Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
@@ -259,18 +275,6 @@ namespace TheLibraryIsOpen.Models.Search
                 return MovieToSearchResult(results);
             });
         }
-
-        //// Not available
-        //private Task<List<SearchResult>> SearchMoviesProducersAsync(string searhString)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private Task<List<SearchResult>> SearchMoviesActorsAsync(string searhString)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //// Not available
 
         private Task<List<SearchResult>> SearchMoviesLanguageAsync(string searchString)
         {
