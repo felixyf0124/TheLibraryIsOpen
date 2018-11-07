@@ -136,11 +136,11 @@ namespace TheLibraryIsOpen.Controllers
                 searchResults[i] = await queryTask[i];
             }
 
-            IEnumerable<SearchResult> matchingSearchResults = new List<SearchResult>(searchResults[0]);
+            HashSet<SearchResult> matchingSearchResults = new HashSet<SearchResult>(searchResults[0], new Search.SearchResultComparer());
 
             for (int i = 1; i < searchResults.Length; i++)
             {
-                matchingSearchResults = matchingSearchResults.Intersect(searchResults[i], new Search.SearchResultComparer());
+                matchingSearchResults.IntersectWith(searchResults[i]);
             }
 
             return View(matchingSearchResults.OrderBy(r=>r.Name));
