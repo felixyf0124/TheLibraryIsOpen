@@ -25,16 +25,16 @@ namespace TheLibraryIsOpen.Models.Search
 
         public async Task<List<SearchResult>> SearchBooksAsync(string searchString)
         {
-            List<SearchResult> results = new List<SearchResult>();
-            foreach (SearchResult bookResult in (await SearchBooksIsbn10Async(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksIsbn13Async(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksTitlesAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksAuthorsAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksFormatsAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksPagesAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksPublishersAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            foreach (SearchResult bookResult in (await SearchBooksLanguagesAsync(searchString))) { if (!results.Contains(bookResult)) results.Add(bookResult); }
-            return results;
+            HashSet<SearchResult> distinctResults = new HashSet<SearchResult>();
+            distinctResults.UnionWith(await SearchBooksIsbn10Async(searchString));
+            distinctResults.UnionWith(await SearchBooksIsbn13Async(searchString));
+            distinctResults.UnionWith(await SearchBooksTitlesAsync(searchString));
+            distinctResults.UnionWith(await SearchBooksAuthorsAsync(searchString));
+            distinctResults.UnionWith(await SearchBooksFormatsAsync(searchString));
+            distinctResults.UnionWith(await SearchBooksPagesAsync(searchString));
+            distinctResults.UnionWith(await SearchBooksPublishersAsync(searchString));
+            distinctResults.UnionWith(await SearchBooksLanguagesAsync(searchString));
+            return new List<SearchResult>(distinctResults);
         }
 
         public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
