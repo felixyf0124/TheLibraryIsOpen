@@ -35,7 +35,7 @@ namespace TheLibraryIsOpen.Models.Search
             results.AddRange(await SearchBooksPagesAsync(searchString));
             results.AddRange(await SearchBooksPublishersAsync(searchString));
             results.AddRange(await SearchBooksLanguagesAsync(searchString));
-            return results.Distinct().ToList();
+            return results.Distinct(new SearchResultComparer()).ToList();
         }
 
         public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
@@ -228,5 +228,18 @@ namespace TheLibraryIsOpen.Models.Search
         }
 
         #endregion
+
+        private class SearchResultComparer : IEqualityComparer<SearchResult>
+        {
+            public bool Equals(SearchResult x, SearchResult y) 
+            {
+                return (x.ModelId == y.ModelId && x.Type == y.Type);
+            }
+
+            public int GetHashCode(SearchResult obj) 
+            {
+                return $"{obj.Type}-{obj.ModelId}".GetHashCode();
+            }
+        }
     }
 }
