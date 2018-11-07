@@ -276,6 +276,16 @@ namespace TheLibraryIsOpen.Models.Search
             });
         }
 
+        private Task<List<SearchResult>> SearchMoviesProducersAsync(string searchString)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task<List<SearchResult>> SearchMoviesActorsAsync(string searchString)
+        {
+            throw new NotImplementedException();
+        }
+
         private Task<List<SearchResult>> SearchMoviesLanguageAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
