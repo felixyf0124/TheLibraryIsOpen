@@ -822,6 +822,244 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        #region SearchMusic
+
+        public List<Music> SearchMusicByType(string musicType)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(type) LIKE LOWER(%\"{musicType}\"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByTitle(string musicTitle)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(title) LIKE LOWER(%\"{musicTitle}\"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByArtist(string musicArtist)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(artist) LIKE LOWER(%\"{musicArtist}\"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByLabel(string musicLabel)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(label) LIKE LOWER(%\"{musicLabel}\"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByReleaseDate(string musicReleaseDate)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(releasedate) LIKE LOWER(%\"{musicReleaseDate}\"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByASIN(string musicASIN)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(ASIN) LIKE LOWER(%\"{musicASIN}\"%);";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        #endregion
+
         #endregion
         #region movies
         /*
@@ -1841,7 +2079,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE isbn10 = \" { SearchString } \";";
+            string query = $"SELECT * FROM books WHERE isbn10 = \"{SearchString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1882,7 +2120,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE isbn13 = \" { SearchString } \";";
+            string query = $"SELECT * FROM books WHERE isbn13 = \"{SearchString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1923,7 +2161,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(title) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(title) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1964,7 +2202,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(author) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(author) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2005,7 +2243,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(format) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(format) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2046,7 +2284,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE pages = \" { SearchString } \";";
+            string query = $"SELECT * FROM books WHERE pages = \"{SearchString}\";";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2087,7 +2325,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(publisher) LIKE LOWER(%\" { SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(publisher) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2128,7 +2366,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<Book> books = new List<Book>();
-            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\" {SearchString } \"%);";
+            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER(%\"{SearchString}\"%);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
