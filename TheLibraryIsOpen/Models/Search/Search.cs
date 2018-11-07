@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
-using System.Linq;
 
 namespace TheLibraryIsOpen.Models.Search
 {
@@ -24,11 +24,20 @@ namespace TheLibraryIsOpen.Models.Search
 
         }
 
-        public Task<List<SearchResult>> SearchBooksAsync(string searchString)
+        public async Task<List<SearchResult>> SearchBooksAsync(string searchString)
         {
-            throw new NotImplementedException();
-
+            List<SearchResult> results = new List<SearchResult>();
+            results.AddRange(await SearchBooksIsbn10Async(searchString));
+            results.AddRange(await SearchBooksIsbn13Async(searchString));
+            results.AddRange(await SearchBooksTitlesAsync(searchString));
+            results.AddRange(await SearchBooksAuthorsAsync(searchString));
+            results.AddRange(await SearchBooksFormatsAsync(searchString));
+            results.AddRange(await SearchBooksPagesAsync(searchString));
+            results.AddRange(await SearchBooksPublishersAsync(searchString));
+            results.AddRange(await SearchBooksLanguagesAsync(searchString));
+            return results.Distinct(new SearchResultComparer()).ToList();
         }
+
         public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
         {
             throw new NotImplementedException();
@@ -55,44 +64,76 @@ namespace TheLibraryIsOpen.Models.Search
 
         #region books
 
+        private Task<List<SearchResult>> SearchBooksIsbn10Async(string searchString)
+        {
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByIsbn10(searchString));
+            });
+        }
+
+        private Task<List<SearchResult>> SearchBooksIsbn13Async(string searchString)
+        {
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByIsbn13(searchString));
+
+            });
+        }
+
         private Task<List<SearchResult>> SearchBooksTitlesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByTitle(searchString));
+            });
         }
+
         private Task<List<SearchResult>> SearchBooksAuthorsAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByAuthor(searchString));
+            });
         }
 
         private Task<List<SearchResult>> SearchBooksFormatsAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByFormat(searchString));
+            });
         }
 
         private Task<List<SearchResult>> SearchBooksPagesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByPages(searchString));
+            });
         }
 
         private Task<List<SearchResult>> SearchBooksPublishersAsync(string searchString)
         {
-            throw new NotImplementedException();
-        }
-        private Task<List<SearchResult>> SearchBooksLanguagesAsync(string searchString)
-        {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByPublisher(searchString));
+            });
         }
 
-        private Task<List<SearchResult>> SearchBooksIsbn10Async(string searchString)
+        private Task<List<SearchResult>> SearchBooksLanguagesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                return ConvertBooksToSearchResults(_db.SearchBooksByLanguage(searchString));
+            });
         }
-        private Task<List<SearchResult>> SearchBooksIsbn13Async(string searchString)
-        {
-            throw new NotImplementedException();
+
+        private List<SearchResult> ConvertBooksToSearchResults(List<Book> books) {
+            List<SearchResult> results = new List<SearchResult>();
+            foreach (Book book in books)
+            {
+                string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
+                SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
+                results.Add(result);
+            }
+            return results;
         }
 
         #endregion
+
         #region magazines
 
         private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
@@ -246,5 +287,18 @@ namespace TheLibraryIsOpen.Models.Search
             return sr;
         }
         #endregion
+
+        private class SearchResultComparer : IEqualityComparer<SearchResult>
+        {
+            public bool Equals(SearchResult x, SearchResult y) 
+            {
+                return (x.ModelId == y.ModelId && x.Type == y.Type);
+            }
+
+            public int GetHashCode(SearchResult obj) 
+            {
+                return $"{obj.Type}-{obj.ModelId}".GetHashCode();
+            }
+        }
     }
 }
