@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models;
@@ -25,16 +26,16 @@ namespace TheLibraryIsOpen.Models.Search
 
         public async Task<List<SearchResult>> SearchBooksAsync(string searchString)
         {
-            HashSet<SearchResult> distinctResults = new HashSet<SearchResult>();
-            distinctResults.UnionWith(await SearchBooksIsbn10Async(searchString));
-            distinctResults.UnionWith(await SearchBooksIsbn13Async(searchString));
-            distinctResults.UnionWith(await SearchBooksTitlesAsync(searchString));
-            distinctResults.UnionWith(await SearchBooksAuthorsAsync(searchString));
-            distinctResults.UnionWith(await SearchBooksFormatsAsync(searchString));
-            distinctResults.UnionWith(await SearchBooksPagesAsync(searchString));
-            distinctResults.UnionWith(await SearchBooksPublishersAsync(searchString));
-            distinctResults.UnionWith(await SearchBooksLanguagesAsync(searchString));
-            return new List<SearchResult>(distinctResults);
+            List<SearchResult> results = new List<SearchResult>();
+            results.AddRange(await SearchBooksIsbn10Async(searchString));
+            results.AddRange(await SearchBooksIsbn13Async(searchString));
+            results.AddRange(await SearchBooksTitlesAsync(searchString));
+            results.AddRange(await SearchBooksAuthorsAsync(searchString));
+            results.AddRange(await SearchBooksFormatsAsync(searchString));
+            results.AddRange(await SearchBooksPagesAsync(searchString));
+            results.AddRange(await SearchBooksPublishersAsync(searchString));
+            results.AddRange(await SearchBooksLanguagesAsync(searchString));
+            return results.Distinct().ToList();
         }
 
         public Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
