@@ -28,51 +28,91 @@ namespace TheLibraryIsOpen.Models.Search
         public async Task<List<SearchResult>> SearchBooksAsync(string searchString)
         {
             List<SearchResult> results = new List<SearchResult>();
-            results.AddRange(await SearchBooksIsbn10Async(searchString));
-            results.AddRange(await SearchBooksIsbn13Async(searchString));
-            results.AddRange(await SearchBooksTitlesAsync(searchString));
-            results.AddRange(await SearchBooksAuthorsAsync(searchString));
-            results.AddRange(await SearchBooksFormatsAsync(searchString));
-            results.AddRange(await SearchBooksPagesAsync(searchString));
-            results.AddRange(await SearchBooksPublishersAsync(searchString));
-            results.AddRange(await SearchBooksLanguagesAsync(searchString));
+
+            var b1 = SearchBooksIsbn10Async(searchString);
+            var b2 = SearchBooksIsbn13Async(searchString);
+            var b3 = SearchBooksTitlesAsync(searchString);
+            var b4 = SearchBooksAuthorsAsync(searchString);
+            var b5 = SearchBooksFormatsAsync(searchString);
+            var b6 = SearchBooksPagesAsync(searchString);
+            var b7 = SearchBooksPublishersAsync(searchString);
+            var b8 = SearchBooksLanguagesAsync(searchString);
+
+            results.AddRange(await b1);
+            results.AddRange(await b2);
+            results.AddRange(await b3);
+            results.AddRange(await b4);
+            results.AddRange(await b5);
+            results.AddRange(await b6);
+            results.AddRange(await b7);
+            results.AddRange(await b8);
+
             return results.Distinct(new SearchResultComparer()).ToList();
         }
 
         public async Task<List<SearchResult>> SearchMagazinesAsync(string searchString)
         {
             List<SearchResult> results = new List<SearchResult>();
-            results.AddRange(await SearchMagazinesTitlesAsync(searchString));
-            results.AddRange(await SearchMagazinesPublishersAsync(searchString));
-            results.AddRange(await SearchMagazinesLanguagesAsync(searchString));
-            results.AddRange(await SearchMagazinesDateAsync(searchString));
-            results.AddRange(await SearchMagazinesIsbn10Async(searchString));
-            results.AddRange(await SearchMagazinesIsbn13Async(searchString));
+
+            var m1 = SearchMagazinesTitlesAsync(searchString);
+            var m2 = SearchMagazinesPublishersAsync(searchString);
+            var m3 = SearchMagazinesLanguagesAsync(searchString);
+            var m4 = SearchMagazinesDateAsync(searchString);
+            var m5 = SearchMagazinesIsbn10Async(searchString);
+            var m6 = SearchMagazinesIsbn13Async(searchString);
+
+            results.AddRange(await m1);
+            results.AddRange(await m2);
+            results.AddRange(await m3);
+            results.AddRange(await m4);
+            results.AddRange(await m5);
+            results.AddRange(await m6);
+
             return results.Distinct(new SearchResultComparer()).ToList();
 
         }
+
         public async Task<List<SearchResult>> SearchMoviesAsync(string searchString)
         {
             List<SearchResult> results = new List<SearchResult>();
-            results.AddRange(await SearchMoviesTitleAsync(searchString));
-            results.AddRange(await SearchMoviesDirectorAsync(searchString));
-            results.AddRange(await SearchMoviesLanguageAsync(searchString));
-            results.AddRange(await SearchMoviesSubtitlesAsync(searchString));
-            results.AddRange(await SearchMoviesDubbedAsync(searchString));
-            results.AddRange(await SearchMoviesReleaseDateAsync(searchString));
-            results.AddRange(await SearchMoviesRunTimeAsync(searchString));
+
+            var m1 = SearchMoviesTitleAsync(searchString);
+            var m2 = SearchMoviesDirectorAsync(searchString);
+            var m3 = SearchMoviesLanguageAsync(searchString);
+            var m5 = SearchMoviesSubtitlesAsync(searchString);
+            var m6 = SearchMoviesDubbedAsync(searchString);
+            var m7 = SearchMoviesReleaseDateAsync(searchString);
+            var m8 = SearchMoviesRunTimeAsync(searchString);
+
+            results.AddRange(await m1);
+            results.AddRange(await m2);
+            results.AddRange(await m3);
+            results.AddRange(await m5);
+            results.AddRange(await m6);
+            results.AddRange(await m7);
+            results.AddRange(await m8);
+
             return results.Distinct(new SearchResultComparer()).ToList();
         }
 
         public async Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
             List<SearchResult> results = new List<SearchResult>();
-            results.AddRange(await SearchMusicTypesAsync(searchString));
-            results.AddRange(await SearchMusicTitlesAsync(searchString));
-            results.AddRange(await SearchMusicArtistsAsync(searchString));
-            results.AddRange(await SearchMusicReleaseDateAsync(searchString));
-            results.AddRange(await SearchMusicLabelsAsync(searchString));
-            results.AddRange(await SearchMusicAsinAsync(searchString));
+
+            var m1 = SearchMusicTypesAsync(searchString);
+            var m2 = SearchMusicTitlesAsync(searchString);
+            var m3 = SearchMusicArtistsAsync(searchString);
+            var m4 = SearchMusicReleaseDateAsync(searchString);
+            var m5 = SearchMusicLabelsAsync(searchString);
+            var m6 = SearchMusicAsinAsync(searchString);
+
+            results.AddRange(await m1);
+            results.AddRange(await m2);
+            results.AddRange(await m3);
+            results.AddRange(await m4);
+            results.AddRange(await m5);
+            results.AddRange(await m6);
+
             return results.Distinct(new SearchResultComparer()).ToList();
         }
 
@@ -135,41 +175,11 @@ namespace TheLibraryIsOpen.Models.Search
             });
         }
 
-        private List<SearchResult> ConvertBooksToSearchResults(List<Book> books) {
-            List<SearchResult> results = new List<SearchResult>();
-            foreach (Book book in books)
-            {
-                string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
-                results.Add(result);
-            }
-            return results;
-        }
-
         #endregion
 
         #region magazines
 
-        private List<SearchResult> MagazineToSearchResult(List<Magazine> results)
-        {
-            //Initialization of a new list of search result
-            List<SearchResult> convertedResult = new List<SearchResult>();
-
-            foreach (Magazine magazine in results)
-            {
-                string[] description = {
-                        "title:" + magazine.Title,
-                        "publisher:" + magazine.Publisher,
-                        "language:" + magazine.Language,
-                        "date:"+ magazine.Date,
-                        "isbn10:" + magazine.Isbn10,
-                        "isbn13" + magazine.Isbn13
-                    };
-                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, description));
-            }
-
-            return convertedResult;
-        }
+        
 
         private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
         {
@@ -238,29 +248,9 @@ namespace TheLibraryIsOpen.Models.Search
         }
 
         #endregion
+
         #region movies
 
-        private List<SearchResult> MovieToSearchResult(List<DBModels.Movie> results)
-        {
-            //Initialization of a new list of search result
-            List<SearchResult> convertedResult = new List<SearchResult>();
-
-            foreach (DBModels.Movie movie in results)
-            {
-                string[] description = {
-                    "title:" + movie.Title,
-                    "director:" + movie.Director,
-                    "language:" + movie.Language,
-                    "subtitles:" + movie.Subtitles,
-                    "dubbed:" + movie.Dubbed,
-                    "releaseDate:" + movie.ReleaseDate,
-                    "runTime:" + movie.RunTime
-                };
-                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, description));
-            }
-
-            return convertedResult;
-        }
 
         private Task<List<SearchResult>> SearchMoviesTitleAsync(string searchString)
         {
@@ -350,6 +340,7 @@ namespace TheLibraryIsOpen.Models.Search
         }
 
         #endregion
+
         #region music
 
         private Task<List<SearchResult>> SearchMusicTypesAsync(string searchString)
@@ -395,6 +386,64 @@ namespace TheLibraryIsOpen.Models.Search
             {
                 return MusicListToSearchResultList(_db.SearchMusicByASIN(searchString));
             });
+        }
+
+        #endregion
+
+        #region modelToSearchResult
+        private List<SearchResult> ConvertBooksToSearchResults(List<Book> books)
+        {
+            List<SearchResult> results = new List<SearchResult>();
+            foreach (Book book in books)
+            {
+                string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
+                SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
+                results.Add(result);
+            }
+            return results;
+        }
+
+        private List<SearchResult> MagazineToSearchResult(List<Magazine> results)
+        {
+            //Initialization of a new list of search result
+            List<SearchResult> convertedResult = new List<SearchResult>();
+
+            foreach (Magazine magazine in results)
+            {
+                string[] description = {
+                        "title:" + magazine.Title,
+                        "publisher:" + magazine.Publisher,
+                        "language:" + magazine.Language,
+                        "date:"+ magazine.Date,
+                        "isbn10:" + magazine.Isbn10,
+                        "isbn13" + magazine.Isbn13
+                    };
+                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, description));
+            }
+
+            return convertedResult;
+        }
+        
+        private List<SearchResult> MovieToSearchResult(List<DBModels.Movie> results)
+        {
+            //Initialization of a new list of search result
+            List<SearchResult> convertedResult = new List<SearchResult>();
+
+            foreach (DBModels.Movie movie in results)
+            {
+                string[] description = {
+                    "title:" + movie.Title,
+                    "director:" + movie.Director,
+                    "language:" + movie.Language,
+                    "subtitles:" + movie.Subtitles,
+                    "dubbed:" + movie.Dubbed,
+                    "releaseDate:" + movie.ReleaseDate,
+                    "runTime:" + movie.RunTime
+                };
+                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, description));
+            }
+
+            return convertedResult;
         }
 
         private List<SearchResult> MusicListToSearchResultList(List<Music> music)
