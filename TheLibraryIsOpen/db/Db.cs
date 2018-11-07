@@ -1498,7 +1498,7 @@ namespace TheLibraryIsOpen.Database
             string query = "SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
                 "FROM movies INNER JOIN movieproducer ON movieproducer.movieID = movies.movieID " +
                 "INNER JOIN person ON person.personID = movieproducer.personID " +
-                $"WHERE LOWER(person.firstname) REGEXP('{namestr}') or LOWER(person.lastname) REGEXP('{namestr}');";
+                $"WHERE LOWER(person.firstname) REGEXP(LOWER('{namestr}')) or LOWER(person.lastname) REGEXP(LOWER('{namestr}'));";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1542,7 +1542,7 @@ namespace TheLibraryIsOpen.Database
             string query = "SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
                 "FROM movies INNER JOIN movieactor ON movieactor.movieID = movies.movieID " +
                 "INNER JOIN person ON person.personID = movieactor.personID " +
-                $"WHERE LOWER(person.firstname) REGEXP('{namestr}') or LOWER(person.lastname) REGEXP('{namestr}');";
+                $"WHERE LOWER(person.firstname) REGEXP(LOWER('{namestr}')) or LOWER(person.lastname) REGEXP(LOWER('{namestr}'));";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
