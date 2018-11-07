@@ -100,8 +100,6 @@ namespace TheLibraryIsOpen.Controllers
             TempData["ModelType"] = modeltype;
             TempData["Query"] = query;
 
-            // TODO: uncomment the following and put it in the View() once the methods are ready
-
             string[] querySplit = query.Split(';');
 
             var queryTask = new Task<List<SearchResult>>[querySplit.Length];
