@@ -63,9 +63,17 @@ namespace TheLibraryIsOpen.Models.Search
             results.AddRange(await SearchMoviesRunTimeAsync(searchString));
             return results.Distinct(new SearchResultComparer()).ToList();
         }
-        public Task<List<SearchResult>> SearchMusicAsync(string searchString)
+
+        public async Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
-            throw new NotImplementedException();
+            List<SearchResult> results = new List<SearchResult>();
+            results.AddRange(await SearchMusicTypesAsync(searchString));
+            results.AddRange(await SearchMusicTitlesAsync(searchString));
+            results.AddRange(await SearchMusicArtistsAsync(searchString));
+            results.AddRange(await SearchMusicReleaseDateAsync(searchString));
+            results.AddRange(await SearchMusicLabelsAsync(searchString));
+            results.AddRange(await SearchMusicAsinAsync(searchString));
+            return results.Distinct(new SearchResultComparer()).ToList();
         }
 
         #region books
@@ -307,6 +315,7 @@ namespace TheLibraryIsOpen.Models.Search
                 return MovieToSearchResult(results);
             });
         }
+
         private Task<List<SearchResult>> SearchMoviesDubbedAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
@@ -343,33 +352,69 @@ namespace TheLibraryIsOpen.Models.Search
         #endregion
         #region music
 
-        private Task<List<SearchResult>> SearchMusicTypesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMusicTypesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                return MusicListToSearchResultList(_db.SearchMusicByType(searchString));
+            });
         }
-        private Task<List<SearchResult>> SearchMusicTitlesAsync(string searhString)
+        private Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                return MusicListToSearchResultList(_db.SearchMusicByTitle(searchString));
+            });
         }
-        private Task<List<SearchResult>> SearchMusicArtistsAsync(string searhString)
+        private Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
         {
-            throw new NotImplementedException();
-        }
-
-        private Task<List<SearchResult>> SearchMusicLabelsAsync(string searhString)
-        {
-            throw new NotImplementedException();
-        }
-
-        private Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searhString)
-        {
-            throw new NotImplementedException();
-        }
-        private Task<List<SearchResult>> SearchMusicAsinAsync(string searhString)
-        {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                return MusicListToSearchResultList(_db.SearchMusicByArtist(searchString));
+            });
         }
 
+        private Task<List<SearchResult>> SearchMusicLabelsAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return MusicListToSearchResultList(_db.SearchMusicByLabel(searchString));
+            });
+        }
+
+        private Task<List<SearchResult>> SearchMusicReleaseDateAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return MusicListToSearchResultList(_db.SearchMusicByReleaseDate(searchString));
+            });
+        }
+        private Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return MusicListToSearchResultList(_db.SearchMusicByASIN(searchString));
+            });
+        }
+
+        private List<SearchResult> MusicListToSearchResultList(List<Music> music)
+        {
+            List<SearchResult> sr = new List<SearchResult>();
+
+            foreach (Music item in music)
+            {
+                string[] description =
+                {
+                    "Released in " + item.ReleaseDate,
+                    "\nPerformed by " + item.Artist,
+                    "\nProduced by" + item.Label,
+                    "\nASIN: " + item.Asin
+                };
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, item.MusicId, item.Title, description));
+            }
+
+            return sr;
+        }
         #endregion
 
         private class SearchResultComparer : IEqualityComparer<SearchResult>
