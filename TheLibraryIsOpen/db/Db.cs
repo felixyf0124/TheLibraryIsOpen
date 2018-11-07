@@ -974,7 +974,7 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        #region SearchMoives
+        #region SearchMovies
 
         // search movie methods
         public List<Movie> SearchMoviesByTitle(string MovieString)
@@ -1217,6 +1217,88 @@ namespace TheLibraryIsOpen.Database
             List<Movie> list = new List<Movie>();
             Movie movie = null;
             string query = $"SELECT * FROM movies WHERE runtime = \"{MovieString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByProducer(string firstname, string lastname)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
+                $"FROM person INNER JOIN movieproducer ON person.personID = movieproducer.personID " +
+                $"INNER JOIN movies ON movieproducer.movieID = movies.movieID where firstname LOWER(%\"{firstname}\"%) and lastname LOWER(%\"{lastname}\"%) ";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releaseDate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByActor(string firstname, string lastname)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
+                $"FROM person INNER JOIN movieactor ON person.personID = movieactor.personID " +
+                $"INNER JOIN movies ON movieactor.movieID = movies.movieID where firstname LOWER(%\"{firstname}\"%) and lastname LOWER(%\"{lastname}\"%) ";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
