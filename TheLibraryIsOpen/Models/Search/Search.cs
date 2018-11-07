@@ -49,17 +49,14 @@ namespace TheLibraryIsOpen.Models.Search
 
         public async Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
-
             List<SearchResult> results = new List<SearchResult>();
-
             results.AddRange(await SearchMusicTypesAsync(searchString));
             results.AddRange(await SearchMusicTitlesAsync(searchString));
             results.AddRange(await SearchMusicArtistsAsync(searchString));
             results.AddRange(await SearchMusicReleaseDateAsync(searchString));
             results.AddRange(await SearchMusicLabelsAsync(searchString));
             results.AddRange(await SearchMusicAsinAsync(searchString));
-
-            return results.Distinct().ToList();
+            return results.Distinct(new SearchResultComparer()).ToList();
         }
 
         #region books
@@ -215,27 +212,21 @@ namespace TheLibraryIsOpen.Models.Search
         {
             return Task.Factory.StartNew(() =>
             {
-                List<Music> results = _db.SearchMusicByType(searchString);
-
-                return MusicListToSearchResultList(results);
+                return MusicListToSearchResultList(_db.SearchMusicByType(searchString));
             });
         }
         private Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<Music> results = _db.SearchMusicByTitle(searchString);
-
-                return MusicListToSearchResultList(results);
+                return MusicListToSearchResultList(_db.SearchMusicByTitle(searchString));
             });
         }
         private Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<Music> results = _db.SearchMusicByArtist(searchString);
-
-                return MusicListToSearchResultList(results);
+                return MusicListToSearchResultList(_db.SearchMusicByArtist(searchString));
             });
         }
 
@@ -243,9 +234,7 @@ namespace TheLibraryIsOpen.Models.Search
         {
             return Task.Factory.StartNew(() =>
             {
-                List<Music> results = _db.SearchMusicByLabel(searchString);
-
-                return MusicListToSearchResultList(results);
+                return MusicListToSearchResultList(_db.SearchMusicByLabel(searchString));
             });
         }
 
@@ -253,18 +242,14 @@ namespace TheLibraryIsOpen.Models.Search
         {
             return Task.Factory.StartNew(() =>
             {
-                List<Music> results = _db.SearchMusicByReleaseDate(searchString);
-
-                return MusicListToSearchResultList(results);
+                return MusicListToSearchResultList(_db.SearchMusicByReleaseDate(searchString));
             });
         }
         private Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<Music> results = _db.SearchMusicByASIN(searchString);
-
-                return MusicListToSearchResultList(results);
+                return MusicListToSearchResultList(_db.SearchMusicByASIN(searchString));
             });
         }
 
