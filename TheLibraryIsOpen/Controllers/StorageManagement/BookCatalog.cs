@@ -244,6 +244,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
+        public addModelCopy(Book book)
+        {
+
+        }
+
 
         //Get all Books
         public Task<List<Book>> GetAllBookDataAsync()
@@ -259,5 +264,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return _unitOfWork.CommitAsync();
         }
+
+
     }
 }
