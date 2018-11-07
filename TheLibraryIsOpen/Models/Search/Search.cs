@@ -36,9 +36,22 @@ namespace TheLibraryIsOpen.Models.Search
         {
             throw new NotImplementedException();
         }
+
         public Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                List<SearchResult> results = new List<SearchResult>();
+
+                results.AddRange(SearchMusicTypesAsync(searchString).Result);
+                results.AddRange(SearchMusicTitlesAsync(searchString).Result);
+                results.AddRange(SearchMusicArtistsAsync(searchString).Result);
+                results.AddRange(SearchMusicReleaseDateAsync(searchString).Result);
+                results.AddRange(SearchMusicLabelsAsync(searchString).Result);
+                results.AddRange(SearchMusicAsinAsync(searchString).Result);
+
+                return results;
+            });
         }
 
         #region books
@@ -168,15 +181,7 @@ namespace TheLibraryIsOpen.Models.Search
 
                 foreach (Music result in results)
                 {
-                    string[] description =
-                    {
-                        "Released in " + result.ReleaseDate,
-                        "\nPerformed by " + result.Artist,
-                        "\nProduced by" + result.Label,
-                        "\nASIN: " + result.Asin
-                    };
-
-                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                    sr.Add(MusicToSearchResult(result));
                 }
 
                 return sr;
@@ -192,15 +197,7 @@ namespace TheLibraryIsOpen.Models.Search
 
                 foreach (Music result in results)
                 {
-                    string[] description =
-                    {
-                        "Released in " + result.ReleaseDate,
-                        "\nPerformed by " + result.Artist,
-                        "\nProduced by" + result.Label,
-                        "\nASIN: " + result.Asin
-                    };
-
-                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                    sr.Add(MusicToSearchResult(result));
                 }
 
                 return sr;
@@ -216,15 +213,7 @@ namespace TheLibraryIsOpen.Models.Search
 
                 foreach (Music result in results)
                 {
-                    string[] description =
-                    {
-                        "Released in " + result.ReleaseDate,
-                        "\nPerformed by " + result.Artist,
-                        "\nProduced by" + result.Label,
-                        "\nASIN: " + result.Asin
-                    };
-
-                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                    sr.Add(MusicToSearchResult(result));
                 }
 
                 return sr;
@@ -241,15 +230,7 @@ namespace TheLibraryIsOpen.Models.Search
 
                 foreach (Music result in results)
                 {
-                    string[] description =
-                    {
-                        "Released in " + result.ReleaseDate,
-                        "\nPerformed by " + result.Artist,
-                        "\nProduced by" + result.Label,
-                        "\nASIN: " + result.Asin
-                    };
-
-                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                    sr.Add(MusicToSearchResult(result));
                 }
 
                 return sr;
@@ -266,15 +247,7 @@ namespace TheLibraryIsOpen.Models.Search
 
                 foreach (Music result in results)
                 {
-                    string[] description =
-                    {
-                        "Released in " + result.ReleaseDate,
-                        "\nPerformed by " + result.Artist,
-                        "\nProduced by" + result.Label,
-                        "\nASIN: " + result.Asin
-                    };
-
-                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                    sr.Add(MusicToSearchResult(result));
                 }
 
                 return sr;
@@ -290,21 +263,25 @@ namespace TheLibraryIsOpen.Models.Search
 
                 foreach (Music result in results)
                 {
-                    string[] description =
-                    {
-                        "Released in " + result.ReleaseDate,
-                        "\nPerformed by " + result.Artist,
-                        "\nProduced by" + result.Label,
-                        "\nASIN: " + result.Asin
-                    };
-
-                    sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, result.MusicId, result.Title, description));
+                    sr.Add(MusicToSearchResult(result));
                 }
 
                 return sr;
             });
         }
 
+        private SearchResult MusicToSearchResult(Music music)
+        {
+            string[] description =
+            {
+                "Released in " + music.ReleaseDate,
+                "\nPerformed by " + music.Artist,
+                "\nProduced by" + music.Label,
+                "\nASIN: " + music.Asin
+            };
+
+            return new SearchResult(Constants.TypeConstants.TypeEnum.Music, music.MusicId, music.Title, description);
+        }
         #endregion
     }
 }
