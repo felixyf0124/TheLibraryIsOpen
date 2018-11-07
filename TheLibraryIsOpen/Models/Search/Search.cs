@@ -175,48 +175,27 @@ namespace TheLibraryIsOpen.Models.Search
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> sr = new List<SearchResult>();
-
                 List<Music> results = _db.SearchMusicByType(searchString);
 
-                foreach (Music result in results)
-                {
-                    sr.Add(MusicToSearchResult(result));
-                }
-
-                return sr;
+                return MusicListToSearchResultList(results);
             });
         }
         private Task<List<SearchResult>> SearchMusicTitlesAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> sr = new List<SearchResult>();
-
                 List<Music> results = _db.SearchMusicByTitle(searchString);
 
-                foreach (Music result in results)
-                {
-                    sr.Add(MusicToSearchResult(result));
-                }
-
-                return sr;
+                return MusicListToSearchResultList(results);
             });
         }
         private Task<List<SearchResult>> SearchMusicArtistsAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> sr = new List<SearchResult>();
-
                 List<Music> results = _db.SearchMusicByArtist(searchString);
 
-                foreach (Music result in results)
-                {
-                    sr.Add(MusicToSearchResult(result));
-                }
-
-                return sr;
+                return MusicListToSearchResultList(results);
             });
         }
 
@@ -224,16 +203,9 @@ namespace TheLibraryIsOpen.Models.Search
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> sr = new List<SearchResult>();
-
                 List<Music> results = _db.SearchMusicByLabel(searchString);
 
-                foreach (Music result in results)
-                {
-                    sr.Add(MusicToSearchResult(result));
-                }
-
-                return sr;
+                return MusicListToSearchResultList(results);
             });
         }
 
@@ -241,46 +213,38 @@ namespace TheLibraryIsOpen.Models.Search
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> sr = new List<SearchResult>();
-
                 List<Music> results = _db.SearchMusicByReleaseDate(searchString);
 
-                foreach (Music result in results)
-                {
-                    sr.Add(MusicToSearchResult(result));
-                }
-
-                return sr;
+                return MusicListToSearchResultList(results);
             });
         }
         private Task<List<SearchResult>> SearchMusicAsinAsync(string searchString)
         {
             return Task.Factory.StartNew(() =>
             {
-                List<SearchResult> sr = new List<SearchResult>();
-
                 List<Music> results = _db.SearchMusicByASIN(searchString);
 
-                foreach (Music result in results)
-                {
-                    sr.Add(MusicToSearchResult(result));
-                }
-
-                return sr;
+                return MusicListToSearchResultList(results);
             });
         }
 
-        private SearchResult MusicToSearchResult(Music music)
+        private List<SearchResult> MusicListToSearchResultList(List<Music> music)
         {
-            string[] description =
-            {
-                "Released in " + music.ReleaseDate,
-                "\nPerformed by " + music.Artist,
-                "\nProduced by" + music.Label,
-                "\nASIN: " + music.Asin
-            };
+            List<SearchResult> sr = new List<SearchResult>();
 
-            return new SearchResult(Constants.TypeConstants.TypeEnum.Music, music.MusicId, music.Title, description);
+            foreach (Music item in music)
+            {
+                string[] description =
+                {
+                    "Released in " + item.ReleaseDate,
+                    "\nPerformed by " + item.Artist,
+                    "\nProduced by" + item.Label,
+                    "\nASIN: " + item.Asin
+                };
+                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, item.MusicId, item.Title, description));
+            }
+
+            return sr;
         }
         #endregion
     }
