@@ -143,7 +143,7 @@ namespace TheLibraryIsOpen.Controllers
                 matchingSearchResults = matchingSearchResults.Intersect(searchResults[i], new Search.SearchResultComparer());
             }
 
-            return View(matchingSearchResults);
+            return View(matchingSearchResults.OrderBy(r=>r.Name));
         }
     }
 }

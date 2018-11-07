@@ -10,5 +10,11 @@
     "inputFiles": [
       "wwwroot/css/site.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/SearchSort.min.js",
+    "inputFiles": [
+      "wwwroot/js/SearchSort.js"
+    ]
   }
 ]
