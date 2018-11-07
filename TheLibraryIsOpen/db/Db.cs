@@ -67,6 +67,16 @@
             movieid int(11) 
             personid int(11)
 
+    Table: modelCopy
+    Columns:
+            id int(11) AI PK 
+            modelType int() 
+            modelID int(11) 
+            borrowerID int(12) FK
+            borrowedDate date
+            returnDate date
+            foreign key (borrowerID) references users(clientID)	    
+
     One things for query language:
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
  */
