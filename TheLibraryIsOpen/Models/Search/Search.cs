@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
+using System.Linq;
 
 namespace TheLibraryIsOpen.Models.Search
 {
@@ -37,21 +38,19 @@ namespace TheLibraryIsOpen.Models.Search
             throw new NotImplementedException();
         }
 
-        public Task<List<SearchResult>> SearchMusicAsync(string searchString)
+        public async Task<List<SearchResult>> SearchMusicAsync(string searchString)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                List<SearchResult> results = new List<SearchResult>();
 
-                results.AddRange(SearchMusicTypesAsync(searchString).Result);
-                results.AddRange(SearchMusicTitlesAsync(searchString).Result);
-                results.AddRange(SearchMusicArtistsAsync(searchString).Result);
-                results.AddRange(SearchMusicReleaseDateAsync(searchString).Result);
-                results.AddRange(SearchMusicLabelsAsync(searchString).Result);
-                results.AddRange(SearchMusicAsinAsync(searchString).Result);
+            List<SearchResult> results = new List<SearchResult>();
 
-                return results;
-            });
+            results.AddRange(await SearchMusicTypesAsync(searchString));
+            results.AddRange(await SearchMusicTitlesAsync(searchString));
+            results.AddRange(await SearchMusicArtistsAsync(searchString));
+            results.AddRange(await SearchMusicReleaseDateAsync(searchString));
+            results.AddRange(await SearchMusicLabelsAsync(searchString));
+            results.AddRange(await SearchMusicAsinAsync(searchString));
+
+            return results.Distinct().ToList();
         }
 
         #region books
