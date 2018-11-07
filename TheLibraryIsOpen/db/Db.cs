@@ -173,7 +173,47 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        // Selects a client by id and returns a client object.
+        //Find modelCopy by Client ID, returns list
+        public List<Client> FindClientsByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM users WHERE clientID = \"{mc.borrowerID}\";";
+            List<Client> client = new List<Client>();
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int clientID = (int)dr["clientID"];
+                            string firstName = dr["firstName"] + "";
+                            string lastName = dr["lastName"] + "";
+                            string emailAddress = dr["emailAddress"] + "";
+                            string homeAddress = dr["homeAddress"] + "";
+                            string phoneNumber = dr["phoneNumber"] + "";
+                            string password = dr["password"] + "";
+                            bool isAdmin = (bool)dr["isAdmin"];
+
+                            client.Add(new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return client;
+        }
+
+        // Selects a client by id and returns a client object
         public Client GetClientById(int id)
         {
             string query = $"SELECT * FROM users WHERE clientID = \"{id}\";";
@@ -1993,6 +2033,7 @@ namespace TheLibraryIsOpen.Database
             }
             return book;
         }
+
 
 
         // Inserts a new book into the db
