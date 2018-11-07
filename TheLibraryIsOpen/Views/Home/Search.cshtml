@@ -19,51 +19,84 @@
 
 <h2>Search Results</h2>
 
-<br />
 <div class="row">
-    <partial name="_SearchBar" model="customData" />
+    <div class="col-md-4 col-sm-6 form-group">
+        <label class="control-label">Sort by:&nbsp;</label>
+        <select class="form-control" id="sortBy">
+            <option value="name" selected>Name</option>
+            <option value="type">Type</option>
+        </select>
+    </div>
+    <div class="col-md-4 col-sm-6 form-group">
+        <label class="control-label">Order by:&nbsp;</label>
+        <select class="form-control" id="orderBy">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+    <div class="col-md-4 col-sm-0"></div>
 </div>
 
-@foreach (var item in Model)
-{
-    string controller = "";
+<br />
+<div id="results">
+    @foreach (var item in Model)
+    {
+        string controller = "";
 
-    <div class="row table-bordered rounded-left rounded-right" style="padding:1em 1em 1em 1em;">
-        <div class="col-md-2">
-            @switch (item.Type)
-            {
-                case TypeEnum.Book:
-                    controller = "Books";
-                    <label class="glyphicon cust glyphicon-book"></label>
-                    break;
-                case TypeEnum.Magazine:
-                    controller = "Magazine";
-                    <label class="glyphicon cust glyphicon-file"></label>
-                    break;
-                case TypeEnum.Movie:
-                    controller = "Movie";
-                    <label class="glyphicon cust glyphicon-film"></label>
-                    break;
-                case TypeEnum.Music:
-                    controller = "Music";
-                    <label class="glyphicon cust glyphicon-music"></label>
-                    break;
-            }
-        </div>
-        <div class="col-md-8">
-            <h3>@item.Name</h3>
-            <p>
-                <ul class="list-group">
-                    @foreach (var desc in item.Description)
+        <div data-type="@item.Type"
+             data-name="@item.Name" class="orderable">
+            <div class="row table-bordered rounded-left rounded-right"
+                 style="padding:1em 1em 1em 1em;">
+                <div class="col-md-2">
+                    @switch (item.Type)
                     {
-                        <li class="list-group-item">@desc</li>
+                        case TypeEnum.Book:
+                            controller = "Books";
+                            <label class="glyphicon cust glyphicon-book"></label>
+                            break;
+                        case TypeEnum.Magazine:
+                            controller = "Magazine";
+                            <label class="glyphicon cust glyphicon-file"></label>
+                            break;
+                        case TypeEnum.Movie:
+                            controller = "Movie";
+                            <label class="glyphicon cust glyphicon-film"></label>
+                            break;
+                        case TypeEnum.Music:
+                            controller = "Music";
+                            <label class="glyphicon cust glyphicon-music"></label>
+                            break;
                     }
-                </ul>
-            </p>
+                </div>
+                <div class="col-md-8">
+                    <h3>@item.Name</h3>
+                    <p>
+                        <ul class="list-group">
+                            @foreach (var desc in item.Description)
+                            {
+                                if (!string.IsNullOrEmpty(desc))
+                                {
+                                    <li class="list-group-item">@desc</li>
+                                }
+                            }
+                        </ul>
+                    </p>
+                </div>
+                <div class="col-md-2" style="text-align:center; margin-top:5em;">
+                    <a asp-controller="@controller" asp-action="Details" asp-route-id="@item.ModelId" class="btn btn-info"><label class="glyphicon glyphicon-list"></label>&nbsp;Details</a>
+                </div>
+            </div>
+            <br />
         </div>
-        <div class="col-md-2" style="text-align:center; margin-top:5em;">
-            <a asp-controller="@controller" asp-action="Details" asp-route-id="@item.ModelId" class="btn btn-info"><label class="glyphicon glyphicon-list"></label>&nbsp;Details</a>
-        </div>
-    </div>
-    <br />
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <environment include="Development">
+        <script type="text/javascript" src="~/js/SearchSort.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script type="text/javascript" src="~/js/SearchSort.min.js" asp-append-version="true"></script>
+    </environment>
 }
