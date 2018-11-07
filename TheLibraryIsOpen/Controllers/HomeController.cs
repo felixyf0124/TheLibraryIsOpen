@@ -29,6 +29,7 @@ namespace TheLibraryIsOpen.Controllers
             _moviec = moc;
             _musicc = muc;
             _magazinec = mac;
+            _search = search;
         }
 
         public IActionResult Index()
@@ -99,14 +100,13 @@ namespace TheLibraryIsOpen.Controllers
             TempData["ModelType"] = modeltype;
             TempData["Query"] = query;
 
-            // TODO: uncomment the following and put it in the View() once the methods are ready
-
-            /*string[] querySplit = query.Split(';');
+            string[] querySplit = query.Split(';');
 
             var queryTask = new Task<List<SearchResult>>[querySplit.Length];
 
             for (int i = 0; i < querySplit.Length; i++)
             {
+                querySplit[i] = querySplit[i].Trim();
                 switch (modeltype)
                 {
                     case "book":
@@ -134,27 +134,14 @@ namespace TheLibraryIsOpen.Controllers
                 searchResults[i] = await queryTask[i];
             }
 
-            IEnumerable<SearchResult> matchingSearchResults = new List<SearchResult>(searchResults[0]);
+            HashSet<SearchResult> matchingSearchResults = new HashSet<SearchResult>(searchResults[0], new Search.SearchResultComparer());
 
-            if (searchResults.Length > 1)
+            for (int i = 1; i < searchResults.Length; i++)
             {
-                for (int i = 1; i < searchResults.Length; i++)
-                {
-                    matchingSearchResults = matchingSearchResults.Intersect(searchResults[i]);
-                }
-            }*/
-            return View(new List<SearchResult> {
-                new SearchResult(
-                    Constants.TypeConstants.TypeEnum.Book,
-                    7,
-                    "A book title (and its date)",
-                    new string[] { "Author: me", "About a book" }),
-                 new SearchResult(
-                     Constants.TypeConstants.TypeEnum.Movie,
-                     14,
-                     "Some kind of movie title (and its date)",
-                     new string[] { "Director: not me", "About the movie", "the language, I guess" })
-            });
+                matchingSearchResults.IntersectWith(searchResults[i]);
+            }
+
+            return View(matchingSearchResults.OrderBy(r=>r.Name));
         }
     }
 }
