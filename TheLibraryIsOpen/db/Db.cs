@@ -1488,14 +1488,17 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        public List<Movie> SearchMoviesByProducer(string firstname, string lastname)
+        public List<Movie> SearchMoviesByProducer(string movieString)
         {
+            string namestr = string.Join('|', movieString.Split(' ', '-'));
+
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
-                $"FROM person INNER JOIN movieproducer ON person.personID = movieproducer.personID " +
-                $"INNER JOIN movies ON movieproducer.movieID = movies.movieID where firstname LOWER(%\"{firstname}\"%) and lastname LOWER(%\"{lastname}\"%) ";
+            string query = "SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
+                "FROM movies INNER JOIN movieproducer ON movieproducer.movieID = movies.movieID " +
+                "INNER JOIN person ON person.personID = movieproducer.personID " +
+                $"WHERE LOWER(person.firstname) REGEXP('{namestr}') or LOWER(person.lastname) REGEXP('{namestr}');";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1529,14 +1532,17 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        public List<Movie> SearchMoviesByActor(string firstname, string lastname)
+        public List<Movie> SearchMoviesByActor(string movieString)
         {
+            string namestr = string.Join('|', movieString.Split(' ', '-'));
+
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
-                $"FROM person INNER JOIN movieactor ON person.personID = movieactor.personID " +
-                $"INNER JOIN movies ON movieactor.movieID = movies.movieID where firstname LOWER(%\"{firstname}\"%) and lastname LOWER(%\"{lastname}\"%) ";
+            string query = "SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
+                "FROM movies INNER JOIN movieactor ON movieactor.movieID = movies.movieID " +
+                "INNER JOIN person ON person.personID = movieactor.personID " +
+                $"WHERE LOWER(person.firstname) REGEXP('{namestr}') or LOWER(person.lastname) REGEXP('{namestr}');";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
