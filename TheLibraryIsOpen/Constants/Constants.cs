@@ -14,7 +14,8 @@ namespace TheLibraryIsOpen.Constants
             Magazine = 1,
             Movie = 2,
             Music = 3,
-            Person = 4
+            Person = 4,
+            ModelCopy = 5
         };
 
         private static Dictionary<Type, TypeEnum> typeDict = new Dictionary<Type, TypeEnum>
@@ -23,7 +24,8 @@ namespace TheLibraryIsOpen.Constants
             {typeof(Magazine),      TypeEnum.Magazine},
             {typeof(Movie),         TypeEnum.Movie},
             {typeof(Music),         TypeEnum.Music},
-            {typeof(Person),        TypeEnum.Person}
+            {typeof(Person),        TypeEnum.Person},
+            {typeof(ModelCopy),        TypeEnum.ModelCopy}
         };
 
         public static TypeEnum GetTypeNum(Type t)
