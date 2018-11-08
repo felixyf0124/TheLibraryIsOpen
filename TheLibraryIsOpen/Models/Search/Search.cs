@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Constants;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Models.Search
 {
@@ -134,14 +135,16 @@ namespace TheLibraryIsOpen.Models.Search
 
         private Task<List<SearchResult>> SearchBooksIsbn10Async(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByIsbn10(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksIsbn13Async(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByIsbn13(searchString));
 
             });
@@ -149,42 +152,48 @@ namespace TheLibraryIsOpen.Models.Search
 
         private Task<List<SearchResult>> SearchBooksTitlesAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByTitle(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksAuthorsAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByAuthor(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksFormatsAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByFormat(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksPagesAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByPages(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksPublishersAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByPublisher(searchString));
             });
         }
 
         private Task<List<SearchResult>> SearchBooksLanguagesAsync(string searchString)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 return ConvertBooksToSearchResults(_db.SearchBooksByLanguage(searchString));
             });
         }
@@ -193,7 +202,7 @@ namespace TheLibraryIsOpen.Models.Search
 
         #region magazines
 
-        
+
 
         private Task<List<SearchResult>> SearchMagazinesTitlesAsync(string searchString)
         {
@@ -422,8 +431,16 @@ namespace TheLibraryIsOpen.Models.Search
             List<SearchResult> results = new List<SearchResult>();
             foreach (Book book in books)
             {
-                string[] resultDescription = { book.Author, book.Format, book.Pages.ToString(), book.Publisher, book.Date, book.Language, book.Isbn10, book.Isbn13 };
-                SearchResult result = new SearchResult(Constants.TypeConstants.TypeEnum.Book, book.BookId, book.Title, resultDescription);
+                string[] resultDescription = {
+                    book.Author,
+                    book.Format, book.Pages.ToString(),
+                    book.Publisher,
+                    book.Date.ToShortDateString(),
+                    book.Language,
+                    book.Isbn10,
+                    book.Isbn13
+                };
+                SearchResult result = new SearchResult(TypeEnum.Book, book.BookId, book.Title, book.Date, resultDescription);
                 results.Add(result);
             }
             return results;
@@ -440,16 +457,16 @@ namespace TheLibraryIsOpen.Models.Search
                         "title:" + magazine.Title,
                         "publisher:" + magazine.Publisher,
                         "language:" + magazine.Language,
-                        "date:"+ magazine.Date,
+                        "date:"+ magazine.Date.ToShortDateString(),
                         "isbn10:" + magazine.Isbn10,
                         "isbn13" + magazine.Isbn13
                     };
-                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, description));
+                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, magazine.Date, description));
             }
 
             return convertedResult;
         }
-        
+
         private List<SearchResult> MovieToSearchResult(List<DBModels.Movie> results)
         {
             //Initialization of a new list of search result
@@ -463,10 +480,10 @@ namespace TheLibraryIsOpen.Models.Search
                     "language:" + movie.Language,
                     "subtitles:" + movie.Subtitles,
                     "dubbed:" + movie.Dubbed,
-                    "releaseDate:" + movie.ReleaseDate,
+                    "releaseDate:" + movie.ReleaseDate.ToShortDateString(),
                     "runTime:" + movie.RunTime
                 };
-                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, description));
+                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, movie.ReleaseDate, description));
             }
 
             return convertedResult;
@@ -480,12 +497,12 @@ namespace TheLibraryIsOpen.Models.Search
             {
                 string[] description =
                 {
-                    "Released in " + item.ReleaseDate,
+                    "Released in " + item.ReleaseDate.ToShortDateString(),
                     "\nPerformed by " + item.Artist,
                     "\nProduced by" + item.Label,
                     "\nASIN: " + item.Asin
                 };
-                sr.Add(new SearchResult(Constants.TypeConstants.TypeEnum.Music, item.MusicId, item.Title, description));
+                sr.Add(new SearchResult(TypeEnum.Music, item.MusicId, item.Title, item.ReleaseDate, description));
             }
 
             return sr;
@@ -494,12 +511,12 @@ namespace TheLibraryIsOpen.Models.Search
 
         public class SearchResultComparer : IEqualityComparer<SearchResult>
         {
-            public bool Equals(SearchResult x, SearchResult y) 
+            public bool Equals(SearchResult x, SearchResult y)
             {
                 return (x.ModelId == y.ModelId && x.Type == y.Type);
             }
 
-            public int GetHashCode(SearchResult obj) 
+            public int GetHashCode(SearchResult obj)
             {
                 return $"{obj.Type}-{obj.ModelId}".GetHashCode();
             }

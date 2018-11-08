@@ -22,6 +22,7 @@
         <label class="control-label">Sort by:&nbsp;</label>
         <select class="form-control" id="sortBy">
             <option value="name" selected>Name</option>
+            <option value="date">Date</option>
             <option value="type">Type</option>
         </select>
     </div>
@@ -42,6 +43,7 @@
         string controller = "";
 
         <div data-type="@item.Type"
+             data-date="@item.Date"
              data-name="@item.Name" class="orderable">
             <div class="row table-bordered rounded-left rounded-right"
                  style="padding:1em 1em 1em 1em;">

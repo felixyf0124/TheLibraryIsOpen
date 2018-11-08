@@ -273,7 +273,7 @@ namespace TheLibraryIsOpen.Database
         public void CreateMagazine(Magazine magazine)
         {
             string query =
-                $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
+                $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date.ToShortDateString()}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
 
             QuerySend(query);
         }
@@ -283,7 +283,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES");
             for (int i = 0; i < magazines.Length; ++i)
             {
-                sb.Append($"(\"{magazines[i].Title}\",\"{magazines[i].Publisher}\",\"{magazines[i].Language}\",\"{magazines[i].Date}\",\"{magazines[i].Isbn10}\",\"{magazines[i].Isbn13}\"){(i + 1 < magazines.Length ? "," : ";")}");
+                sb.Append($"(\"{magazines[i].Title}\",\"{magazines[i].Publisher}\",\"{magazines[i].Language}\",\"{magazines[i].Date.ToShortDateString()}\",\"{magazines[i].Isbn10}\",\"{magazines[i].Isbn13}\"){(i + 1 < magazines.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -293,7 +293,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE magazines SET ");
             for (int i = 0; i < magazines.Length; ++i)
             {
-                sb.Append($"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
+                sb.Append($"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date.ToShortDateString()}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
             }
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
@@ -302,7 +302,7 @@ namespace TheLibraryIsOpen.Database
         // need improve
         public void UpdateMagazine(Magazine magazine)
         {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date.ToShortDateString()}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
 
             QuerySend(query);
         }
@@ -310,7 +310,7 @@ namespace TheLibraryIsOpen.Database
         // update magazine by ID
         public void UpdateMagazine(Magazine magazine, int magazineID)
         {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date.ToShortDateString()}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
 
             QuerySend(query);
         }
@@ -364,7 +364,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -430,7 +430,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -471,7 +471,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -509,7 +509,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -547,7 +547,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -585,7 +585,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -623,7 +623,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -661,7 +661,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -691,7 +691,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO cds (type, title, artist, label, releasedate, asin) VALUES");
             for (int i = 0; i < music.Length; ++i)
             {
-                sb.Append($"(\"{music[i].Type}\", \"{music[i].Title}\", \"{music[i].Artist}\", \"{music[i].Label}\", \"{music[i].ReleaseDate}\", \"{music[i].Asin}\"){(i + 1 < music.Length ? "," : ";")}");
+                sb.Append($"(\"{music[i].Type}\", \"{music[i].Title}\", \"{music[i].Artist}\", \"{music[i].Label}\", \"{music[i].ReleaseDate.ToShortDateString()}\", \"{music[i].Asin}\"){(i + 1 < music.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -702,7 +702,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE cds SET ");
             for (int i = 0; i < music.Length; ++i)
             {
-                sb.Append($"type = \"{music[i].Type}\", title = \"{music[i].Title}\",artist = \"{music[i].Artist}\", label = \"{music[i].Label}\", releasedate = \"{music[i].ReleaseDate}\", asin = \"{music[i].Asin}\" WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
+                sb.Append($"type = \"{music[i].Type}\", title = \"{music[i].Title}\",artist = \"{music[i].Artist}\", label = \"{music[i].Label}\", releasedate = \"{music[i].ReleaseDate.ToShortDateString()}\", asin = \"{music[i].Asin}\" WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
             }
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
@@ -761,7 +761,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -799,7 +799,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -839,7 +839,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -878,7 +878,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -917,7 +917,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -956,7 +956,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -995,7 +995,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -1034,7 +1034,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -1061,7 +1061,7 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new movie into the database
         public void CreateMovie(Movie movie)
         {
-            string query = $"INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{movie.Director}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate}\", \"{movie.RunTime}\");";
+            string query = $"INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{movie.Director}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate.ToShortDateString()}\", \"{movie.RunTime}\");";
             QuerySend(query);
         }
 
@@ -1071,7 +1071,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES");
             for (int i = 0; i < movies.Length; ++i)
             {
-                sb.Append($"(\"{movies[i].Title}\", \"{movies[i].Director}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
+                sb.Append($"(\"{movies[i].Title}\", \"{movies[i].Director}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate.ToShortDateString()}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -1079,7 +1079,7 @@ namespace TheLibraryIsOpen.Database
         // Update a movie's information in the database by MovieID
         public void UpdateMovie(Movie movie)
         {
-            string query = $"UPDATE movies SET title = \"{movie.Title}\", director = \"{movie.Director}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
+            string query = $"UPDATE movies SET title = \"{movie.Title}\", director = \"{movie.Director}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate.ToShortDateString()}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
             QuerySend(query);
         }
 
@@ -1088,7 +1088,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE movies SET ");
             for (int i = 0; i < movies.Length; ++i)
             {
-                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\", releasedate = \"{movies[i].ReleaseDate}\", runtime = \"{movies[i].RunTime}\" WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
+                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\", releasedate = \"{movies[i].ReleaseDate.ToShortDateString()}\", runtime = \"{movies[i].RunTime}\" WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -1146,7 +1146,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1185,7 +1185,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1227,7 +1227,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1266,7 +1266,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1305,7 +1305,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1344,7 +1344,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1383,7 +1383,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1422,7 +1422,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1461,7 +1461,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1505,7 +1505,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1549,7 +1549,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -1915,7 +1915,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1957,7 +1957,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1974,7 +1974,7 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new book into the db
         public void CreateBook(Book book)
         {
-            string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
+            string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date.ToShortDateString()}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
 
             QuerySend(query);
         }
@@ -1985,7 +1985,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES");
             for (int i = 0; i < books.Length; ++i)
             {
-                sb.Append($"(\"{books[i].Title}\", \"{books[i].Author}\", \"{books[i].Format}\", \"{books[i].Pages}\", \"{books[i].Publisher}\", \"{books[i].Date}\", \"{books[i].Language}\",\"{books[i].Isbn10}\",\"{books[i].Isbn13}\"){(i + 1 < books.Length ? "," : ";")}");
+                sb.Append($"(\"{books[i].Title}\", \"{books[i].Author}\", \"{books[i].Format}\", \"{books[i].Pages}\", \"{books[i].Publisher}\", \"{books[i].Date.ToShortDateString()}\", \"{books[i].Language}\",\"{books[i].Isbn10}\",\"{books[i].Isbn13}\"){(i + 1 < books.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -1994,7 +1994,7 @@ namespace TheLibraryIsOpen.Database
         // We can add other function to update book
         public void UpdateBook(Book book)
         {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date.ToShortDateString()}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
 
             QuerySend(query);
         }
@@ -2005,7 +2005,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE books SET ");
             for (int i = 0; i < books.Length; ++i)
             {
-                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", date = \"{books[i].Date}\",Language = \"{books[i].Language}\", ISBN10 = \"{books[i].Isbn10}\", ISBN13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
+                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", date = \"{books[i].Date.ToShortDateString()}\",Language = \"{books[i].Language}\", ISBN10 = \"{books[i].Isbn10}\", ISBN13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
             }
 
             QuerySend(sb.ToString());
@@ -2014,7 +2014,7 @@ namespace TheLibraryIsOpen.Database
         // Update a book information in the database by isbn10
         public void UpdateBookByIsbn(Book book, string isbn10)
         {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date.ToShortDateString()}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
 
             QuerySend(query);
         }
@@ -2051,7 +2051,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2090,7 +2090,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
+                            DateTime year = DateTime.Parse(dr["year"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2129,7 +2129,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
+                            DateTime year = DateTime.Parse(dr["year"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2171,7 +2171,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2212,7 +2212,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2253,7 +2253,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2294,7 +2294,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2335,7 +2335,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2376,7 +2376,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2417,7 +2417,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2458,7 +2458,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
