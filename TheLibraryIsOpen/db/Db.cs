@@ -75,6 +75,7 @@ using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using TheLibraryIsOpen.Models.DBModels;
@@ -1711,10 +1712,8 @@ namespace TheLibraryIsOpen.Database
         public void CreateMovieActors(int movieId, params int[] actorIds)
         {
             StringBuilder ma = new StringBuilder($"INSERT INTO movieactor (movieID, personID) VALUES ");
-            for (int i = 0; i < actorIds.Length; i++)
-            {
-                ma.Append($"({movieId}, {actorIds[i]})");
-            }
+            IEnumerable<string> strings = actorIds.Select(id => $"({movieId}, {id})");
+            ma.AppendJoin(',', strings);
             ma.Append(";");
 
             QuerySend(ma.ToString());
@@ -1798,10 +1797,8 @@ namespace TheLibraryIsOpen.Database
         public void CreateMovieProducers(int movieId, params int[] producerIds)
         {
             StringBuilder mp = new StringBuilder($"INSERT INTO movieproducer (movieID, personID) VALUES ");
-            for (int i = 0; i < producerIds.Length; i++)
-            {
-                mp.Append($"({movieId}, {producerIds[i]})");
-            }
+            IEnumerable<string> strings = producerIds.Select(id => $"({movieId}, {id})");
+            mp.AppendJoin(',', strings);
             mp.Append(";");
 
             QuerySend(mp.ToString());
