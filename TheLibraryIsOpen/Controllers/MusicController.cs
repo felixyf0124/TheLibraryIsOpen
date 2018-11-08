@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Models.DBModels;
 
@@ -12,14 +13,19 @@ namespace TheLibraryIsOpen.Controllers
     public class MusicController : Controller
     {
         private readonly MusicCatalog _mc;
+        private readonly ClientStore _cs;
 
-        public MusicController(MusicCatalog mc)
+        public MusicController(MusicCatalog mc, ClientStore cs)
         {
             _mc = mc;
+            _cs = cs;
         }
 
         public async Task<IActionResult> Index()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             List<Music> musicList = await _mc.GetAllMusicDataAsync();
             return View(musicList);
         }
@@ -40,8 +46,11 @@ namespace TheLibraryIsOpen.Controllers
             return View(music);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             return View();
         }
 
@@ -49,6 +58,9 @@ namespace TheLibraryIsOpen.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Music music)
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             if (ModelState.IsValid)
             {
                 await _mc.CreateMusicAsync(music);
@@ -66,6 +78,10 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
+
             var music = await _mc.FindMusicByIdAsync(id);
             if (music == null)
             {
@@ -82,6 +98,9 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             if (ModelState.IsValid)
             {
@@ -114,6 +133,10 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
+
             var music = await _mc.FindMusicByIdAsync(id);
 
             if (music == null)
@@ -130,6 +153,11 @@ namespace TheLibraryIsOpen.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
+
             var music = await _mc.FindMusicByIdAsync(id);
             await _mc.DeleteMusicAsync(music);
             await _mc.CommitAsync();

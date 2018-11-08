@@ -39,5 +39,5 @@ It's easier to have visual studio 2017 with the .net core packages installed to 
 4) pick whichever link and put it into a browser
     
 ## admin
-username: Admin@thelibraryisopen.com
-password: admin
+* username: Admin@thelibraryisopen.com
+* password: admin
