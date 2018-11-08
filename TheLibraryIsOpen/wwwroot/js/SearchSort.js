@@ -23,7 +23,7 @@ function sort(option, order) {
     orderables = orderables.sort((a, b) => {
         let contentA = $(a).attr(attrib);
         let contentB = $(b).attr(attrib);
-        console.log(contentA.localeCompare(contentB));
+
         if (order === "asc") {
             return contentA.localeCompare(contentB);
         } else {

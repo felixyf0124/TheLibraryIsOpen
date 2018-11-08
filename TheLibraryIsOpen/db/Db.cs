@@ -567,7 +567,7 @@ namespace TheLibraryIsOpen.Database
             List<Magazine> list = new List<Magazine>();
             Magazine magazine = null;
 
-            string query = $"SELECT * FROM magazines WHERE LOWER(date) = \"{MagazineString}\";";
+            string query = $"SELECT * FROM magazines WHERE LOWER(date) LIKE LOWER('%{MagazineString}%');";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -1402,7 +1402,7 @@ namespace TheLibraryIsOpen.Database
             //Create a list of unknown size to store the result
             List<Movie> list = new List<Movie>();
             Movie movie = null;
-            string query = $"SELECT * FROM movies WHERE releasedate = \"{MovieString}\";";
+            string query = $"SELECT * FROM movies WHERE releasedate LIKE LOWER('%{MovieString}%');";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
