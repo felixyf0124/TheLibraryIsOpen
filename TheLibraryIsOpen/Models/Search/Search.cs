@@ -432,13 +432,14 @@ namespace TheLibraryIsOpen.Models.Search
             foreach (Book book in books)
             {
                 string[] resultDescription = {
-                    book.Author,
-                    book.Format, book.Pages.ToString(),
-                    book.Publisher,
-                    book.Date.ToShortDateString(),
-                    book.Language,
-                    book.Isbn10,
-                    book.Isbn13
+                    "Author: " , book.Author,
+                    "Publisher: " , book.Publisher,
+                    "Date: " , book.Date.ToShortDateString(),
+                    "Language: " , book.Language,
+                    "Format: " , book.Format,
+                    "Pages: " , book.Pages.ToString(),
+                    "ISBN-10: " , book.Isbn10,
+                    "ISBN-13: " , book.Isbn13
                 };
                 SearchResult result = new SearchResult(TypeEnum.Book, book.BookId, book.Title, book.Date, resultDescription);
                 results.Add(result);
@@ -454,12 +455,11 @@ namespace TheLibraryIsOpen.Models.Search
             foreach (Magazine magazine in results)
             {
                 string[] description = {
-                        "title:" + magazine.Title,
-                        "publisher:" + magazine.Publisher,
-                        "language:" + magazine.Language,
-                        "date:"+ magazine.Date.ToShortDateString(),
-                        "isbn10:" + magazine.Isbn10,
-                        "isbn13" + magazine.Isbn13
+                        "Publisher: " , magazine.Publisher,
+                        "Date: ", magazine.Date.ToShortDateString(),
+                        "Language: " , magazine.Language,
+                        "ISBN-10: " , magazine.Isbn10,
+                        "ISBN-13: " , magazine.Isbn13
                     };
                 convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, magazine.Date, description));
             }
@@ -475,13 +475,12 @@ namespace TheLibraryIsOpen.Models.Search
             foreach (DBModels.Movie movie in results)
             {
                 string[] description = {
-                    "title:" + movie.Title,
-                    "director:" + movie.Director,
-                    "language:" + movie.Language,
-                    "subtitles:" + movie.Subtitles,
-                    "dubbed:" + movie.Dubbed,
-                    "releaseDate:" + movie.ReleaseDate.ToShortDateString(),
-                    "runTime:" + movie.RunTime
+                    "Director: " , movie.Director,
+                    "Date: " , movie.ReleaseDate.ToShortDateString(),
+                    "Language: " , movie.Language,
+                    "Subtitles: " , movie.Subtitles,
+                    "Dubbed: " , movie.Dubbed,
+                    "RunTime: " , movie.RunTime
                 };
                 convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, movie.ReleaseDate, description));
             }
@@ -497,10 +496,10 @@ namespace TheLibraryIsOpen.Models.Search
             {
                 string[] description =
                 {
-                    "Released in " + item.ReleaseDate.ToShortDateString(),
-                    "\nPerformed by " + item.Artist,
-                    "\nProduced by" + item.Label,
-                    "\nASIN: " + item.Asin
+                    "Artist: " , item.Artist,
+                    "Producer: " , item.Label,
+                    "Date: " , item.ReleaseDate.ToShortDateString(),
+                    "ASIN: " , item.Asin
                 };
                 sr.Add(new SearchResult(TypeEnum.Music, item.MusicId, item.Title, item.ReleaseDate, description));
             }

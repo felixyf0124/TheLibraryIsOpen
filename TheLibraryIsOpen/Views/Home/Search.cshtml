@@ -69,11 +69,18 @@
                     <h3>@item.Name</h3>
                     <p>
                         <ul class="list-group">
-                            @foreach (var desc in item.Description)
+                            @for (int i = 0; i < item.Description.Length; i += 2)
                             {
-                                if (!string.IsNullOrEmpty(desc))
+                                if (!string.IsNullOrEmpty(item.Description[i + 1]))
                                 {
-                                    <li class="list-group-item list-group-item-text">@desc</li>
+                                    <li class="list-group-item list-group-item-text row">
+                                        <div class="col-sm-2 col-xs-4">
+                                            <strong>@item.Description[i]</strong>
+                                        </div>
+                                        <div class="col-sm-10 col-xs-8">
+                                            @item.Description[i + 1]
+                                        </div>
+                                    </li>
                                 }
                             }
                         </ul>
