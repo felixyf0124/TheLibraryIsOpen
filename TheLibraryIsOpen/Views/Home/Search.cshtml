@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<TheLibraryIsOpen.Models.Search.SearchResult>
-@using TheLibraryIsOpen.Constants
 @using static TheLibraryIsOpen.Constants.TypeConstants
-@*
-    This is a test page, it doesn't do anything yet
-*@
 
 <style type="text/css">
     .cust {
@@ -44,7 +40,8 @@
 
         <div data-type="@item.Type"
              data-date="@item.Date"
-             data-name="@item.Name" class="orderable">
+             data-name="@item.Name"
+             class="orderable">
             <div class="row table-bordered rounded-left rounded-right"
                  style="padding:1em 1em 1em 1em;">
                 <div class="col-md-2">
@@ -76,7 +73,7 @@
                             {
                                 if (!string.IsNullOrEmpty(desc))
                                 {
-                                    <li class="list-group-item">@desc</li>
+                                    <li class="list-group-item list-group-item-text">@desc</li>
                                 }
                             }
                         </ul>
