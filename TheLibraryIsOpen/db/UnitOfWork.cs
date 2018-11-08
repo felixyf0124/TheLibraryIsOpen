@@ -84,6 +84,14 @@ namespace TheLibraryIsOpen.db
                         _newLock.ExitWriteLock();
                         break;
                     }
+                case TypeEnum.ModelCopy:
+                    {
+                        ModelCopy temp = (ModelCopy)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredNew.TryAdd($"{TypeEnum.ModelCopy}-{(temp.id == 0 ? RegisteredNew.Count.ToString() : $"custom{temp.id}")}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
                 default:
                     {
                         return false;
@@ -134,6 +142,14 @@ namespace TheLibraryIsOpen.db
                         Person temp = (Person)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{RegisteredDirty.Count.ToString()}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.ModelCopy:
+                    {
+                        ModelCopy temp = (ModelCopy)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.ModelCopy}-{RegisteredDirty.Count.ToString()}", o);
                         _newLock.ExitWriteLock();
                         break;
                     }
