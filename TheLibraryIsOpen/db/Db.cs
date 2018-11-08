@@ -88,6 +88,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Constants;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Database
 {
@@ -175,45 +177,6 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-
-        //Find modelCopies of client by Client ID, returns list of modelCopy
-        public List<ModelCopy> FindModelCopiesOfClient(int clientId)
-        {
-            string query = $"SELECT * FROM modelcopies WHERE borrowerID = \"{clientId}\";";
-            List<ModelCopy> modelCopies = new List<ModelCopy>();
-
-            //Open connection
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data
-                        if (dr.Read())
-                        {
-                            int id = (int)dr["id"];
-                            int modelType = (int)dr["modelType"];
-                            int modelID = (int)dr["modelID"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
-
-                            modelCopies.Add(new ModelCopy{id = id, modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
-                                modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, returnDate = returnDate });
-                        }
-                    }
-
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return modelCopies;
-        }
 
 
         //Find modelCopy by Client ID, returns list
@@ -2880,8 +2843,9 @@ namespace TheLibraryIsOpen.Database
 
 
         //Find modelCopies of model by model ID, returns list of modelCopy
-        public List<ModelCopy> FindModelCopiesOfModel(int modelId, int mType)
+        public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType)
         {
+            int mType = (int)enumType;
             string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" ;";
             List<ModelCopy> modelCopies = new List<ModelCopy>();
 
@@ -2925,54 +2889,86 @@ namespace TheLibraryIsOpen.Database
             return modelCopies;
         }
 
+
+        //Find modelCopies of client by Client ID, returns list of modelCopy
+        public List<ModelCopy> FindModelCopiesOfClient(int clientId)
+        {
+            string query = $"SELECT * FROM modelcopies WHERE borrowerID = \"{clientId}\";";
+            List<ModelCopy> modelCopies = new List<ModelCopy>();
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data
+                        if (dr.Read())
+                        {
+                            int id = (int)dr["id"];
+                            int modelType = (int)dr["modelType"];
+                            int modelID = (int)dr["modelID"];
+                            int borrowerID = (int)dr["borrowerID"];
+                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
+                            DateTime returnDate = (DateTime)dr["returnDate"];
+
+                            modelCopies.Add(new ModelCopy
+                            {
+                                id = id,
+                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
+                                modelID = modelID,
+                                borrowerID = borrowerID,
+                                borrowedDate = borrowedDate,
+                                returnDate = returnDate
+                            });
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return modelCopies;
+        }
+
+
         //counts number of copies borrowed of a specific model
 
-        public int CountModelCopiesOfModel(ModelCopy modelId, int mType, Constants.TypeConstants.BorrowType borrowId)
+        public int CountModelCopiesOfModel(ModelCopy modelId, int mType, BorrowType borrowId)
         {
-            string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" borrowerID = \"{borrowId}\" ;";
+            string query = null;
+            switch (borrowId)
+            {
+                case BorrowType.Borrowed:
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" AND NOT borrowerID = null;";
+                    break;
+                case BorrowType.NotBorrowed:
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" AND borrowerID = null;";
+                    break;
+                case BorrowType.Any:
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\";";
+                    break;
+            }
+            int count = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    count = Convert.ToInt32(cmd.ExecuteScalar());
 
-            ////**
-            //List<ModelCopy> modelCopies = new List<ModelCopy>();
-
-            ////Open connection
-
-            //using (MySqlConnection connection = new MySqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        connection.Open();
-            //        //Create Command
-            //        MySqlCommand cmd = new MySqlCommand(query, connection);
-            //        //Create a data reader and Execute the command
-            //        using (MySqlDataReader dr = cmd.ExecuteReader())
-            //        {
-            //            //Read the data
-            //            if (dr.Read())
-            //            {
-            //                int id = (int)dr["id"];
-            //                int modelType = (int)dr["modelType"];
-            //                int modelID = (int)dr["modelID"];
-            //                int borrowerID = (int)dr["borrowerID"];
-            //                DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-            //                DateTime returnDate = (DateTime)dr["returnDate"];
-
-            //                modelCopies.Add(new ModelCopy
-            //                {
-            //                    id = id,
-            //                    modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
-            //                    modelID = modelID,
-            //                    borrowerID = borrowerID,
-            //                    borrowedDate = borrowedDate,
-            //                    returnDate = returnDate
-            //                });
-            //            }
-            //        }
-
-            //    }
-            //    catch (Exception e) { Console.WriteLine(e); }
-            //}
-
-            return 1;
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return count;
         }
 
         #endregion
