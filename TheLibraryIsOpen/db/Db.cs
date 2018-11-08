@@ -2543,10 +2543,179 @@ namespace TheLibraryIsOpen.Database
         #endregion
         #endregion
 
+        #region modelCopy
 
-        
+        //public void DeleteModelCopy(ModelCopy mc)
+        //{
+        //    string query = $"DELETE FROM modelcopy WHERE (ID = \"{mc.id}\");";
+        //    QuerySend(query);
+        //}
 
-        
+        // Deletes several books from the db
+        public void DeleteModelCopies(params ModelCopy[] mcs)
+        {
+            StringBuilder sb = new StringBuilder("DELETE FROM modelcopy WHERE id IN (");
+            for (int i = 0; i < mcs.Length; ++i)
+            {
+                sb.Append($"{mcs[i].id}{(i + 1 < mcs.Length ? "," : ");")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        // Returns a list of all clients in the db converted to client object.
+        public List<ModelCopy> GetAllModelCopies()
+        {
+            //Create a list of unknown size to store the result
+            List<ModelCopy> mcs = new List<ModelCopy>();
+            string query = "SELECT * FROM modelcopy;";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int id = (int)dr["id"];
+                            int modelID = (int)dr["modelID"];
+                            int modelType = (int)dr["modelType"];
+                            int borrowerID = (int)dr["borrowerID"];
+                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
+                            DateTime returnDate = (DateTime)dr["returnDate"];
+
+                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate};
+                            //Console.Write(book);
+
+                            mcs.Add(mc);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return mcs;
+        }
+
+        // Inserts a new modelcopy into the db
+        //public void CreateModelCopy(ModelCopy mc)
+        //{
+
+        //    string query = $"INSERT INTO modelcopy (id, modelID, modelType) VALUES(\"{mc.id}\", \"{mc.modelID}\", \"{mc.modelType}\")";
+
+        //    QuerySend(query);
+        //}
+
+        // Inserts several new books into the db
+        public void CreateModelCopies(params ModelCopy[] mcs)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (id, modelID, modelType) VALUES");
+            for (int i = 0; i < mcs.Length; ++i)
+            {
+                sb.Append($"(\"{mcs[i].id}\", \"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        //update books information
+        public void UpdateModelCopies(params ModelCopy[] mcs)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE modelcopy SET ");
+            for (int i = 0; i < mcs.Length; ++i)
+            {
+                sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
+            }
+
+            QuerySend(sb.ToString());
+        }
+
+        public Book GetBookById(int id)
+        {
+            string query = $"SELECT * FROM books WHERE bookID = \" { id } \";";
+
+            Book book = null;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["date"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format,
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return book;
+        }
+
+        public Book GetBookByIsbn10(string Isbn10)
+        {
+            string query = $"SELECT * FROM books WHERE isbn10 = \" { Isbn10 } \";";
+
+            Book book = null;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["year"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book = new Book(bookId, title, author, format,
+                                pages, publisher, year, language, isbn10, isbn13);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return book;
+        }
+
+
+        #endregion
+
+
+
     }
 
 
