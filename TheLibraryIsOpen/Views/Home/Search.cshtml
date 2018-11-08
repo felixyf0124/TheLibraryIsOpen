@@ -5,6 +5,12 @@
     .cust {
         font-size: 10em;
     }
+    .list-group{
+        margin-bottom:0px;
+    }
+    .list-group-item{
+        padding:3px 7px;
+    }
 </style>
 
 @{
@@ -39,7 +45,7 @@
         string controller = "";
 
         <div data-type="@item.Type"
-             data-date="@item.Date"
+             data-date="@item.Date.ToShortDateString()"
              data-name="@item.Name"
              class="orderable">
             <div class="row table-bordered rounded-left rounded-right"
