@@ -13,16 +13,18 @@ namespace TheLibraryIsOpen.Controllers
 {
     public class MagazineController : Controller
     {
-        private readonly MagazineCatalog _cs;
+        private readonly MagazineCatalog _mc;
+        private readonly ClientStore _cs;
 
-        public MagazineController(MagazineCatalog cs)
+        public MagazineController(MagazineCatalog mc, ClientStore cs)
         {
+            _mc = mc;
             _cs = cs;
         }
-
+        
         public async Task<IActionResult> Index()
         {
-            List<Magazine> li = await _cs.GetAllMagazinesDataAsync();
+            List<Magazine> li = await _mc.GetAllMagazinesDataAsync();
             return View(li);
         }
 
@@ -33,7 +35,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            var magazine = await _cs.FindByIdAsync(id);
+            var magazine = await _mc.FindByIdAsync(id);
             if (magazine == null)
             {
                 return NotFound();
@@ -53,8 +55,11 @@ namespace TheLibraryIsOpen.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _cs.CreateAsync(magazine);
-                await _cs.CommitAsync();
+                bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+                if (!isAdmin)
+                    return Unauthorized();
+                await _mc.CreateAsync(magazine);
+                await _mc.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(magazine);
@@ -67,7 +72,11 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            var magazine = await _cs.FindByIdAsync(id);
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
+
+            var magazine = await _mc.FindByIdAsync(id);
 
             if (magazine == null)
             {
@@ -89,8 +98,11 @@ namespace TheLibraryIsOpen.Controllers
             {
                 try
                 {
-                    await _cs.UpdateAsync(magazine);
-                    await _cs.CommitAsync();
+                    bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+                    if (!isAdmin)
+                        return Unauthorized();
+                    await _mc.UpdateAsync(magazine);
+                    await _mc.CommitAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,14 +128,17 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            var magazine = await _cs.FindByIdAsync(id);
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
+            var magazine = await _mc.FindByIdAsync(id);
 
             if (magazine == null)
             {
                 return NotFound();
             }
-            await _cs.DeleteAsync(magazine);
-            await _cs.CommitAsync();
+            await _mc.DeleteAsync(magazine);
+            await _mc.CommitAsync();
             return View(magazine);
         }
 
@@ -131,15 +146,18 @@ namespace TheLibraryIsOpen.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var magazine = await _cs.FindByIdAsync(id);
-            await _cs.DeleteAsync(magazine);
-            await _cs.CommitAsync();
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
+            var magazine = await _mc.FindByIdAsync(id);
+            await _mc.DeleteAsync(magazine);
+            await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MagazineExists(string id)
         {
-            return (_cs.FindByIdAsync(id) != null);
+            return (_mc.FindByIdAsync(id) != null);
         }
     }
 }

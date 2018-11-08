@@ -9,17 +9,18 @@ using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 
-namespace TheLibraryIsOpen.Controllers.StorageManagement
+namespace TheLibraryIsOpen.Controllers
 {
     public class BooksController : Controller
     {
         private readonly BookCatalog _bc;
+        private readonly ClientStore _cs;
 
-        public BooksController(BookCatalog bc)
+        public BooksController(BookCatalog bc, ClientStore cs)
         {
             _bc = bc;
+            _cs = cs;
         }
-
         // GET: Books
         public async Task<IActionResult> Index()
         {
@@ -45,8 +46,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         // GET: Books/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             return View();
         }
 
@@ -57,6 +61,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             if (ModelState.IsValid)
             {
+                bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+                if (!isAdmin)
+                    return Unauthorized();
                 await _bc.CreateAsync(book);
                 await _bc.CommitAsync();
 
@@ -73,6 +80,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             var book = await _bc.FindByIdAsync(id);
             if (book == null)
@@ -92,6 +102,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             if (ModelState.IsValid)
             {
@@ -124,6 +137,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             var book = await _bc.FindByIdAsync(id);
 
@@ -141,6 +157,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             var book = await _bc.FindByIdAsync(id);
 
             await _bc.DeleteAsync(book);
