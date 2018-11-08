@@ -93,6 +93,8 @@ namespace TheLibraryIsOpen.Models.Search
             var m6 = SearchMoviesDubbedAsync(searchString);
             var m7 = SearchMoviesReleaseDateAsync(searchString);
             var m8 = SearchMoviesRunTimeAsync(searchString);
+            var m9 = SearchMoviesProducersAsync(searchString);
+            var m10 = SearchMoviesActorsAsync(searchString);
 
             results.AddRange(await m1);
             results.AddRange(await m2);
@@ -101,6 +103,8 @@ namespace TheLibraryIsOpen.Models.Search
             results.AddRange(await m6);
             results.AddRange(await m7);
             results.AddRange(await m8);
+            results.AddRange(await m9);
+            results.AddRange(await m10);
 
             return results.Distinct(new SearchResultComparer()).ToList();
         }
@@ -286,12 +290,24 @@ namespace TheLibraryIsOpen.Models.Search
 
         private Task<List<SearchResult>> SearchMoviesProducersAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by producer
+                List<DBModels.Movie> results = _db.SearchMoviesByProducer(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
         private Task<List<SearchResult>> SearchMoviesActorsAsync(string searchString)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                //Retrieve all the corresponding movies by actor
+                List<DBModels.Movie> results = _db.SearchMoviesByActor(searchString);
+
+                return MovieToSearchResult(results);
+            });
         }
 
         private Task<List<SearchResult>> SearchMoviesLanguageAsync(string searchString)
