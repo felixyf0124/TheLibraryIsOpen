@@ -24,6 +24,9 @@ namespace TheLibraryIsOpen.Controllers
         
         public async Task<IActionResult> Index()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             List<Magazine> li = await _mc.GetAllMagazinesDataAsync();
             return View(li);
         }

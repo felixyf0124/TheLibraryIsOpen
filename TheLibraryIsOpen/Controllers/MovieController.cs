@@ -33,6 +33,9 @@ namespace TheLibraryIsOpen.Controllers
         
         public async Task<IActionResult> Index()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             List<Movie> lm = await _mc.GetAllMoviesDataAsync();
             ViewData["Message"] = "Your movie list page.";
             return View(lm);

@@ -23,6 +23,9 @@ namespace TheLibraryIsOpen.Controllers
 
         public async Task<IActionResult> Index()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             List<Music> musicList = await _mc.GetAllMusicDataAsync();
             return View(musicList);
         }

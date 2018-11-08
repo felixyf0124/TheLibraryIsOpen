@@ -24,6 +24,9 @@ namespace TheLibraryIsOpen.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             List<Book> books = await _bc.GetAllBookDataAsync();
             return View(books);
         }
