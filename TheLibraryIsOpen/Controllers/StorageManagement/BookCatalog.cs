@@ -63,10 +63,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public void Dispose()
-        { }
-
-
         //Find methods (by id, isbn10, isbn13)
 
         public Task<Book> FindByIdAsync(string bookId)
@@ -108,126 +104,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
 
         //Update Methods (per attribute, general)
-
-        public Task SetTitleAsync(Book book, string title)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Title = title;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetAuthorAsync(Book book, string author)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Author = author;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetFormatAsync(Book book, string format)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Format = format;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetPagesAsync(Book book, int pages)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Pages = pages;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetPublisherAsync(Book book, string publisher)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Publisher = publisher;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetYearAsync(Book book, string date)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Date = date;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetLanguageAsync(Book book, string language)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Language = language;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-
-
-        public Task SetIsbn10Async(Book book, string isbn10)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Isbn10 = isbn10;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetIsbn13Async(Book book, string isbn13)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Isbn13 = isbn13;
-                    _unitOfWork.RegisterDirty(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
         public Task<IdentityResult> UpdateAsync(Book book)
         {
             if (book != null)

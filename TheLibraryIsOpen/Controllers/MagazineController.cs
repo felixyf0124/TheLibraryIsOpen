@@ -123,7 +123,7 @@ namespace TheLibraryIsOpen.Controllers
             }
             return View(magazine);
         }
-
+        [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -140,19 +140,17 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
-            await _mc.DeleteAsync(magazine);
-            await _mc.CommitAsync();
+
             return View(magazine);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Delete(Magazine magazine)
         {
             bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
             if (!isAdmin)
                 return Unauthorized();
-            var magazine = await _mc.FindByIdAsync(id);
             await _mc.DeleteAsync(magazine);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));
