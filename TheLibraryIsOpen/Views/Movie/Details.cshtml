@@ -75,7 +75,7 @@
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ReleaseDate)
+            @Model.ReleaseDate.ToShortDateString()
         </dd>
     </dl>
 </div>

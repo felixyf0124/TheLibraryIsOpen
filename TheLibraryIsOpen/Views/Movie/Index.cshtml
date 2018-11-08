@@ -55,7 +55,7 @@
                     @item.RunTime
                 </td>
                 <td>
-                    @item.ReleaseDate
+                    @item.ReleaseDate.ToShortDateString()
                 </td>
                 <td>
                     <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@item.MovieId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>

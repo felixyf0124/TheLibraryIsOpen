@@ -14,7 +14,7 @@ namespace TheLibraryIsOpen.Models.Movie
         public string Language { get; set; }
         public string Subtitles { get; set; }
         public string Dubbed { get; set; }
-        public string ReleaseDate { get; set; }
+        public System.DateTime ReleaseDate { get; set; }
         public string RunTime { get; set; }
 
         public DBModels.Movie ToMovie()

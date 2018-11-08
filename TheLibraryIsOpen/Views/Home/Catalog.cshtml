@@ -24,7 +24,7 @@
             <tr>
                 <td>@book.Title</td>
                 <td>@book.Author</td>
-                <td>@book.Date</td>
+                <td>@book.Date.ToShortDateString()</td>
                 <td><a asp-controller="Books" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@book.BookId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }
@@ -44,7 +44,7 @@
             <tr>
                 <td>@magazine.Title</td>
                 <td>@magazine.Publisher</td>
-                <td>@magazine.Date</td>
+                <td>@magazine.Date.ToShortDateString()</td>
                 <td><a asp-controller="Magazine" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@magazine.MagazineId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }
@@ -63,7 +63,7 @@
             <tr>
                 <td>@movie.Title</td>
                 <td>@movie.RunTime</td>
-                <td>@movie.ReleaseDate</td>
+                <td>@movie.ReleaseDate.ToShortDateString()</td>
                 <td><a asp-controller="Movie" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@movie.MovieId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }
@@ -82,7 +82,7 @@
             <tr>
                 <td>@music.Title</td>
                 <td>@music.Artist</td>
-                <td>@music.ReleaseDate</td>
+                <td>@music.ReleaseDate.ToShortDateString()</td>
                 <td><a asp-controller="Music" asp-action="Details" class="btn btn-sm btn-info" asp-route-id="@music.MusicId"><label class="glyphicon glyphicon-list"></label>&nbsp; Details</a></td>
             </tr>
         }

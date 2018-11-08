@@ -53,7 +53,7 @@
             @Html.DisplayNameFor(model => model.Date)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Date)
+            @Model.Date.ToShortDateString()
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Language)

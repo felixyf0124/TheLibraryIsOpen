@@ -9,7 +9,7 @@ sortBy.on('change', () => {
 
 orderBy.on('change', () => {
     sort(sortBy.val(), orderBy.val());
-})
+});
 
 function sort(option, order) {
     var attrib;
@@ -17,6 +17,8 @@ function sort(option, order) {
         attrib = 'data-name';
     else if (option === "type")
         attrib = 'data-type';
+    else if (option === "date")
+        attrib = 'data-date';
 
     orderables = orderables.sort((a, b) => {
         let contentA = $(a).attr(attrib);
