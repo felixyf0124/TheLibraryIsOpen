@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TheLibraryIsOpen.Models.DBModels;
 
 namespace TheLibraryIsOpen.Constants
@@ -15,6 +13,14 @@ namespace TheLibraryIsOpen.Constants
             Movie = 2,
             Music = 3,
             Person = 4
+        };
+
+        public enum BorrowType
+        {
+            Borrowed = 0,
+            NotBorrowed = 1,
+            Any = 3
+
         };
 
         private static Dictionary<Type, TypeEnum> typeDict = new Dictionary<Type, TypeEnum>
