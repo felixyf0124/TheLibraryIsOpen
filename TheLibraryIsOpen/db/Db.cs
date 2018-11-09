@@ -2430,6 +2430,47 @@ namespace TheLibraryIsOpen.Database
             return books;
         }
 
+        public List<Book> SearchBooksByDate(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(date) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
         public List<Book> SearchBooksByLanguage(string SearchString)
         {
             //Create a list of unknown size to store the result
