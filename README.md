@@ -24,8 +24,7 @@ Name,  Student Id,  Email,  Github Username
 9. Antoine Betenjaneh,  27161956,  antoine.beiten@gmail.com,  soenAnt
 
 10. Xi Chen,  27276605,  davidseechan@gmail.com,  g82005
-
-*I am including github usernames since some of the account emails do not match the ones submitted to the TA.
+    * I am including github usernames since some of the account emails do not match the ones submitted to the TA.
 
 ## Compilation
 To compile, the .net core runtime must be installed on the host computer.
@@ -34,10 +33,15 @@ It's easier to have visual studio 2017 with the .net core packages installed to 
 1) cd to the root folder of the project and run the command `dotnet build --configuration Release`.
 2) cd to `TheLibraryIsOpen\bin\Release\netcoreapp2.1` and run the command `dotnet TheLibraryIsOpen.dll`
 3) the console will show a few messages, among which:
-    * "Now listening on: http://localhost:[portnb1]"
-    * "Now listening on: https://localhost:[portnb2]"
+    * "Now listening on: http://<span></span>localhost:[portnb1]"
+    * "Now listening on: https://<span></span>localhost:[portnb2]"
 4) pick whichever link and put it into a browser
     
-## admin
-username: Admin@thelibraryisopen.com
-password: admin
+## Admin account
+* username: admin@thelibraryisopen<span></span>.com
+* password: admin
+
+## Search bar
+You can search the items by entering the search string of almost any field of that item. In most cases (except ones where precision is required, such as Asin or ISBN identifiers), the engine will look for fields containing the input string as a substring.
+* If you want your search to be more specific, you can use the `;` character in your input.
+    >i.e: "Harry Potter; 2003" will search for all objects with the substring "Harry Potter" (which could be in this example in the title field) AND the substring "2003" (which could be in this example in the date field).

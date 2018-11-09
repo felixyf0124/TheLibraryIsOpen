@@ -9,20 +9,24 @@ using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 
-namespace TheLibraryIsOpen.Controllers.StorageManagement
+namespace TheLibraryIsOpen.Controllers
 {
     public class BooksController : Controller
     {
         private readonly BookCatalog _bc;
+        private readonly ClientStore _cs;
 
-        public BooksController(BookCatalog bc)
+        public BooksController(BookCatalog bc, ClientStore cs)
         {
             _bc = bc;
+            _cs = cs;
         }
-
         // GET: Books
         public async Task<IActionResult> Index()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             List<Book> books = await _bc.GetAllBookDataAsync();
             return View(books);
         }
@@ -45,21 +49,27 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         // GET: Books/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
             return View();
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Author,Format,Pages,Publisher,Year,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Create(Book book)
         {
             if (ModelState.IsValid)
             {
+                bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+                if (!isAdmin)
+                    return Unauthorized();
                 await _bc.CreateAsync(book);
                 await _bc.CommitAsync();
-                
+
                 return RedirectToAction(nameof(Index));
             }
             return View(book);
@@ -73,6 +83,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             var book = await _bc.FindByIdAsync(id);
             if (book == null)
@@ -83,21 +96,25 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         // POST: Books/Edit/5
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BookId,Title,Author,Format,Pages,Publisher,Date,Language,Isbn10,Isbn13")] Book book)
+        public async Task<IActionResult> Edit(string id, Book book)
         {
             if (int.Parse(id) != book.BookId)
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     await _bc.UpdateAsync(book);
+                    await _bc.CommitAsync();
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -117,12 +134,16 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         // GET: Books/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             var book = await _bc.FindByIdAsync(id);
 
@@ -130,19 +151,21 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return NotFound();
             }
-            await _bc.DeleteAsync(book);
-            await _bc.CommitAsync();
+
             return View(book);
         }
 
         // POST: Books/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Delete(Book book)
         {
-            var book = await _bc.FindByIdAsync(id);
+            bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
+            if (!isAdmin)
+                return Unauthorized();
 
             await _bc.DeleteAsync(book);
+            await _bc.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 

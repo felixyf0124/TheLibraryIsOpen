@@ -14,11 +14,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     public class BookCatalog
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly IdentityMap _im;
         private readonly Db _db; // TODO: delete this when db code is removed
 
-        public BookCatalog(UnitOfWork unitOfWork, Db db)
+
+        public BookCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
         {
             _unitOfWork = unitOfWork;
+            _im = im;
             _db = db; // TODO: delete this when db code is removed
         }
 
@@ -50,7 +53,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // _unitOfWork.RegisterDelete(book);
+                    _unitOfWork.RegisterDeleted(book);
                     return IdentityResult.Success;
                 });
             }
@@ -60,17 +63,15 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public void Dispose()
-        { }
-
-
         //Find methods (by id, isbn10, isbn13)
 
         public Task<Book> FindByIdAsync(string bookId)
         {
             return Task.Factory.StartNew(() =>
             {
-                return _db.GetBookById((int.Parse(bookId)));
+                Book book = _im.FindBook(int.Parse(bookId));
+
+                return book;
             });
             throw new ArgumentNullException("bookId");
         }
@@ -81,6 +82,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
+                    // TODO: replace with _im
                     return _db.GetBookByIsbn10(isbn10);
                 });
             }
@@ -93,6 +95,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
+                    // TODO: replace with _im
                     return _db.GetBookByIsbn13(isbn13);
                 });
             }
@@ -101,133 +104,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
 
         //Update Methods (per attribute, general)
-
-        public Task SetTitleAsync(Book book, string title)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Title = title;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetAuthorAsync(Book book, string author)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Author = author;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetFormatAsync(Book book, string format)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Format = format;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetPagesAsync(Book book, int pages)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Pages = pages;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetPublisherAsync(Book book, string publisher)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Publisher = publisher;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetYearAsync(Book book, string date)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Date = date;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetLanguageAsync(Book book, string language)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Language = language;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-
-
-        public Task SetIsbn10Async(Book book, string isbn10)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Isbn10 = isbn10;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
-        public Task SetIsbn13Async(Book book, string isbn13)
-        {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    book.Isbn13 = isbn13;
-                    _db.UpdateBook(book);
-                });
-            }
-            throw new ArgumentNullException("book");
-        }
-
         public Task<IdentityResult> UpdateAsync(Book book)
         {
             if (book != null)
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    _db.UpdateBook(book);
+                    _unitOfWork.RegisterDirty(book);
                     return IdentityResult.Success;
                 });
             }
@@ -243,6 +126,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
+                // TODO: replace with _im
                 return _db.GetAllBooks();
             });
         }

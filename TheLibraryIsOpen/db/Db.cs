@@ -3,78 +3,80 @@
     Inspired from https://www.codeproject.com/Articles/43438/Connect-C-to-MySQL
     The database table looks like so:
     Table:      users
-    Columns:    clientID int(12) 
-                firstName varchar(255) 
-                lastName varchar(255) 
-                emailAddress varchar(255) 
-                homeAddress varchar(255) 
-                phoneNumber varchar(255) 
-                password varchar(255) 
+    Columns:    clientID int(12)
+                firstName varchar(255)
+                lastName varchar(255)
+                emailAddress varchar(255)
+                homeAddress varchar(255)
+                phoneNumber varchar(255)
+                password varchar(255)
                 isAdmin tinyint(1)
 
     Table: books
     Columns:
-            bookID int(11) AI PK 
-            title varchar(255) 
-            author varchar(255) 
-            format varchar(255) 
-            pages int(11) 
-            publisher varchar(255) 
-            date varchar(255) 
-            language varchar(255) 
-            isbn10 varchar(255) 
+            bookID int(11) AI PK
+            title varchar(255)
+            author varchar(255)
+            format varchar(255)
+            pages int(11)
+            publisher varchar(255)
+            date varchar(255)
+            language varchar(255)
+            isbn10 varchar(255)
             isbn13 varchar(255)
 
     Table: magazines
     Columns:
-            magazineID int(11) AI PK 
-            title varchar(255) 
-            publisher varchar(255) 
+            magazineID int(11) AI PK
+            title varchar(255)
+            publisher varchar(255)
             language varchar(255)
             date varchar(255)
-            isbn10 varchar(255) 
+            isbn10 varchar(255)
             isbn13 varchar(255)
 
     Table: movies
     Columns:
-            movieID int(11) AI PK 
-            title varchar(255) 
-            director varchar(255) 
-            language varchar(255) 
-            subtitles varchar(255) 
-            dubbed varchar(255) 
-            releasedate varchar(255) 
+            movieID int(11) AI PK
+            title varchar(255)
+            director varchar(255)
+            language varchar(255)
+            subtitles varchar(255)
+            dubbed varchar(255)
+            releasedate varchar(255)
             runtime varchar(255)
 
     Table: cds
     Columns:
-            cdID int(11) AI PK 
-            type varchar(255) 
-            title varchar(255) 
-            artist varchar(255) 
-            label varchar(255) 
-            releasedate varchar(255) 
-            asin varchar(255)   
+            cdID int(11) AI PK
+            type varchar(255)
+            title varchar(255)
+            artist varchar(255)
+            label varchar(255)
+            releasedate varchar(255)
+            asin varchar(255)
 
     Table: person
     Columns:
-            personID int(11) AI PK 
-            firstname varchar(255) 
-            lastname varchar(255) 
+            personID int(11) AI PK
+            firstname varchar(255)
+            lastname varchar(255)
 
     Table: movieactor , movieproducer
     Columns:
-            movieid int(11) 
+            movieid int(11)
             personid int(11)
 
     One things for query language:
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
  */
+
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Microsoft.Extensions.Logging;
 using System.Threading;
 using TheLibraryIsOpen.Models.DBModels;
 
@@ -102,6 +104,7 @@ namespace TheLibraryIsOpen.Database
         * For all types of tables
         * Method to send query to database for creating, updating and deleting
         */
+
         public void QuerySend(string query)
         {
             //open connection
@@ -119,8 +122,8 @@ namespace TheLibraryIsOpen.Database
             }
         }
 
-
         #region clients
+
         // Returns a list of all clients in the db converted to client object.
         public List<Client> GetAllClients()
         {
@@ -208,7 +211,6 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM users WHERE emailAddress = \"{emailAddres}\";";
             Client client = null;
 
-
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 try
@@ -240,7 +242,6 @@ namespace TheLibraryIsOpen.Database
             return client;
         }
 
-
         // Inserts a new client into the db
         public void CreateClient(Client client)
         {
@@ -261,9 +262,11 @@ namespace TheLibraryIsOpen.Database
             string query = $"UPDATE users SET firstName = \"{client.FirstName}\", lastName = \"{client.LastName}\", emailAddress = \"{client.EmailAddress}\", homeAddress = \"{client.HomeAddress}\", phoneNumber = \"{client.PhoneNo}\", password = \"{client.Password}\", isAdmin = {client.IsAdmin} WHERE clientID = \"{client.clientId}\";";
             QuerySend(query);
         }
-        #endregion
+
+        #endregion clients
 
         #region magazines
+
         /*
          *  Magazine Table methods
          */
@@ -271,29 +274,27 @@ namespace TheLibraryIsOpen.Database
         public void CreateMagazine(Magazine magazine)
         {
             string query =
-                $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
+                $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date.ToShortDateString()}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
 
             QuerySend(query);
         }
 
-       
         public void CreateMagazines(params Magazine[] magazines)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO magazines ((title, publisher, language, date, isbn10, isbn13) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES");
             for (int i = 0; i < magazines.Length; ++i)
             {
-                sb.Append($"(\"{magazines[i].Title}\",\"{magazines[i].Publisher}\",\"{magazines[i].Language}\",\"{magazines[i].Date}\",\"{magazines[i].Isbn10}\",\"{magazines[i].Isbn13}\"){(i + 1 < magazines.Length ? "," : ";")}");
+                sb.Append($"(\"{magazines[i].Title}\",\"{magazines[i].Publisher}\",\"{magazines[i].Language}\",\"{magazines[i].Date.ToShortDateString()}\",\"{magazines[i].Isbn10}\",\"{magazines[i].Isbn13}\"){(i + 1 < magazines.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
 
-        
         public void UpdateMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("UPDATE magazines SET ");
             for (int i = 0; i < magazines.Length; ++i)
             {
-                sb.Append($"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
+                sb.Append($"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date.ToShortDateString()}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
             }
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
@@ -302,22 +303,19 @@ namespace TheLibraryIsOpen.Database
         // need improve
         public void UpdateMagazine(Magazine magazine)
         {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date.ToShortDateString()}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
 
             QuerySend(query);
-
         }
 
         // update magazine by ID
         public void UpdateMagazine(Magazine magazine, int magazineID)
         {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
+            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date.ToShortDateString()}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
 
             QuerySend(query);
-
         }
 
-        
         public void DeleteMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("DELETE FROM magazines ");
@@ -367,7 +365,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -378,7 +376,6 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return magazines;
-
         }
 
         public Magazine GetMagazineById(int id)
@@ -396,10 +393,9 @@ namespace TheLibraryIsOpen.Database
             Magazine magazine = QueryRetrieveMaganize(query);
 
             return magazine;
-
         }
 
-        // 
+        //
         public Magazine GetMagazineByIsbn13(string isbn13)
         {
             string query = $"SELECT * FROM magazines WHERE isbn13 = \"{isbn13}\";";
@@ -413,6 +409,7 @@ namespace TheLibraryIsOpen.Database
     * For retrieving ONE object ONLY
     * Method to retrieve maganize information by id or isbn10 or isbn13
     */
+
         public Magazine QueryRetrieveMaganize(string query)
         {
             Magazine magazine = null;
@@ -434,7 +431,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -446,8 +443,245 @@ namespace TheLibraryIsOpen.Database
             }
             return magazine;
         }
-        #endregion
+
+        #region SearchMagazines
+
+        // methods for searching magazines
+
+        public List<Magazine> SearchMagazinesByTitle(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(title) LIKE LOWER('%{MagazineString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Magazine> SearchMagazinesByPublisher(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(publisher) LIKE LOWER('%{MagazineString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Magazine> SearchMagazinesByLanguage(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(language) LIKE LOWER('%{MagazineString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Magazine> SearchMagazinesByDate(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(date) LIKE LOWER('%{MagazineString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Magazine> SearchMagazinesByIsbn10(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(isbn10) = \"{MagazineString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Magazine> SearchMagazinesByIsbn13(string MagazineString)
+        {
+            List<Magazine> list = new List<Magazine>();
+            Magazine magazine = null;
+
+            string query = $"SELECT * FROM magazines WHERE LOWER(isbn13) = \"{MagazineString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create magazine object and store in list
+                        while (dr.Read())
+                        {
+                            int magazineId = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            magazine = new Magazine(magazineId, title, publisher, language, date, isbn10, isbn13);
+                            list.Add(magazine);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        #endregion SearchMagazines
+
+        #endregion magazines
+
         #region music
+
         /*
          * The following methods are made for the music table
          */
@@ -458,7 +692,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO cds (type, title, artist, label, releasedate, asin) VALUES");
             for (int i = 0; i < music.Length; ++i)
             {
-                sb.Append($"(\"{music[i].Type}\", \"{music[i].Title}\", \"{music[i].Artist}\", \"{music[i].Label}\", \"{music[i].ReleaseDate}\", \"{music[i].Asin}\"){(i + 1 < music.Length ? "," : ";")}");
+                sb.Append($"(\"{music[i].Type}\", \"{music[i].Title}\", \"{music[i].Artist}\", \"{music[i].Label}\", \"{music[i].ReleaseDate.ToShortDateString()}\", \"{music[i].Asin}\"){(i + 1 < music.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -466,25 +700,24 @@ namespace TheLibraryIsOpen.Database
         // Update a music's information in the database by MusicId
         public void UpdateMusic(params Music[] music)
         {
-        
             StringBuilder sb = new StringBuilder("UPDATE cds SET ");
             for (int i = 0; i < music.Length; ++i)
             {
-                sb.Append($"type = \"{music[i].Type}\", title = \"{music[i].Title}\",artist = \"{music[i].Artist}\", label = \"{music[i].Label}\", releasedate = \"{music[i].ReleaseDate}\", asin = \"{music[i].Asin}\" WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
+                sb.Append($"type = \"{music[i].Type}\", title = \"{music[i].Title}\",artist = \"{music[i].Artist}\", label = \"{music[i].Label}\", releasedate = \"{music[i].ReleaseDate.ToShortDateString()}\", asin = \"{music[i].Asin}\" WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
             }
-           // Console.WriteLine(sb.ToString());
+            // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
-    
+
         // Delete music by MusicId from the database
-        public void DeleteMusic(params Music [] music)
+        public void DeleteMusic(params Music[] music)
         {
             StringBuilder sb = new StringBuilder("DELETE FROM cds ");
             for (int i = 0; i < music.Length; ++i)
             {
                 sb.Append($"WHERE cdID = \"{music[i].MusicId}\"{(i + 1 < music.Length ? "," : ";")}");
             }
-           // Console.WriteLine(sb.ToString());
+            // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 
@@ -502,11 +735,11 @@ namespace TheLibraryIsOpen.Database
             return QueryRetrieveMusic(query);
         }
 
-
         /*
          * For retrieving ONE object ONLY
-         * Method to retrieve music information by id or asin 
+         * Method to retrieve music information by id or asin
          */
+
         public Music QueryRetrieveMusic(string query)
         {
             Music music = null;
@@ -529,7 +762,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -549,6 +782,45 @@ namespace TheLibraryIsOpen.Database
             Music music = null;
             string query = "SELECT * FROM cds;";
 
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return list;
+        }
+
+        #region SearchMusic
+
+        public List<Music> SearchMusicByType(string musicType)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(type) LIKE LOWER('%{musicType}%');";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -568,7 +840,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
                             music = new Music(musicId, type, title, artist, label, releaseDate, asin);
@@ -578,11 +850,211 @@ namespace TheLibraryIsOpen.Database
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
             }
+
             return list;
         }
 
-        #endregion
+        public List<Music> SearchMusicByTitle(string musicTitle)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(title) LIKE LOWER('%{musicTitle}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByArtist(string musicArtist)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(artist) LIKE LOWER('%{musicArtist}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByLabel(string musicLabel)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(label) LIKE LOWER('%{musicLabel}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByReleaseDate(string musicReleaseDate)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(releasedate) LIKE LOWER('%{musicReleaseDate}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        public List<Music> SearchMusicByASIN(string musicASIN)
+        {
+            List<Music> list = new List<Music>();
+            Music music = null;
+
+            string query = $"SELECT * FROM cds WHERE LOWER(ASIN) LIKE LOWER('%{musicASIN}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create music object and store in list
+                        while (dr.Read())
+                        {
+                            int musicId = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music = new Music(musicId, type, title, artist, label, releaseDate, asin);
+                            list.Add(music);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+
+            return list;
+        }
+
+        #endregion SearchMusic
+
+        #endregion music
+
         #region movies
+
         /*
          * The following methods are made for the movie table
          */
@@ -590,17 +1062,17 @@ namespace TheLibraryIsOpen.Database
         // Inserts a new movie into the database
         public void CreateMovie(Movie movie)
         {
-            string query = $"INSERT INTO movies (title, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate}\", \"{movie.RunTime}\");";
+            string query = $"INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{movie.Director}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate.ToShortDateString()}\", \"{movie.RunTime}\");";
             QuerySend(query);
         }
 
         //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
         public void CreateMovies(params Movie[] movies)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO movies (title, language, subtitles, dubbed, releasedate, runtime) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES");
             for (int i = 0; i < movies.Length; ++i)
             {
-                sb.Append($"(\"{movies[i].Title}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
+                sb.Append($"(\"{movies[i].Title}\", \"{movies[i].Director}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate.ToShortDateString()}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -608,7 +1080,7 @@ namespace TheLibraryIsOpen.Database
         // Update a movie's information in the database by MovieID
         public void UpdateMovie(Movie movie)
         {
-            string query = $"UPDATE movies SET title = \"{movie.Title}\", director = \"{movie.Director}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
+            string query = $"UPDATE movies SET title = \"{movie.Title}\", director = \"{movie.Director}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate.ToShortDateString()}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
             QuerySend(query);
         }
 
@@ -617,41 +1089,36 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE movies SET ");
             for (int i = 0; i < movies.Length; ++i)
             {
-                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\"WHERE cdID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
+                sb.Append($"title = \"{movies[i].Title}\", director = \"{movies[i].Director}\", language = \"{movies[i].Language}\", subtitles = \"{movies[i].Subtitles}\", dubbed = \"{movies[i].Dubbed}\", releasedate = \"{movies[i].ReleaseDate.ToShortDateString()}\", runtime = \"{movies[i].RunTime}\" WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
             }
-            Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 
         // Delete movie by movieId from the database
         public void DeleteMovie(Movie movie)
         {
-        
-           DeleteMovieActors(movie);
-           DeleteMovieProducers(movie);
-           string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
-           QuerySend(query);
-       }
+            DeleteMovieActors(movie);
+            DeleteMovieProducers(movie);
+            string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
+            QuerySend(query);
+        }
 
-       public void DeleteMovies(params Movie[] movies)
-       {
-           for (int i = 0; i < movies.Length; i++)
-           {
-               DeleteMovieActors(movies[i]);
-               DeleteMovieProducers(movies[i]);
-           }
+        public void DeleteMovies(params Movie[] movies)
+        {
+            for (int i = 0; i < movies.Length; i++)
+            {
+                DeleteMovieActors(movies[i]);
+                DeleteMovieProducers(movies[i]);
+            }
 
             StringBuilder sb = new StringBuilder("DELETE FROM movies ");
 
             for (int i = 0; i < movies.Length; ++i)
             {
-
                 sb.Append($"WHERE movieID = \"{movies[i].MovieId}\"{(i + 1 < movies.Length ? "," : ";")}");
+            }
 
-            }  
-            
             QuerySend(sb.ToString());
-
         }
 
         // Retrieve a movie information by id
@@ -680,7 +1147,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -699,7 +1166,6 @@ namespace TheLibraryIsOpen.Database
             List<Movie> list = new List<Movie>();
             Movie movie = null;
             string query = "SELECT * FROM movies;";
-
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -720,7 +1186,7 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releaseDate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
                             movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
@@ -733,7 +1199,376 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        #region SearchMovies
+
+        // search movie methods
+        public List<Movie> SearchMoviesByTitle(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(title) LIKE LOWER('%{MovieString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByDirector(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(director) LIKE LOWER('%{MovieString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByLanguage(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(language) LIKE LOWER('%{MovieString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesBySubtitles(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(subtitles) LIKE LOWER('%{MovieString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByDubbed(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE LOWER(dubbed) LIKE LOWER('%{MovieString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByReleasedate(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE releasedate LIKE LOWER('%{MovieString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByRuntime(string MovieString)
+        {
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = $"SELECT * FROM movies WHERE runtime = \"{MovieString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByProducer(string movieString)
+        {
+            string namestr = string.Join('|', movieString.Split(' ', '-'));
+
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = "SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
+                "FROM movies INNER JOIN movieproducer ON movieproducer.movieID = movies.movieID " +
+                "INNER JOIN person ON person.personID = movieproducer.personID " +
+                $"WHERE LOWER(person.firstname) REGEXP(LOWER('{namestr}')) or LOWER(person.lastname) REGEXP(LOWER('{namestr}'));";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Movie> SearchMoviesByActor(string movieString)
+        {
+            string namestr = string.Join('|', movieString.Split(' ', '-'));
+
+            //Create a list of unknown size to store the result
+            List<Movie> list = new List<Movie>();
+            Movie movie = null;
+            string query = "SELECT movies.movieID,title,director,language,subtitles,dubbed,releasedate,runtime " +
+                "FROM movies INNER JOIN movieactor ON movieactor.movieID = movies.movieID " +
+                "INNER JOIN person ON person.personID = movieactor.personID " +
+                $"WHERE LOWER(person.firstname) REGEXP(LOWER('{namestr}')) or LOWER(person.lastname) REGEXP(LOWER('{namestr}'));";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie = new Movie(movieId, title, director, language, subtitles, dubbed, releaseDate, runtime);
+                            list.Add(movie);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        #endregion SearchMovies
+
+        #endregion movies
+
         #region person
+
         /*
          * The following methods are made for the person table
          */
@@ -860,7 +1695,9 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
+
         #region movieactor
+
         /*
          * The following methods are made for the movieActor table
          */
@@ -870,6 +1707,16 @@ namespace TheLibraryIsOpen.Database
         {
             string query = $"INSERT INTO movieactor (movieID, personID) VALUES(\"{mid}\", \"{pid}\");";
             QuerySend(query);
+        }
+
+        public void CreateMovieActors(int movieId, params int[] actorIds)
+        {
+            StringBuilder ma = new StringBuilder($"INSERT INTO movieactor (movieID, personID) VALUES ");
+            IEnumerable<string> strings = actorIds.Select(id => $"({movieId}, {id})");
+            ma.AppendJoin(',', strings);
+            ma.Append(";");
+
+            QuerySend(ma.ToString());
         }
 
         // Delete movie actor by movieID and personID from the database
@@ -884,7 +1731,15 @@ namespace TheLibraryIsOpen.Database
         {
             string query = $"DELETE FROM movieactor WHERE (movieID = \"{movie.MovieId}\";";
             QuerySend(query);
+        }
 
+        public void DeleteMovieActors(int movieId, params int[] actorsIds)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM movieactor WHERE movieID =\"{movieId} \" AND personID IN (");
+            sb.AppendJoin(',', actorsIds);
+            sb.Append(");");
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
         }
 
         // Get all movie actors from a specific movie
@@ -912,7 +1767,6 @@ namespace TheLibraryIsOpen.Database
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
 
-
                             person = new Person(personId, firstname, lastname);
 
                             list.Add(person);
@@ -923,8 +1777,11 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-        #endregion
+
+        #endregion movieactor
+
         #region movieproducer
+
         /*
          * The following methods are made for the movieProducer table
          */
@@ -936,6 +1793,17 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        //insert producers into the database
+        public void CreateMovieProducers(int movieId, params int[] producerIds)
+        {
+            StringBuilder mp = new StringBuilder($"INSERT INTO movieproducer (movieID, personID) VALUES ");
+            IEnumerable<string> strings = producerIds.Select(id => $"({movieId}, {id})");
+            mp.AppendJoin(',', strings);
+            mp.Append(";");
+
+            QuerySend(mp.ToString());
+        }
+
         // Delete movieProducer by movieID and personID from the database
         public void DeleteMovieProducer(string mid, string pid)
         {
@@ -943,15 +1811,21 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
-
         // Delete all movieProducer by Movie object
         public void DeleteMovieProducers(Movie movie)
         {
             string query = $"DELETE FROM movieproducer WHERE (movieID = \"{movie.MovieId}\";";
             QuerySend(query);
-
         }
 
+        public void DeleteMovieProducers(int movieId, params int[] producerIds)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM movieproducer WHERE movieID =\"{movieId} \" AND personID IN (");
+            sb.AppendJoin(',', producerIds);
+            sb.Append(");");
+            // Console.WriteLine(sb.ToString());
+            QuerySend(sb.ToString());
+        }
 
         // Get all movie producers from a specific movie
         public List<Person> GetAllMovieProducers(int movieId)
@@ -978,7 +1852,6 @@ namespace TheLibraryIsOpen.Database
                             string firstname = dr["firstname"] + "";
                             string lastname = dr["lastname"] + "";
 
-
                             person = new Person(personId, firstname, lastname);
 
                             list.Add(person);
@@ -989,10 +1862,13 @@ namespace TheLibraryIsOpen.Database
             }
             return list;
         }
-        #endregion
-        #endregion
-        #endregion
+
+        #endregion movieproducer
+
+        #endregion person
+
         #region books
+
         public void DeleteBook(Book book)
         {
             string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
@@ -1036,7 +1912,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1052,7 +1928,6 @@ namespace TheLibraryIsOpen.Database
             }
             return books;
         }
-
 
         // Return book get from isbn 10
         public Book GetBooksByIsbn(string isbn)
@@ -1079,7 +1954,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1093,12 +1968,10 @@ namespace TheLibraryIsOpen.Database
             return book;
         }
 
-
         // Inserts a new book into the db
         public void CreateBook(Book book)
         {
-
-            string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
+            string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date.ToShortDateString()}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
 
             QuerySend(query);
         }
@@ -1109,7 +1982,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES");
             for (int i = 0; i < books.Length; ++i)
             {
-                sb.Append($"(\"{books[i].Title}\", \"{books[i].Author}\", \"{books[i].Format}\", \"{books[i].Pages}\", \"{books[i].Publisher}\", \"{books[i].Date}\", \"{books[i].Language}\",\"{books[i].Isbn10}\",\"{books[i].Isbn13}\"){(i + 1 < books.Length ? "," : ";")}");
+                sb.Append($"(\"{books[i].Title}\", \"{books[i].Author}\", \"{books[i].Format}\", \"{books[i].Pages}\", \"{books[i].Publisher}\", \"{books[i].Date.ToShortDateString()}\", \"{books[i].Language}\",\"{books[i].Isbn10}\",\"{books[i].Isbn13}\"){(i + 1 < books.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -1118,15 +1991,27 @@ namespace TheLibraryIsOpen.Database
         // We can add other function to update book
         public void UpdateBook(Book book)
         {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date.ToShortDateString()}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
 
             QuerySend(query);
+        }
+
+        //update books information
+        public void UpdateBooks(params Book[] books)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE books SET ");
+            for (int i = 0; i < books.Length; ++i)
+            {
+                sb.Append($"title = \"{books[i].Title}\", Author = \"{books[i].Author}\", Format = \"{books[i].Format}\", Pages = \"{books[i].Pages}\", Publisher = \"{books[i].Publisher}\", date = \"{books[i].Date.ToShortDateString()}\",Language = \"{books[i].Language}\", ISBN10 = \"{books[i].Isbn10}\", ISBN13 = \"{books[i].Isbn13}\" WHERE (bookID = \"{books[i].BookId}\"){(i + 1 < books.Length ? "," : ";")}");
+            }
+
+            QuerySend(sb.ToString());
         }
 
         // Update a book information in the database by isbn10
         public void UpdateBookByIsbn(Book book, string isbn10)
         {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
+            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date.ToShortDateString()}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
 
             QuerySend(query);
         }
@@ -1138,7 +2023,6 @@ namespace TheLibraryIsOpen.Database
 
             QuerySend(query);
         }
-
 
         public Book GetBookById(int id)
         {
@@ -1164,7 +2048,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1203,7 +2087,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
+                            DateTime year = DateTime.Parse(dr["year"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1242,7 +2126,7 @@ namespace TheLibraryIsOpen.Database
                             string format = dr["format"] + "";
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
-                            string year = dr["year"] + "";
+                            DateTime year = DateTime.Parse(dr["year"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -1256,6 +2140,380 @@ namespace TheLibraryIsOpen.Database
             }
             return book;
         }
-        #endregion
+
+        #region SearchBooks
+
+        public List<Book> SearchBooksByIsbn10(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE isbn10 = \"{SearchString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByIsbn13(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE isbn13 = \"{SearchString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByTitle(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(title) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByAuthor(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(author) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByFormat(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(format) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByPages(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE pages = \"{SearchString}\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByPublisher(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(publisher) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByDate(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(date) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        public List<Book> SearchBooksByLanguage(string SearchString)
+        {
+            //Create a list of unknown size to store the result
+            List<Book> books = new List<Book>();
+            string query = $"SELECT * FROM books WHERE LOWER(language) LIKE LOWER('%{SearchString}%');";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            DateTime year = DateTime.Parse(dr["date"] + "");
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
+
+                            books.Add(book);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return books;
+        }
+
+        #endregion SearchBooks
+
+        #endregion books
     }
 }
