@@ -47,7 +47,8 @@ namespace TheLibraryIsOpen.Models.Search
             var b5 = SearchBooksFormatsAsync(searchString);
             var b6 = SearchBooksPagesAsync(searchString);
             var b7 = SearchBooksPublishersAsync(searchString);
-            var b8 = SearchBooksLanguagesAsync(searchString);
+            var b8 = SearchBooksDateAsync(searchString);
+            var b9 = SearchBooksLanguagesAsync(searchString);
 
             results.AddRange(await b1);
             results.AddRange(await b2);
@@ -57,6 +58,7 @@ namespace TheLibraryIsOpen.Models.Search
             results.AddRange(await b6);
             results.AddRange(await b7);
             results.AddRange(await b8);
+            results.AddRange(await b9);
 
             return results.Distinct(new SearchResultComparer()).ToList();
         }
@@ -187,6 +189,14 @@ namespace TheLibraryIsOpen.Models.Search
             return Task.Factory.StartNew(() =>
             {
                 return ConvertBooksToSearchResults(_db.SearchBooksByPublisher(searchString));
+            });
+        }
+
+        private Task<List<SearchResult>> SearchBooksDateAsync(string searchString)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return ConvertBooksToSearchResults(_db.SearchBooksByDate(searchString));
             });
         }
 
