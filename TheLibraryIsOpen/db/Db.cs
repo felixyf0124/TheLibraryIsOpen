@@ -729,6 +729,43 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+
+        // find magazine by modelCopy
+        public List<Magazine> FindMagazineByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM magazines WHERE magazineID = \"{mc.modelID}\";";
+            List<Magazine> mag = new List<Magazine>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int magazineID = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            string date = dr["date"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            mag.Add(new Magazine(magazineID, title, publisher, language, date, isbn10, isbn13));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return mag;
+        }
+
         #endregion SearchMagazines
 
         #endregion magazines
@@ -1101,6 +1138,44 @@ namespace TheLibraryIsOpen.Database
 
             return list;
         }
+
+
+        // find music by modelCopy
+        public List<Music> FindMusicByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM cds WHERE cdID = \"{mc.modelID}\";";
+            List<Music> music = new List<Music>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int cdID = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            string releasedate = dr["releasedate"] + "";
+                            string asin = dr["asin"] + "";
+
+                            music.Add(new Music(cdID, type, title, artist, label, releasedate, asin));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return music;
+        }
+
 
         #endregion SearchMusic
 
@@ -1614,6 +1689,45 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
+        }
+
+
+
+        // find movie by modelCopy
+        public List<Movie> FindMovieByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM movies WHERE movieID = \"{mc.modelID}\";";
+            List<Movie> movie = new List<Movie>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int movieID = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            string releasedate = dr["releasedate"] + "";
+                            string runtime = dr["runtime"] + "";
+
+                            movie.Add(new Movie(movieID, title, director, language, subtitles, dubbed, releasedate, runtime));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return movie;
         }
 
         #endregion SearchMovies
@@ -2528,15 +2642,49 @@ namespace TheLibraryIsOpen.Database
             return books;
         }
 
+        // find book by modelCopy
+        public List<Book> FindBookByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM books WHERE bookID = \"{mc.modelID}\";";
+            List<Book> book = new List<Book>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int bookId = (int)dr["bookID"];
+                            string title = dr["title"] + "";
+                            string author = dr["author"] + "";
+                            string format = dr["format"] + "";
+                            int pages = (int)dr["pages"];
+                            string publisher = dr["publisher"] + "";
+                            string year = dr["date"] + "";
+                            string language = dr["language"] + "";
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            book.Add(new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return book;
+        }
+
         #endregion SearchBooks
         #endregion books
-        
+
         #region modelCopy
-        //public void DeleteModelCopy(ModelCopy mc)
-        //{
-        //    string query = $"DELETE FROM modelcopy WHERE (ID = \"{mc.id}\");";
-        //    QuerySend(query);
-        //}
 
         // Deletes several books from the db
         public void DeleteModelCopies(params ModelCopy[] mcs)
@@ -2587,15 +2735,6 @@ namespace TheLibraryIsOpen.Database
             }
             return mcs;
         }
-
-        // Inserts a new modelcopy into the db
-        //public void CreateModelCopy(ModelCopy mc)
-        //{
-
-        //    string query = $"INSERT INTO modelcopy (id, modelID, modelType) VALUES(\"{mc.id}\", \"{mc.modelID}\", \"{mc.modelType}\")";
-
-        //    QuerySend(query);
-        //}
 
         // Inserts several new books into the db
         public void CreateModelCopies(params ModelCopy[] mcs)
@@ -2687,160 +2826,6 @@ namespace TheLibraryIsOpen.Database
             }
             return mc;
         }
-
-        #endregion
-
-        #region sort
-
-        // find book by modelCopy
-        public List<Book> FindBookByModelCopy(ModelCopy mc)
-        {
-            string query = $"SELECT * FROM books WHERE bookID = \"{mc.modelID}\";";
-            List<Book> book = new List<Book>();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int bookId = (int)dr["bookID"];
-                            string title = dr["title"] + "";
-                            string author = dr["author"] + "";
-                            string format = dr["format"] + "";
-                            int pages = (int)dr["pages"];
-                            string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
-                            string language = dr["language"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            book.Add(new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13));
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return book;
-        }
-
-        // find magazine by modelCopy
-        public List<Magazine> FindMagazineByModelCopy(ModelCopy mc)
-        {
-            string query = $"SELECT * FROM magazines WHERE magazineID = \"{mc.modelID}\";";
-            List<Magazine> mag = new List<Magazine>();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int magazineID = (int)dr["magazineID"];
-                            string title = dr["title"] + "";
-                            string publisher = dr["publisher"] + "";
-                            string language = dr["language"] + "";
-                            string date = dr["date"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            mag.Add(new Magazine(magazineID, title, publisher, language, date, isbn10, isbn13));
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return mag;
-        }
-
-        // find movie by modelCopy
-        public List<Movie> FindMovieByModelCopy(ModelCopy mc)
-        {
-            string query = $"SELECT * FROM movies WHERE movieID = \"{mc.modelID}\";";
-            List<Movie> movie = new List<Movie>();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int movieID = (int)dr["movieID"];
-                            string title = dr["title"] + "";
-                            string director = dr["director"] + "";
-                            string language = dr["language"] + "";
-                            string subtitles = dr["subtitles"] + "";
-                            string dubbed = dr["dubbed"] + "";
-                            string releasedate = dr["releasedate"] + "";
-                            string runtime = dr["runtime"] + "";
-
-                            movie.Add(new Movie(movieID, title, director, language, subtitles, dubbed, releasedate, runtime));
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return movie;
-        }
-
-
-        // find music by modelCopy
-        public List<Music> FindMusicByModelCopy(ModelCopy mc)
-        {
-            string query = $"SELECT * FROM cds WHERE cdID = \"{mc.modelID}\";";
-            List<Music> music = new List<Music>();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int cdID = (int)dr["cdID"];
-                            string type = dr["type"] + "";
-                            string title = dr["title"] + "";
-                            string artist = dr["artist"] + "";
-                            string label = dr["label"] + "";
-                            string releasedate = dr["releasedate"] + "";
-                            string asin = dr["asin"] + "";
-
-                            music.Add(new Music(cdID, type, title, artist, label, releasedate, asin));
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return music;
-        }
-
 
         //Find modelCopies of model by model ID, returns list of modelCopy
         public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType)
@@ -2972,6 +2957,5 @@ namespace TheLibraryIsOpen.Database
         }
 
         #endregion
-
     }
 }
