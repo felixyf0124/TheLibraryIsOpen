@@ -2991,10 +2991,10 @@ namespace TheLibraryIsOpen.Database
         // Inserts several new books into the db
         public void CreateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (id, modelID, modelType) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (modelID, modelType) VALUES");
             for (int i = 0; i < mcs.Length; ++i)
             {
-                sb.Append($"(\"{mcs[i].id}\", \"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
+                sb.Append($"(\"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -3014,40 +3014,6 @@ namespace TheLibraryIsOpen.Database
         public ModelCopy GetModelCopyById(int id)
         {
             string query = $"SELECT * FROM modelcopy WHERE ID = \" { id } \";";
-
-            ModelCopy mc = null;
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create book object and store in list
-                        if (dr.Read())
-                        {
-                            int Id = (int)dr["id"];
-                            int modelID = (int)dr["modelID"];
-                            int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
-
-                            mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return mc;
-        }
-
-        public ModelCopy GetModelCopyByBookId(int id)
-        {
-            string query = $"SELECT * FROM modelcopy WHERE MODELID = \" { id } \" AND MODELTYPE = \" { Constants.TypeConstants.TypeEnum.Book } \";";
 
             ModelCopy mc = null;
             using (MySqlConnection connection = new MySqlConnection(connectionString))
