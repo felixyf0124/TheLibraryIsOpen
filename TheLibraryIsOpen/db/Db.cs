@@ -88,8 +88,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Constants;
+using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Database
@@ -754,7 +754,7 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string publisher = dr["publisher"] + "";
                             string language = dr["language"] + "";
-                            string date = dr["date"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
@@ -1165,10 +1165,10 @@ namespace TheLibraryIsOpen.Database
                             string title = dr["title"] + "";
                             string artist = dr["artist"] + "";
                             string label = dr["label"] + "";
-                            string releasedate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string asin = dr["asin"] + "";
 
-                            music.Add(new Music(cdID, type, title, artist, label, releasedate, asin));
+                            music.Add(new Music(cdID, type, title, artist, label, releaseDate, asin));
                         }
                     }
                 }
@@ -1719,10 +1719,10 @@ namespace TheLibraryIsOpen.Database
                             string language = dr["language"] + "";
                             string subtitles = dr["subtitles"] + "";
                             string dubbed = dr["dubbed"] + "";
-                            string releasedate = dr["releasedate"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
                             string runtime = dr["runtime"] + "";
 
-                            movie.Add(new Movie(movieID, title, director, language, subtitles, dubbed, releasedate, runtime));
+                            movie.Add(new Movie(movieID, title, director, language, subtitles, dubbed, releaseDate, runtime));
                         }
                     }
                 }
@@ -2669,268 +2669,15 @@ namespace TheLibraryIsOpen.Database
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
 
-<<<<<<< Updated upstream
                             Book book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
 
                             books.Add(book);
-=======
-                            book.Add(new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13));
                         }
                     }
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
             }
-            return book;
-        }
-
-        #endregion SearchBooks
-        #endregion books
-
-        #region modelCopy
-
-        // Deletes several books from the db
-        public void DeleteModelCopies(params ModelCopy[] mcs)
-        {
-            StringBuilder sb = new StringBuilder("DELETE FROM modelcopy WHERE id IN (");
-            for (int i = 0; i < mcs.Length; ++i)
-            {
-                sb.Append($"{mcs[i].id}{(i + 1 < mcs.Length ? "," : ");")}");
-            }
-            QuerySend(sb.ToString());
-        }
-
-        // Returns a list of all clients in the db converted to client object.
-        public List<ModelCopy> GetAllModelCopies()
-        {
-            //Create a list of unknown size to store the result
-            List<ModelCopy> mcs = new List<ModelCopy>();
-            string query = "SELECT * FROM modelcopy;";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create book object and store in list
-                        while (dr.Read())
-                        {
-                            int id = (int)dr["id"];
-                            int modelID = (int)dr["modelID"];
-                            int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
-
-                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate};
-                            //Console.Write(book);
-
-                            mcs.Add(mc);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return mcs;
-        }
-
-        // Inserts several new books into the db
-        public void CreateModelCopies(params ModelCopy[] mcs)
-        {
-            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (modelID, modelType) VALUES");
-            for (int i = 0; i < mcs.Length; ++i)
-            {
-                sb.Append($"(\"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
-            }
-            QuerySend(sb.ToString());
-        }
-
-        //update books information
-        public void UpdateModelCopies(params ModelCopy[] mcs)
-        {
-            StringBuilder sb = new StringBuilder("UPDATE modelcopy SET ");
-            for (int i = 0; i < mcs.Length; ++i)
-            {
-                sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
-            }
-
-            QuerySend(sb.ToString());
-        }
-
-        public ModelCopy GetModelCopyById(int id)
-        {
-            string query = $"SELECT * FROM modelcopy WHERE ID = \" { id } \";";
-
-            ModelCopy mc = null;
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create book object and store in list
-                        if (dr.Read())
-                        {
-                            int Id = (int)dr["id"];
-                            int modelID = (int)dr["modelID"];
-                            int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
-
-                            mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
->>>>>>> Stashed changes
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-<<<<<<< Updated upstream
             return books;
-=======
-            return mc;
-        }
-
-        //Find modelCopies of model by model ID, returns list of modelCopy
-        public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType)
-        {
-            int mType = (int)enumType;
-            string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" ;";
-            List<ModelCopy> modelCopies = new List<ModelCopy>();
-
-            //Open connection
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data
-                        if (dr.Read())
-                        {
-                            int id = (int)dr["id"];
-                            int modelType = (int)dr["modelType"];
-                            int modelID = (int)dr["modelID"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
-
-                            modelCopies.Add(new ModelCopy
-                            {
-                                id = id,
-                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
-                                modelID = modelID,
-                                borrowerID = borrowerID,
-                                borrowedDate = borrowedDate,
-                                returnDate = returnDate
-                            });
-                        }
-                    }
-
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return modelCopies;
-        }
-
-
-        //Find modelCopies of client by Client ID, returns list of modelCopy
-        public List<ModelCopy> FindModelCopiesOfClient(int clientId)
-        {
-            string query = $"SELECT * FROM modelcopies WHERE borrowerID = \"{clientId}\";";
-            List<ModelCopy> modelCopies = new List<ModelCopy>();
-
-            //Open connection
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data
-                        if (dr.Read())
-                        {
-                            int id = (int)dr["id"];
-                            int modelType = (int)dr["modelType"];
-                            int modelID = (int)dr["modelID"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
-
-                            modelCopies.Add(new ModelCopy
-                            {
-                                id = id,
-                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
-                                modelID = modelID,
-                                borrowerID = borrowerID,
-                                borrowedDate = borrowedDate,
-                                returnDate = returnDate
-                            });
-                        }
-                    }
-
-                }
-                catch (Exception e) { Console.WriteLine(e); }
-            }
-            return modelCopies;
->>>>>>> Stashed changes
-        }
-
-        // find book by modelCopy
-        public List<Book> FindBookByModelCopy(ModelCopy mc)
-        {
-            string query = $"SELECT * FROM books WHERE bookID = \"{mc.modelID}\";";
-            List<Book> book = new List<Book>();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int bookId = (int)dr["bookID"];
-                            string title = dr["title"] + "";
-                            string author = dr["author"] + "";
-                            string format = dr["format"] + "";
-                            int pages = (int)dr["pages"];
-                            string publisher = dr["publisher"] + "";
-                            string year = dr["date"] + "";
-                            string language = dr["language"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            book.Add(new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13));
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return book;
         }
 
         #endregion SearchBooks
@@ -2976,7 +2723,7 @@ namespace TheLibraryIsOpen.Database
                             DateTime borrowedDate = (DateTime)dr["borrowedDate"];
                             DateTime returnDate = (DateTime)dr["returnDate"];
 
-                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate};
+                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
                             //Console.Write(book);
 
                             mcs.Add(mc);
