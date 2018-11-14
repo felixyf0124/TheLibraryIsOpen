@@ -1,39 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
-using TheLibraryIsOpen.Models.DBModels;
-using Microsoft.EntityFrameworkCore;
-using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models.Search;
 
 namespace TheLibraryIsOpen
 {
-	public class Startup
-	{
-		public Startup(IConfiguration configuration)
-		{
-			Configuration = configuration;
-		}
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-		public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		public void ConfigureServices(IServiceCollection services)
-		{
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -57,40 +49,42 @@ namespace TheLibraryIsOpen
             services.AddScoped(typeof(ClientManager));
             services.AddScoped(typeof(ClientStore));
             services.AddScoped(typeof(MovieCatalog));
-                     
+
             services.AddScoped(typeof(MagazineCatalog));
             services.AddScoped(typeof(BookCatalog));
             services.AddScoped(typeof(MusicCatalog));
 
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-		    
-		}
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+        }
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ClientManager cm)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			else
-			{
-				app.UseExceptionHandler("/Home/Error");
-				app.UseHsts();
-			}
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ClientManager cm)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
 
-			app.UseHttpsRedirection();
-			app.UseStaticFiles();
-			app.UseCookiePolicy();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseSession();
 
-			app.UseMvc(routes =>
-			{
-				routes.MapRoute(
-					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
-			});
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
 
             string email = Configuration["DefaultAdmin:Email"];
             string password = Configuration["DefaultAdmin:Password"];
@@ -113,6 +107,6 @@ namespace TheLibraryIsOpen
                 await cm.UpdateAsync(x);
 
             }
-		}
-	}
+        }
+    }
 }

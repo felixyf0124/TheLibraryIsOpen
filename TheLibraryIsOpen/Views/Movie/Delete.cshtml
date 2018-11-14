@@ -51,13 +51,12 @@
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ReleaseDate)
+            @Model.ReleaseDate.ToShortDateString()
         </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="MovieId" />
-        <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-default" />
     </form>
 </div>

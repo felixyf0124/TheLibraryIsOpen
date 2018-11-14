@@ -125,7 +125,7 @@ namespace TheLibraryIsOpen.Controllers
             }
             return View(music);
         }
-
+        [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -143,22 +143,17 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
-            await _mc.DeleteMusicAsync(music);
-            await _mc.CommitAsync();
 
             return View(music);
         }
-
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Delete(Music music)
         {
 
             bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
             if (!isAdmin)
                 return Unauthorized();
-
-            var music = await _mc.FindMusicByIdAsync(id);
             await _mc.DeleteMusicAsync(music);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));

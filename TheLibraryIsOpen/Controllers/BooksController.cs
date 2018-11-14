@@ -134,6 +134,7 @@ namespace TheLibraryIsOpen.Controllers
         }
 
         // GET: Books/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -150,20 +151,18 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
-            await _bc.DeleteAsync(book);
-            await _bc.CommitAsync();
+
             return View(book);
         }
 
         // POST: Books/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Delete(Book book)
         {
             bool isAdmin = await _cs.IsItAdminAsync(User.Identity.Name);
             if (!isAdmin)
                 return Unauthorized();
-            var book = await _bc.FindByIdAsync(id);
 
             await _bc.DeleteAsync(book);
             await _bc.CommitAsync();

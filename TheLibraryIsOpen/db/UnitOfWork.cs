@@ -109,7 +109,7 @@ namespace TheLibraryIsOpen.db
                     {
                         Book temp = (Book)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
-                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Book}-{RegisteredDirty.Count.ToString()}", o);
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
                         _newLock.ExitWriteLock();
                         break;
                     }
@@ -117,7 +117,7 @@ namespace TheLibraryIsOpen.db
                     {
                         Magazine temp = (Magazine)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
-                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Magazine}-{RegisteredDirty.Count.ToString()}", o); ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o); ;
                         _newLock.ExitWriteLock();
                         break;
                     }
@@ -125,7 +125,7 @@ namespace TheLibraryIsOpen.db
                     {
                         Movie temp = (Movie)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
-                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Movie}-{RegisteredDirty.Count.ToString()}", o); ;
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o); ;
                         _newLock.ExitWriteLock();
                         break;
                     }
@@ -133,7 +133,7 @@ namespace TheLibraryIsOpen.db
                     {
                         Music temp = (Music)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
-                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Music}-{RegisteredDirty.Count.ToString()}", o);
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
                         _newLock.ExitWriteLock();
                         break;
                     }
@@ -141,7 +141,7 @@ namespace TheLibraryIsOpen.db
                     {
                         Person temp = (Person)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
-                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{RegisteredDirty.Count.ToString()}", o);
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
                         _newLock.ExitWriteLock();
                         break;
                     }

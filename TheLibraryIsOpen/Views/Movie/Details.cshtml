@@ -75,7 +75,7 @@
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ReleaseDate)
+            @Model.ReleaseDate.ToShortDateString()
         </dd>
     </dl>
 </div>
@@ -83,6 +83,7 @@
     @if (isAdmin)
     {
         <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.MovieId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+        <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@Model.MovieId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
     }
-    <a asp-area="" class="btn btn-sm btn-info" asp-action="Index">Back to List</a>
+
 </div>

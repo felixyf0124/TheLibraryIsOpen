@@ -1,13 +1,15 @@
 ﻿@model IEnumerable<TheLibraryIsOpen.Models.Search.SearchResult>
-@using TheLibraryIsOpen.Constants
 @using static TheLibraryIsOpen.Constants.TypeConstants
-@*
-    This is a test page, it doesn't do anything yet
-*@
 
 <style type="text/css">
     .cust {
         font-size: 10em;
+    }
+    .list-group{
+        margin-bottom:0px;
+    }
+    .list-group-item{
+        padding:3px 7px;
     }
 </style>
 
@@ -22,6 +24,7 @@
         <label class="control-label">Sort by:&nbsp;</label>
         <select class="form-control" id="sortBy">
             <option value="name" selected>Name</option>
+            <option value="date">Date</option>
             <option value="type">Type</option>
         </select>
     </div>
@@ -42,7 +45,9 @@
         string controller = "";
 
         <div data-type="@item.Type"
-             data-name="@item.Name" class="orderable">
+             data-date="@item.Date.ToShortDateString()"
+             data-name="@item.Name"
+             class="orderable">
             <div class="row table-bordered rounded-left rounded-right"
                  style="padding:1em 1em 1em 1em;">
                 <div class="col-md-2">
@@ -70,11 +75,18 @@
                     <h3>@item.Name</h3>
                     <p>
                         <ul class="list-group">
-                            @foreach (var desc in item.Description)
+                            @for (int i = 0; i < item.Description.Length; i += 2)
                             {
-                                if (!string.IsNullOrEmpty(desc))
+                                if (!string.IsNullOrEmpty(item.Description[i + 1]))
                                 {
-                                    <li class="list-group-item">@desc</li>
+                                    <li class="list-group-item list-group-item-text row">
+                                        <div class="col-sm-2 col-xs-4">
+                                            <strong>@item.Description[i]</strong>
+                                        </div>
+                                        <div class="col-sm-10 col-xs-8">
+                                            @item.Description[i + 1]
+                                        </div>
+                                    </li>
                                 }
                             }
                         </ul>
