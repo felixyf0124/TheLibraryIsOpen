@@ -141,7 +141,7 @@ namespace TheLibraryIsOpen.db
                     {
                         Person temp = (Person)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
-                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{RegisteredDirty.Count.ToString()}", o);
+                        succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
                         _newLock.ExitWriteLock();
                         break;
                     }
@@ -203,6 +203,14 @@ namespace TheLibraryIsOpen.db
                         Person temp = (Person)o;
                         while (!_newLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
+                        _newLock.ExitWriteLock();
+                        break;
+                    }
+                case TypeEnum.ModelCopy:
+                    {
+                        ModelCopy temp = (ModelCopy)o;
+                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.ModelCopy}-{temp.id}", o);
                         _newLock.ExitWriteLock();
                         break;
                     }
