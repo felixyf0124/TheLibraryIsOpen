@@ -108,49 +108,49 @@ namespace TheLibraryIsOpen.db
                 case TypeEnum.Book:
                     {
                         Book temp = (Book)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_dirtyLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
-                        _newLock.ExitWriteLock();
+                        _dirtyLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Magazine:
                     {
                         Magazine temp = (Magazine)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_dirtyLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o); ;
-                        _newLock.ExitWriteLock();
+                        _dirtyLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Movie:
                     {
                         Movie temp = (Movie)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_dirtyLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o); ;
-                        _newLock.ExitWriteLock();
+                        _dirtyLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Music:
                     {
                         Music temp = (Music)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_dirtyLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
-                        _newLock.ExitWriteLock();
+                        _dirtyLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Person:
                     {
                         Person temp = (Person)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_dirtyLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
-                        _newLock.ExitWriteLock();
+                        _dirtyLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.ModelCopy:
                     {
                         ModelCopy temp = (ModelCopy)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_dirtyLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDirty.TryAdd($"{TypeEnum.ModelCopy}-{temp.id}", o);
-                        _newLock.ExitWriteLock();
+                        _dirtyLock.ExitWriteLock();
                         break;
                     }
                 default:
@@ -169,41 +169,41 @@ namespace TheLibraryIsOpen.db
                 case TypeEnum.Book:
                     {
                         Book temp = (Book)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_toDeleteLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Book}-{temp.BookId}", o);
-                        _newLock.ExitWriteLock();
+                        _toDeleteLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Magazine:
                     {
                         Magazine temp = (Magazine)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_toDeleteLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Magazine}-{temp.MagazineId}", o);
-                        _newLock.ExitWriteLock();
+                        _toDeleteLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Movie:
                     {
                         Movie temp = (Movie)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_toDeleteLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Movie}-{temp.MovieId}", o);
-                        _newLock.ExitWriteLock();
+                        _toDeleteLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Music:
                     {
                         Music temp = (Music)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_toDeleteLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Music}-{temp.MusicId}", o);
-                        _newLock.ExitWriteLock();
+                        _toDeleteLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.Person:
                     {
                         Person temp = (Person)o;
-                        while (!_newLock.TryEnterWriteLock(10)) ;
+                        while (!_toDeleteLock.TryEnterWriteLock(10)) ;
                         succeeded = RegisteredDeleted.TryAdd($"{TypeEnum.Person}-{temp.PersonId}", o);
-                        _newLock.ExitWriteLock();
+                        _toDeleteLock.ExitWriteLock();
                         break;
                     }
                 case TypeEnum.ModelCopy:
