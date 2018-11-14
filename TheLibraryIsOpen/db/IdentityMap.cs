@@ -18,12 +18,14 @@ namespace TheLibraryIsOpen.db
         private readonly ReaderWriterLockSlim _movieLock;
         private readonly ReaderWriterLockSlim _musicLock;
         private readonly ReaderWriterLockSlim _peopleLock;
+        private readonly ReaderWriterLockSlim _modelCopyLock;
 
         private readonly Dictionary<int, Book> _books;
         private readonly Dictionary<int, Magazine> _mags;
         private readonly Dictionary<int, Movie> _movies;
         private readonly Dictionary<int, Music> _music;
         private readonly Dictionary<int, Person> _people;
+        private readonly Dictionary<int, ModelCopy> _modelCopy;
 
         public IdentityMap(Db db)
         {
@@ -33,12 +35,14 @@ namespace TheLibraryIsOpen.db
             _movieLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _musicLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peopleLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+            _modelCopyLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
             _books = new Dictionary<int, Book>();
             _mags = new Dictionary<int, Magazine>();
             _movies = new Dictionary<int, Movie>();
             _music = new Dictionary<int, Music>();
             _people = new Dictionary<int, Person>();
+            _modelCopy = new Dictionary<int, ModelCopy>();
         }
 
         public Task<bool> AddAsync(params object[] objectsToAdd)
@@ -50,6 +54,7 @@ namespace TheLibraryIsOpen.db
                 List<Movie> movies = new List<Movie>();
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
+                List<ModelCopy> mc = new List<ModelCopy>();
                 foreach (var item in objectsToAdd)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -79,6 +84,11 @@ namespace TheLibraryIsOpen.db
                                 people.Add((Person)item);
                                 break;
                             }
+                        case TypeEnum.ModelCopy:
+                            {
+                                mc.Add((ModelCopy)item);
+                                break;
+                            }
                         default:
                             {
                                 return false;
@@ -97,6 +107,8 @@ namespace TheLibraryIsOpen.db
                         _db.CreateMusic(music.ToArray());
                     if (people.Count > 0)
                         _db.CreatePeople(people.ToArray());
+                    if (mc.Count > 0)
+                        _db.CreateModelCopies(mc.ToArray());
                     return true;
                 }
                 catch
@@ -117,6 +129,7 @@ namespace TheLibraryIsOpen.db
                 List<Movie> movies = new List<Movie>();
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
+                List<ModelCopy> mc = new List<ModelCopy>();
                 foreach (var item in objectsToEdit)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -144,6 +157,11 @@ namespace TheLibraryIsOpen.db
                         case TypeEnum.Person:
                             {
                                 people.Add((Person)item);
+                                break;
+                            }
+                        case TypeEnum.ModelCopy:
+                            {
+                                mc.Add((ModelCopy)item);
                                 break;
                             }
                         default:
@@ -287,6 +305,24 @@ namespace TheLibraryIsOpen.db
 
                         _db.UpdatePeople(people.ToArray());
                     }
+                    if (mc.Count > 0)
+                    {
+                        mc.ForEach(temp =>
+                        {
+                            while (!_modelCopyLock.TryEnterReadLock(10)) ;
+                            bool hasMC = _modelCopy.ContainsKey(temp.id);
+                            _modelCopyLock.ExitReadLock();
+
+                            while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                            if (!hasMC)
+                                _modelCopy.Add(temp.id, temp);
+                            else
+                                _modelCopy[temp.id] = temp;
+                            _modelCopyLock.ExitWriteLock();
+                        });
+
+                        _db.UpdateModelCopies(mc.ToArray());
+                    }
                     return true;
                 }
                 catch (Exception e)
@@ -306,6 +342,7 @@ namespace TheLibraryIsOpen.db
                 List<Movie> movies = new List<Movie>();
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
+                List<ModelCopy> mc = new List<ModelCopy>();
                 foreach (var item in objectsToDelete)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -333,6 +370,11 @@ namespace TheLibraryIsOpen.db
                         case TypeEnum.Person:
                             {
                                 people.Add((Person)item);
+                                break;
+                            }
+                        case TypeEnum.ModelCopy:
+                            {
+                                mc.Add((ModelCopy)item);
                                 break;
                             }
                         default:
@@ -370,7 +412,7 @@ namespace TheLibraryIsOpen.db
                     if (music.Count > 0)
                     {
                         while (!_musicLock.TryEnterWriteLock(10)) ;
-                        music.ForEach(temp => _books.Remove(temp.MusicId));
+                        music.ForEach(temp => _music.Remove(temp.MusicId));
                         _musicLock.ExitWriteLock();
 
                         _db.DeleteMusic(music.ToArray());
@@ -378,10 +420,18 @@ namespace TheLibraryIsOpen.db
                     if (people.Count > 0)
                     {
                         while (!_peopleLock.TryEnterWriteLock(10)) ;
-                        people.ForEach(temp => _books.Remove(temp.PersonId));
+                        people.ForEach(temp => _people.Remove(temp.PersonId));
                         _peopleLock.ExitWriteLock();
 
                         _db.DeletePeople(people.ToArray());
+                    }
+                    if (mc.Count > 0)
+                    {
+                        while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                        mc.ForEach(temp => _modelCopy.Remove(temp.id));
+                        _modelCopyLock.ExitWriteLock();
+
+                        _db.DeleteModelCopies(mc.ToArray());
                     }
                     return true;
                 }
@@ -497,6 +547,25 @@ namespace TheLibraryIsOpen.db
                 }
             }
             return bookToFind;
+        }
+
+        public ModelCopy FindModelCopy(int id)
+        {
+            ModelCopy mcToFind;
+            while (!_modelCopyLock.TryEnterReadLock(10)) ;
+            _modelCopy.TryGetValue(id, out mcToFind);
+            _modelCopyLock.ExitReadLock();
+            if (mcToFind == null)
+            {
+                mcToFind = _db.GetModelCopyById(id);
+                if (mcToFind != null)
+                {
+                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                    _modelCopy.TryAdd(id, mcToFind);
+                    _modelCopyLock.ExitWriteLock();
+                }
+            }
+            return mcToFind;
         }
 
         // TODO: BOOK find by isbn 13, isbn 10 and GetAllBooks

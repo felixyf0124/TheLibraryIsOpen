@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
-
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -120,6 +120,28 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
+        public Task<IdentityResult> addModelCopy(Book book)
+        {
+            if (book != null)
+            {
+
+                return Task.Factory.StartNew(() =>
+                {
+                    // TODO: manage error if register returns false
+
+                    _unitOfWork.RegisterNew(new ModelCopy
+                    {
+                        modelID = book.BookId,
+                        modelType = TypeEnum.Book
+                    });
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "book was null" });
+            });
+        }
 
         //Get all Books
         public Task<List<Book>> GetAllBookDataAsync()
@@ -135,5 +157,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return _unitOfWork.CommitAsync();
         }
+
+
     }
 }
