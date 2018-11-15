@@ -143,13 +143,14 @@ namespace TheLibraryIsOpen.Controllers
             }
         }
 
-        public async void AddToCart(Movie movie)
+        public IActionResult AddToCart(int id)
         {
             var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
                 ?? new List<SessionModel>();
-            Items.Add(new SessionModel { Id = movie.MovieId, ModelType = TypeEnum.Movie });
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Movie });
             HttpContext.Session.SetObject("Items", Items);
             HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id });
         }
 
     }

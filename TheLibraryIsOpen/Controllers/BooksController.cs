@@ -174,13 +174,14 @@ namespace TheLibraryIsOpen.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async void AddToCart(Book book)
+        public IActionResult AddToCart(int id)
         {
             var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
                 ?? new List<SessionModel>();
-            Items.Add(new SessionModel { Id = book.BookId, ModelType = TypeEnum.Book });
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Book });
             HttpContext.Session.SetObject("Items", Items);
             HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
         private bool BookExists(string id)

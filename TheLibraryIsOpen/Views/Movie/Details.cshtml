@@ -11,13 +11,7 @@
 }
 
 @{
-    bool inStoke = false;
-    string str = TempData["AvailableCopies"] as string;
-    if (str != null)
-    {
-        inStoke = (int.Parse(str) > 0 ? true : false);
-    }
-
+    bool inStoke = (int)TempData["AvailableCopies"] > 0;
 }
 
 @{
@@ -93,7 +87,7 @@
 <div>
     @if (inStoke)
     {
-        <a asp-action="AddToCart(@Model)" class="btn btn-lg btn-warning" asp-route-id="@Model.MovieId"><label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Add To Cart</a>
+        <a asp-action="AddToCart" asp-route-id="@Model.MovieId" class="btn btn-lg btn-warning"><label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Add To Cart</a>
     }
 </div>
 <div style="height: 6px;"></div>

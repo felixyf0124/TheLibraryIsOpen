@@ -165,13 +165,14 @@ namespace TheLibraryIsOpen.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async void AddToCart(Music music)
+        public IActionResult AddToCart(int id)
         {
             var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
                 ?? new List<SessionModel>();
-            Items.Add(new SessionModel { Id = music.MusicId, ModelType = TypeEnum.Music });
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Music });
             HttpContext.Session.SetObject("Items", Items);
             HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
         private bool MusicExists(string id)
