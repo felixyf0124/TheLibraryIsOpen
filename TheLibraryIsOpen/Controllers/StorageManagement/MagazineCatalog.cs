@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -134,6 +135,32 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
+        }
+
+        public Task<int> getNoOfAvailableModelCopies(Magazine magazine)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(magazine.MagazineId, (int)TypeEnum.Magazine, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public Task<List<ModelCopy>> getModelCopies(Magazine magazine)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                List<ModelCopy> copies = _im.FindModelCopies(magazine.MagazineId, TypeEnum.Magazine);
+
+
+                return copies;
+
+            });
+
         }
 
     }

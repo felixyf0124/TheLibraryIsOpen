@@ -158,6 +158,30 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return _unitOfWork.CommitAsync();
         }
 
+        public Task<int> getNoOfAvailableModelCopies(Book book)
+        {
+            return Task.Factory.StartNew(() =>
+            {
 
+                int AvailableCopies = _db.CountModelCopiesOfModel(book.BookId, (int)TypeEnum.Book, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+            
+        }
+
+        public Task<List<ModelCopy>> getModelCopies(Book book)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                List<ModelCopy> copies = _im.FindModelCopies(book.BookId, TypeEnum.Book);
+                
+
+                return copies;
+
+            });
+
+        }
     }
 }

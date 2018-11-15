@@ -6,7 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
+using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
+using Microsoft.AspNetCore.Http;
+using static TheLibraryIsOpen.Constants.TypeConstants;
+using static TheLibraryIsOpen.Constants.SessionExtensions;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -42,6 +46,8 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
+
+            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(music);
 
             return View(music);
         }
@@ -157,6 +163,16 @@ namespace TheLibraryIsOpen.Controllers
             await _mc.DeleteMusicAsync(music);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult AddToCart(int id)
+        {
+            var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
+                ?? new List<SessionModel>();
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Music });
+            HttpContext.Session.SetObject("Items", Items);
+            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
         private bool MusicExists(string id)

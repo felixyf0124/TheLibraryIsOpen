@@ -17,6 +17,9 @@ using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.Authentication;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models.Movie;
+using TheLibraryIsOpen.Models;
+using static TheLibraryIsOpen.Constants.TypeConstants;
+using static TheLibraryIsOpen.Constants.SessionExtensions;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -102,6 +105,8 @@ namespace TheLibraryIsOpen.Controllers
             toDetails.Producers = await _mc.GetAllMovieProducerDataAsync(id);
             toDetails.Actors = await _mc.GetAllMovieActorDataAsync(id);
 
+            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(toDetails);
+
             return View(toDetails);
 
         }
@@ -137,5 +142,16 @@ namespace TheLibraryIsOpen.Controllers
                 return RedirectToAction("Home", "Index");
             }
         }
+
+        public IActionResult AddToCart(int id)
+        {
+            var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
+                ?? new List<SessionModel>();
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Movie });
+            HttpContext.Session.SetObject("Items", Items);
+            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
     }
 }

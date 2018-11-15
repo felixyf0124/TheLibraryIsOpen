@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -99,6 +100,32 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
+        }
+
+        public Task<int> getNoOfAvailableModelCopies(Music music)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(music.MusicId, (int)TypeEnum.Music, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public Task<List<ModelCopy>> getModelCopies(Music music)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                List<ModelCopy> copies = _im.FindModelCopies(music.MusicId, TypeEnum.Music);
+
+
+                return copies;
+
+            });
+
         }
     }
 }

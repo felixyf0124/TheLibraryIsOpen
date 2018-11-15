@@ -2889,7 +2889,7 @@ namespace TheLibraryIsOpen.Database
 
         //counts number of copies borrowed of a specific model
 
-        public int CountModelCopiesOfModel(ModelCopy modelId, int mType, BorrowType borrowId)
+        public int CountModelCopiesOfModel(int modelId, int mType, BorrowType borrowId)
         {
             string query = null;
             switch (borrowId)

@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
+using Microsoft.AspNetCore.Http;
+using static TheLibraryIsOpen.Constants.TypeConstants;
+using static TheLibraryIsOpen.Constants.SessionExtensions;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -44,6 +47,8 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
+
+            TempData["AvailableCopies"] = await _bc.getNoOfAvailableModelCopies(book);
 
             return View(book);
         }
@@ -167,6 +172,16 @@ namespace TheLibraryIsOpen.Controllers
             await _bc.DeleteAsync(book);
             await _bc.CommitAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult AddToCart(int id)
+        {
+            var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
+                ?? new List<SessionModel>();
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Book });
+            HttpContext.Session.SetObject("Items", Items);
+            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
         private bool BookExists(string id)
