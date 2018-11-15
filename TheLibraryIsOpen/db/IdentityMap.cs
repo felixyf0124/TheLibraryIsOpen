@@ -568,6 +568,61 @@ namespace TheLibraryIsOpen.db
             return mcToFind;
         }
 
+        public List<ModelCopy> FindModelCopies(int mId, TypeEnum mType)
+        {
+            List<ModelCopy> mcToFind = new List<ModelCopy>();
+
+            for(int i =0; i<_modelCopy.Count;i++)
+            {
+               // ModelCopy tempMC;
+                if (_modelCopy[i].modelID == mId && _modelCopy[i].modelType == mType)
+                {
+                    mcToFind.Add(_modelCopy[i]);
+
+                }
+            }
+            if(mcToFind.Count == 0)
+            {
+                mcToFind = _db.FindModelCopiesOfModel(mId, mType);
+            }
+
+            return mcToFind;
+        }
+
+        public void UpdateAllModelCopiesOfOneModelFromDB(List<ModelCopy> mCopies)
+        {
+            for(int i=0; i<mCopies.Count;i++)
+            {
+                ModelCopy tempMC = _db.GetModelCopyById(mCopies[i].id);
+
+                if (tempMC == null)
+                {
+                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                    _modelCopy.Remove(mCopies[i].id);
+                    _modelCopyLock.ExitWriteLock();
+                }
+                else
+                {
+                    mCopies[i] = tempMC;
+
+
+                    while (!_modelCopyLock.TryEnterReadLock(10)) ;
+                    bool hasMC = _modelCopy.ContainsKey(mCopies[i].id);
+                    _modelCopyLock.ExitReadLock();
+
+                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                    if (!hasMC)
+                        _modelCopy.Add(mCopies[i].id, mCopies[i]);
+                    else
+                        _modelCopy[mCopies[i].id] = mCopies[i];
+                    _modelCopyLock.ExitWriteLock();
+                }
+
+            }
+        }
+
+        
+
         // TODO: BOOK find by isbn 13, isbn 10 and GetAllBooks
 
         // TODO: MAGAZINE find by isbn 13, isbn 10 and GetAllMagazines

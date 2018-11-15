@@ -9,57 +9,75 @@
     Client client = await cm.FindByEmailAsync(clientEmail);
     bool isAdmin = client.IsAdmin;
 }
-    @{
-        ViewData["Title"] = "Details";
-    }
-    <h2>Details</h2>
-    <div>
-        <h4>Book</h4>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Title)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Title)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Publisher)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Publisher)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Language)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Language)
-            </dd>
-            <dt>
-                @Model.Date.ToShortDateString()
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Date)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Isbn10)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Isbn10)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Isbn13)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Isbn13)
-            </dd>
-        </dl>
-    </div>
-    <div>
-        @if (isAdmin)
-        {
-            <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.MagazineId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
-            <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@Model.MagazineId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
-        }
 
-    </div>
+@{
+    bool inStoke = false;
+    string str = TempData["AvailableCopies"] as string;
+    if (str != null)
+    {
+        inStoke = (int.Parse(str) > 0 ? true : false);
+    }
+
+}
+
+@{
+    ViewData["Title"] = "Details";
+}
+<h2>Details</h2>
+<div>
+    <h4>Magazine</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Publisher)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Publisher)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Language)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Model.Date.ToShortDateString()
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Isbn10)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Isbn10)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Isbn13)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Isbn13)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (inStoke)
+    {
+        <a asp-action="AddToCart(@Model)" class="btn btn-lg btn-warning" asp-route-id="@Model.MagazineId"><label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Add To Cart</a>
+    }
+</div>
+<div style="height: 6px;"></div>
+<div>
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.MagazineId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+        <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@Model.MagazineId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
+    }
+
+</div>
