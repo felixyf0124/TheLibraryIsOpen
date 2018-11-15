@@ -162,16 +162,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                List<ModelCopy> copies = _im.FindModelCopies(book.BookId, TypeEnum.Book);
-                int AvailableCopies = 0;
 
-                foreach(var item in copies)
-                {
-                    if (item.borrowerID == 0)
-                    {
-                        AvailableCopies++;
-                    }
-                }
+                int AvailableCopies = _db.CountModelCopiesOfModel(book.BookId, (int)TypeEnum.Book, BorrowType.NotBorrowed);
 
                 return AvailableCopies;
 

@@ -9,6 +9,7 @@ using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using Microsoft.AspNetCore.Http;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 using static TheLibraryIsOpen.Constants.SessionExtensions;
 
 namespace TheLibraryIsOpen.Controllers
@@ -177,19 +178,9 @@ namespace TheLibraryIsOpen.Controllers
         {
             var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
                 ?? new List<SessionModel>();
-            SessionModel _item = new SessionModel();
-            List<ModelCopy> copies = await _bc.getModelCopies(book);
-            foreach(ModelCopy tempMC in copies)
-            {
-                if(tempMC.borrowerID == 0)
-                {
-                    _item.Id = tempMC.id;
-                    _item.ModelType = tempMC.modelType;
-                    Items.Add(_item);
-                    HttpContext.Session.SetObject("Items", Items);
-                    break;
-                }
-            }
+            Items.Add(new SessionModel { Id = book.BookId, ModelType = TypeEnum.Book });
+            HttpContext.Session.SetObject("Items", Items);
+            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
         }
 
         private bool BookExists(string id)
