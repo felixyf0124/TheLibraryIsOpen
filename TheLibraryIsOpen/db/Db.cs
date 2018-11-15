@@ -81,14 +81,11 @@
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
  */
 
-using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 

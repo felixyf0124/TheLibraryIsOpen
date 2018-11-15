@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TheLibraryIsOpen.Constants;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Models.DBModels
@@ -17,4 +13,3 @@ namespace TheLibraryIsOpen.Models.DBModels
         public DateTime returnDate { get; set; }
     }
 }
- 

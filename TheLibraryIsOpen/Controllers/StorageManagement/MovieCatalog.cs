@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement

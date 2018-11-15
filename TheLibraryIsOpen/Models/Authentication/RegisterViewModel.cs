@@ -24,7 +24,7 @@ namespace TheLibraryIsOpen.Models.Authentication
         [DisplayName("Home Address")]
         public string Address { get; set; }
 
-        [DataType(DataType.PhoneNumber),DisplayName("Phone Number")]
+        [DataType(DataType.PhoneNumber), DisplayName("Phone Number")]
         public string PhoneNumber { get; set; }
 
         public Client ToClient()

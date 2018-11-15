@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
@@ -168,7 +166,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return AvailableCopies;
 
             });
-            
+
         }
 
         public Task<List<ModelCopy>> getModelCopies(Book book)
@@ -176,7 +174,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return Task.Factory.StartNew(() =>
             {
                 List<ModelCopy> copies = _im.FindModelCopies(book.BookId, TypeEnum.Book);
-                
+
 
                 return copies;
 

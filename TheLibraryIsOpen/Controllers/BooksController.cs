@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Controllers.StorageManagement;
-using Microsoft.AspNetCore.Http;
-using static TheLibraryIsOpen.Constants.TypeConstants;
 using static TheLibraryIsOpen.Constants.SessionExtensions;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
 {

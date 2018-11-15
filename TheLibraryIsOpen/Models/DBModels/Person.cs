@@ -31,7 +31,7 @@ namespace TheLibraryIsOpen.Models.DBModels
             PersonId = pId;
             FirstName = firstName;
             LastName = lastName;
-           
+
         }
 
         // Return information about the person

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database;
@@ -167,7 +166,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<List<Client>> GetAllClientsDataAsync() 
+        public Task<List<Client>> GetAllClientsDataAsync()
         {
             return Task.Factory.StartNew(() =>
             {
