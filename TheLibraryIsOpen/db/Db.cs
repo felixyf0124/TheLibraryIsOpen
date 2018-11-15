@@ -2793,10 +2793,22 @@ namespace TheLibraryIsOpen.Database
         }
 
         //Find modelCopies of model by model ID, returns list of modelCopy
-        public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType)
+        public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType, BorrowType borrowId = BorrowType.Any)
         {
             int mType = (int)enumType;
-            string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" ;";
+            string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\"";
+            switch (borrowId)
+            {
+                case BorrowType.Borrowed:
+                    query += " AND NOT borrowerID IS NULL;";
+                        break;
+                case BorrowType.NotBorrowed:
+                    query += " AND borrowerID IS NULL;";
+                    break;
+                case BorrowType.Any:
+                    query += ";";
+                    break;
+            }
             List<ModelCopy> modelCopies = new List<ModelCopy>();
 
             //Open connection
@@ -2895,13 +2907,13 @@ namespace TheLibraryIsOpen.Database
             switch (borrowId)
             {
                 case BorrowType.Borrowed:
-                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" AND NOT borrowerID = null;";
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\" AND NOT borrowerID IS NULL;";
                     break;
                 case BorrowType.NotBorrowed:
-                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\" AND borrowerID = null;";
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\" AND borrowerID IS NULL;";
                     break;
                 case BorrowType.Any:
-                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" modelType = \"{mType}\";";
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\";";
                     break;
             }
             int count = 0;
