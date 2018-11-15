@@ -1,0 +1,37 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TheLibraryIsOpen.Constants;
+using static TheLibraryIsOpen.Constants.TypeConstants;
+
+namespace TheLibraryIsOpen.Models.DBModels
+{
+    public class Log
+    {
+        public int LogID { get; set; }
+        public int ClientID { get; set; }
+        public int ModelCopyID { get; set; }
+        public int Transaction { get; set; }
+        public DateTime TransactionTime { get; set; }
+
+        public Log() { }
+
+        public Log(int clientID, int modelCopyID, int transaction, DateTime transactionTime)
+        {
+            ClientID = clientID;
+            ModelCopyID = modelCopyID;
+            Transaction = transaction;
+            TransactionTime = transactionTime;
+        }
+
+        public Log(int logID, int clientID, int modelCopyID, int transaction, DateTime transactionTime)
+        {
+            LogID = logID;
+            ClientID = clientID;
+            ModelCopyID = modelCopyID;
+            Transaction = transaction;
+            TransactionTime = transactionTime;
+        }
+    }
+}
