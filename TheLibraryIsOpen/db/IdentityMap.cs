@@ -19,6 +19,7 @@ namespace TheLibraryIsOpen.db
         private readonly ReaderWriterLockSlim _musicLock;
         private readonly ReaderWriterLockSlim _peopleLock;
         private readonly ReaderWriterLockSlim _modelCopyLock;
+        private readonly ReaderWriterLockSlim _logLock;
 
         private readonly Dictionary<int, Book> _books;
         private readonly Dictionary<int, Magazine> _mags;
@@ -26,6 +27,7 @@ namespace TheLibraryIsOpen.db
         private readonly Dictionary<int, Music> _music;
         private readonly Dictionary<int, Person> _people;
         private readonly Dictionary<int, ModelCopy> _modelCopy;
+        private readonly Dictionary<int, Log> _log;
 
         public IdentityMap(Db db)
         {
@@ -36,6 +38,7 @@ namespace TheLibraryIsOpen.db
             _musicLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peopleLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _modelCopyLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+            _logLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
             _books = new Dictionary<int, Book>();
             _mags = new Dictionary<int, Magazine>();
@@ -43,6 +46,7 @@ namespace TheLibraryIsOpen.db
             _music = new Dictionary<int, Music>();
             _people = new Dictionary<int, Person>();
             _modelCopy = new Dictionary<int, ModelCopy>();
+            _log = new Dictionary<int, Log>();
         }
 
         public Task<bool> AddAsync(params object[] objectsToAdd)
@@ -55,6 +59,7 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
+                List<Log> log = new List<Log>();
                 foreach (var item in objectsToAdd)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -130,6 +135,8 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
+                List<Log> log = new List<Log>();
+
                 foreach (var item in objectsToEdit)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -162,6 +169,11 @@ namespace TheLibraryIsOpen.db
                         case TypeEnum.ModelCopy:
                             {
                                 mc.Add((ModelCopy)item);
+                                break;
+                            }
+                        case TypeEnum.Log:
+                            {
+                                log.Add((Log)item);
                                 break;
                             }
                         default:
@@ -322,6 +334,24 @@ namespace TheLibraryIsOpen.db
                         });
 
                         _db.UpdateModelCopies(mc.ToArray());
+                    }
+                    if (log.Count > 0)
+                    {
+                        log.ForEach(temp =>
+                        {
+                            while (!_logLock.TryEnterReadLock(10)) ;
+                            bool hasLog = _log.ContainsKey(temp.LogID);
+                            _logLock.ExitReadLock();
+
+                            while (!_logLock.TryEnterWriteLock(10)) ;
+                            if (!hasLog)
+                                _log.Add(temp.LogID, temp);
+                            else
+                                _log[temp.LogID] = temp;
+                            _logLock.ExitWriteLock();
+                        });
+
+                        _db.TransactionUpdate(log.ToArray());
                     }
                     return true;
                 }
