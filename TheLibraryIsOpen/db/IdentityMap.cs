@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -19,6 +18,7 @@ namespace TheLibraryIsOpen.db
         private readonly ReaderWriterLockSlim _musicLock;
         private readonly ReaderWriterLockSlim _peopleLock;
         private readonly ReaderWriterLockSlim _modelCopyLock;
+        private readonly ReaderWriterLockSlim _logLock;
 
         private readonly Dictionary<int, Book> _books;
         private readonly Dictionary<int, Magazine> _mags;
@@ -26,6 +26,7 @@ namespace TheLibraryIsOpen.db
         private readonly Dictionary<int, Music> _music;
         private readonly Dictionary<int, Person> _people;
         private readonly Dictionary<int, ModelCopy> _modelCopy;
+        private readonly Dictionary<int, Log> _log;
 
         public IdentityMap(Db db)
         {
@@ -36,6 +37,7 @@ namespace TheLibraryIsOpen.db
             _musicLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peopleLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _modelCopyLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+            _logLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
             _books = new Dictionary<int, Book>();
             _mags = new Dictionary<int, Magazine>();
@@ -43,6 +45,7 @@ namespace TheLibraryIsOpen.db
             _music = new Dictionary<int, Music>();
             _people = new Dictionary<int, Person>();
             _modelCopy = new Dictionary<int, ModelCopy>();
+            _log = new Dictionary<int, Log>();
         }
 
         public Task<bool> AddAsync(params object[] objectsToAdd)
@@ -55,6 +58,7 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
+                List<Log> log = new List<Log>();
                 foreach (var item in objectsToAdd)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -89,6 +93,11 @@ namespace TheLibraryIsOpen.db
                                 mc.Add((ModelCopy)item);
                                 break;
                             }
+                        case TypeEnum.Log:
+                            {
+                                log.Add((Log)item);
+                                break;
+                            }
                         default:
                             {
                                 return false;
@@ -109,6 +118,8 @@ namespace TheLibraryIsOpen.db
                         _db.CreatePeople(people.ToArray());
                     if (mc.Count > 0)
                         _db.CreateModelCopies(mc.ToArray());
+                    if (log.Count > 0)
+                        _db.AddLogs(log.ToArray());
                     return true;
                 }
                 catch
@@ -130,6 +141,7 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
+                List<Log> logs = new List<Log>();
                 foreach (var item in objectsToEdit)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -211,9 +223,9 @@ namespace TheLibraryIsOpen.db
 
                     if (movies.Count > 0)
                     {
-                        movies.ForEach(movie =>
+                        movies.ForEach(async movie =>
                         {
-                            var prevMovie = FindMovie(movie.MovieId);
+                            var prevMovie = await FindMovie(movie.MovieId);
                             if (prevMovie.Actors == null)
                                 prevMovie.Actors = _db.GetAllMovieActors(movie.MovieId);
                             if (prevMovie.Producers == null)
@@ -343,6 +355,8 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
+                List<Log> log = new List<Log>();
+
                 foreach (var item in objectsToDelete)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -375,6 +389,11 @@ namespace TheLibraryIsOpen.db
                         case TypeEnum.ModelCopy:
                             {
                                 mc.Add((ModelCopy)item);
+                                break;
+                            }
+                        case TypeEnum.Log:
+                            {
+                                log.Add((Log)item);
                                 break;
                             }
                         default:
@@ -433,6 +452,14 @@ namespace TheLibraryIsOpen.db
 
                         _db.DeleteModelCopies(mc.ToArray());
                     }
+                    if (log.Count > 0)
+                    {
+                        while (!_logLock.TryEnterWriteLock(10)) ;
+                        log.ForEach(temp => _log.Remove(temp.LogID));
+                        _logLock.ExitWriteLock();
+
+                        _db.DeleteLogs(log.ToArray());
+                    }
                     return true;
                 }
                 catch
@@ -442,118 +469,126 @@ namespace TheLibraryIsOpen.db
             });
         }
 
-        public Movie FindMovie(int movieId)
+        public Task<Movie> FindMovie(int movieId)
         {
-            Movie movieToFind;
-
-            while (!_movieLock.TryEnterReadLock(10)) ;
-            _movies.TryGetValue(movieId, out movieToFind);
-            _movieLock.ExitReadLock();
-
-            if (movieToFind == null)
+            return Task.Factory.StartNew(() =>
             {
-                movieToFind = _db.GetMovieById(movieId);
+                while (!_movieLock.TryEnterReadLock(10)) ;
+                _movies.TryGetValue(movieId, out Movie movieToFind);
+                _movieLock.ExitReadLock();
 
-                if (movieToFind != null)
+                if (movieToFind == null)
                 {
-                    while (!_movieLock.TryEnterWriteLock(10)) ;
-                    _movies.TryAdd(movieId, movieToFind);
-                    _movieLock.ExitWriteLock();
-                }
-            }
+                    movieToFind = _db.GetMovieById(movieId);
 
-            return movieToFind;
+                    if (movieToFind != null)
+                    {
+                        while (!_movieLock.TryEnterWriteLock(10)) ;
+                        _movies.TryAdd(movieId, movieToFind);
+                        _movieLock.ExitWriteLock();
+                    }
+                }
+
+                return movieToFind;
+            });
         }
 
-        public Music FindMusic(int musicId)
+        public Task<Music> FindMusic(int musicId)
         {
-            Music musicToFind;
-
-            while (!_musicLock.TryEnterReadLock(10)) ;
-            _music.TryGetValue(musicId, out musicToFind);
-            _musicLock.ExitReadLock();
-
-            if (musicToFind == null)
+            return Task.Factory.StartNew(() =>
             {
-                musicToFind = _db.GetMusicById(musicId);
+                while (!_musicLock.TryEnterReadLock(10)) ;
+                _music.TryGetValue(musicId, out Music musicToFind);
+                _musicLock.ExitReadLock();
 
-                if (musicToFind != null)
+                if (musicToFind == null)
                 {
-                    while (!_musicLock.TryEnterWriteLock(10)) ;
-                    _music.TryAdd(musicId, musicToFind);
-                    _musicLock.ExitWriteLock();
-                }
-            }
+                    musicToFind = _db.GetMusicById(musicId);
 
-            return musicToFind;
+                    if (musicToFind != null)
+                    {
+                        while (!_musicLock.TryEnterWriteLock(10)) ;
+                        _music.TryAdd(musicId, musicToFind);
+                        _musicLock.ExitWriteLock();
+                    }
+                }
+
+                return musicToFind;
+            });
         }
 
-        public Person FindPerson(int personId)
+        public Task<Person> FindPerson(int personId)
         {
-            Person personToFind;
 
-            while (!_peopleLock.TryEnterReadLock(10)) ;
-            _people.TryGetValue(personId, out personToFind);
-            _peopleLock.ExitReadLock();
-
-            if (personToFind == null)
+            return Task.Factory.StartNew(() =>
             {
-                personToFind = _db.GetPersonById(personId);
+                while (!_peopleLock.TryEnterReadLock(10)) ;
+                _people.TryGetValue(personId, out Person personToFind);
+                _peopleLock.ExitReadLock();
 
-                if (personToFind != null)
+                if (personToFind == null)
                 {
-                    while (!_peopleLock.TryEnterWriteLock(10)) ;
-                    _people.TryAdd(personId, personToFind);
-                    _peopleLock.ExitWriteLock();
-                }
-            }
+                    personToFind = _db.GetPersonById(personId);
 
-            return personToFind;
+                    if (personToFind != null)
+                    {
+                        while (!_peopleLock.TryEnterWriteLock(10)) ;
+                        _people.TryAdd(personId, personToFind);
+                        _peopleLock.ExitWriteLock();
+                    }
+                }
+
+                return personToFind;
+            });
         }
 
-        public Magazine FindMagazine(int magazineID)
+        public Task<Magazine> FindMagazine(int magazineID)
         {
-            Magazine magazineToFind;
-            while (!_magLock.TryEnterReadLock(10)) ;
-            _mags.TryGetValue(magazineID, out magazineToFind);
-            _magLock.ExitReadLock();
-            if (magazineToFind == null)
+
+            return Task.Factory.StartNew(() =>
             {
-                magazineToFind = _db.GetMagazineById(magazineID);
-                if (magazineToFind != null)
+                while (!_magLock.TryEnterReadLock(10)) ;
+                _mags.TryGetValue(magazineID, out Magazine magazineToFind);
+                _magLock.ExitReadLock();
+                if (magazineToFind == null)
                 {
-                    while (!_magLock.TryEnterWriteLock(10)) ;
-                    _mags.TryAdd(magazineID, magazineToFind);
-                    _magLock.ExitWriteLock();
+                    magazineToFind = _db.GetMagazineById(magazineID);
+                    if (magazineToFind != null)
+                    {
+                        while (!_magLock.TryEnterWriteLock(10)) ;
+                        _mags.TryAdd(magazineID, magazineToFind);
+                        _magLock.ExitWriteLock();
+                    }
                 }
-            }
-            return magazineToFind;
+                return magazineToFind;
+            });
         }
 
-        public Book FindBook(int bookID)
+        public Task<Book> FindBook(int bookID)
         {
-            Book bookToFind;
-            while (!_bookLock.TryEnterReadLock(10)) ;
-            _books.TryGetValue(bookID, out bookToFind);
-            _bookLock.ExitReadLock();
-            if (bookToFind == null)
-            {
-                bookToFind = _db.GetBookById(bookID);
-                if (bookToFind != null)
-                {
-                    while (!_bookLock.TryEnterWriteLock(10)) ;
-                    _books.TryAdd(bookID, bookToFind);
-                    _bookLock.ExitWriteLock();
-                }
-            }
-            return bookToFind;
-        }
 
-        public ModelCopy FindModelCopy(int id)
-        {
-            ModelCopy mcToFind;
+            return Task.Factory.StartNew(() =>
+            {
+                while (!_bookLock.TryEnterReadLock(10)) ;
+                _books.TryGetValue(bookID, out Book bookToFind);
+                _bookLock.ExitReadLock();
+                if (bookToFind == null)
+                {
+                    bookToFind = _db.GetBookById(bookID);
+                    if (bookToFind != null)
+                    {
+                        while (!_bookLock.TryEnterWriteLock(10)) ;
+                        _books.TryAdd(bookID, bookToFind);
+                        _bookLock.ExitWriteLock();
+                    }
+                }
+                return bookToFind;
+            });
+        }
+        public Task<ModelCopy> FindModelCopy(int id)
+         {return Task.Factory.StartNew(() => {
             while (!_modelCopyLock.TryEnterReadLock(10)) ;
-            _modelCopy.TryGetValue(id, out mcToFind);
+            _modelCopy.TryGetValue(id, out ModelCopy mcToFind);
             _modelCopyLock.ExitReadLock();
             if (mcToFind == null)
             {
@@ -565,70 +600,124 @@ namespace TheLibraryIsOpen.db
                     _modelCopyLock.ExitWriteLock();
                 }
             }
-            return mcToFind;
+             return mcToFind;});
         }
 
-        public List<ModelCopy> FindModelCopies(int mId, TypeEnum mType)
-        {
-            List<ModelCopy> mcToFind = new List<ModelCopy>();
-
-            for(int i =0; i<_modelCopy.Count;i++)
+        /// <summary>
+        /// finds the model copies of a model
+        /// </summary>
+        /// <param name="mId">Model id</param>
+        /// <param name="mType">Model type</param>
+        /// <returns></returns>
+        public Task<List<ModelCopy>> FindModelCopies(int mId, TypeEnum mType)
+         {return Task.Factory.StartNew(() => {
+            List<ModelCopy> mcToFind = _db.FindModelCopiesOfModel(mId, mType);
+            mcToFind.ForEach(mc =>
             {
-               // ModelCopy tempMC;
-                if (_modelCopy[i].modelID == mId && _modelCopy[i].modelType == mType)
-                {
-                    mcToFind.Add(_modelCopy[i]);
-
-                }
-            }
-            if(mcToFind.Count == 0)
-            {
-                mcToFind = _db.FindModelCopiesOfModel(mId, mType);
-            }
-
-            return mcToFind;
+                while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                _modelCopy.TryAdd(mc.id, mc);
+                _modelCopyLock.ExitWriteLock();
+            });
+             return mcToFind;});
         }
 
-        public void UpdateAllModelCopiesOfOneModelFromDB(List<ModelCopy> mCopies)
-        {
-            for(int i=0; i<mCopies.Count;i++)
+        public Task<List<Log>> GetAllLogs()
+         {return Task.Factory.StartNew(() => {
+
+            List<Log> logToFind = _db.GetAllLogs();
+
+            logToFind.ForEach(log =>
             {
-                ModelCopy tempMC = _db.GetModelCopyById(mCopies[i].id);
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
 
-                if (tempMC == null)
-                {
-                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
-                    _modelCopy.Remove(mCopies[i].id);
-                    _modelCopyLock.ExitWriteLock();
-                }
-                else
-                {
-                    mCopies[i] = tempMC;
-
-
-                    while (!_modelCopyLock.TryEnterReadLock(10)) ;
-                    bool hasMC = _modelCopy.ContainsKey(mCopies[i].id);
-                    _modelCopyLock.ExitReadLock();
-
-                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
-                    if (!hasMC)
-                        _modelCopy.Add(mCopies[i].id, mCopies[i]);
-                    else
-                        _modelCopy[mCopies[i].id] = mCopies[i];
-                    _modelCopyLock.ExitWriteLock();
-                }
-
-            }
+             return logToFind;});
         }
 
-        
+        public Task<List<Log>> FindLogsByDate(DateTime date, bool exact)
+         {return Task.Factory.StartNew(() => {
+            List<Log> logToFind =  _db.GetLogsByDate(date, exact);
+            logToFind.ForEach(log =>
+            {
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
+             return logToFind;});
+        }
 
-        // TODO: BOOK find by isbn 13, isbn 10 and GetAllBooks
+        public Task<List<Log>> FindLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
+         {return Task.Factory.StartNew(() => {
+            List<Log> logToFind = _db.GetLogsByPeriod(dateStart, dateEnd, exact);
 
-        // TODO: MAGAZINE find by isbn 13, isbn 10 and GetAllMagazines
+            logToFind.ForEach(log =>
+            {
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
+             return logToFind;});
+        }
 
-        // TODO: MOVIE GetAllMovies, getAllPerson, GetAllMovieProducers, GetAllMovieActors
+        public Task<List<Log>> FindLogsByModelTypeAndId(TypeEnum type, int id)
+         {return Task.Factory.StartNew(() => {
+            List<Log> logToFind =  _db.GetLogsByModelTypeAndId(type, id);
+            logToFind.ForEach(log =>
+            {
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
 
-        // TODO: MUSIC GetAllMusic
+             return logToFind;});
+        }
+
+        public Task<List<Log>> FindLogsByClientID(int id)
+         {return Task.Factory.StartNew(() => {
+            List<Log> logToFind = _db.GetLogsByClientID(id);
+
+            logToFind.ForEach(log =>
+            {
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
+
+             return logToFind;});
+        }
+
+        public Task<List<Log>> FindLogsByCopyID(int id)
+         {return Task.Factory.StartNew(() => {
+            List<Log> logToFind = _db.GetLogsByCopyID(id);
+
+            logToFind.ForEach(log =>
+            {
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
+
+             return logToFind;});
+        }
+
+        public Task<List<Log>> FindLogsByTransaction(TransactionType transac)
+         {return Task.Factory.StartNew(() => {
+            List<Log> logToFind =  _db.GetLogsByTransaction(transac);
+
+            logToFind.ForEach(log =>
+            {
+                while (!_logLock.TryEnterWriteLock(10)) ;
+                _log.TryAdd(log.LogID, log);
+                _logLock.ExitWriteLock();
+            });
+             return logToFind;});
+        }
+
+        // TODO: public List<SessionModel> TransactionUpdate() {}
+
+
+
     }
 }

@@ -13,7 +13,8 @@ namespace TheLibraryIsOpen.Constants
             Movie = 2,
             Music = 3,
             Person = 4,
-            ModelCopy = 5
+            ModelCopy = 5,
+            Log = 6
         };
 
         public enum BorrowType
@@ -21,8 +22,13 @@ namespace TheLibraryIsOpen.Constants
             Borrowed = 0,
             NotBorrowed = 1,
             Any = 3
-
         };
+
+        public enum TransactionType
+        {
+            Borrow = 0,
+            Return = 1
+        }
 
         private static Dictionary<Type, TypeEnum> typeDict = new Dictionary<Type, TypeEnum>
         {
@@ -31,7 +37,8 @@ namespace TheLibraryIsOpen.Constants
             {typeof(Movie),         TypeEnum.Movie},
             {typeof(Music),         TypeEnum.Music},
             {typeof(Person),        TypeEnum.Person},
-            {typeof(ModelCopy),        TypeEnum.ModelCopy}
+            {typeof(ModelCopy),        TypeEnum.ModelCopy},
+            {typeof(Log),        TypeEnum.Log}
         };
 
         public static TypeEnum GetTypeNum(Type t)

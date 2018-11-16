@@ -1,25 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Database;
-using TheLibraryIsOpen.Models.Authentication;
+using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models.Movie;
-using TheLibraryIsOpen.Models;
-using static TheLibraryIsOpen.Constants.TypeConstants;
 using static TheLibraryIsOpen.Constants.SessionExtensions;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
 {
