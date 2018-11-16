@@ -599,16 +599,16 @@ namespace TheLibraryIsOpen.db
         {
             List<ModelCopy> mcToFind = new List<ModelCopy>();
 
-            for(int i =0; i<_modelCopy.Count;i++)
+            for (int i = 0; i < _modelCopy.Count; i++)
             {
-               // ModelCopy tempMC;
+                // ModelCopy tempMC;
                 if (_modelCopy[i].modelID == mId && _modelCopy[i].modelType == mType)
                 {
                     mcToFind.Add(_modelCopy[i]);
 
                 }
             }
-            if(mcToFind.Count == 0)
+            if (mcToFind.Count == 0)
             {
                 mcToFind = _db.FindModelCopiesOfModel(mId, mType);
             }
@@ -618,7 +618,7 @@ namespace TheLibraryIsOpen.db
 
         public void UpdateAllModelCopiesOfOneModelFromDB(List<ModelCopy> mCopies)
         {
-            for(int i=0; i<mCopies.Count;i++)
+            for (int i = 0; i < mCopies.Count; i++)
             {
                 ModelCopy tempMC = _db.GetModelCopyById(mCopies[i].id);
 
@@ -648,45 +648,139 @@ namespace TheLibraryIsOpen.db
             }
         }
 
-        // public List<Log> GetAllLogs()
-        // {
+        public List<Log> GetAllLogs()
+        {
 
-        // }
+            List<Log> logToFind = new List<Log>();
 
-        // public List<Log> FindLogsByDate(DateTime date, bool exact)
-        // {
+            for (int i = 0; i < _log.Count; i++)
+            {
+                logToFind.Add(_log[i]);
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetAllLogs();
+            }
 
-        // }
+            return logToFind;
+        }
 
-        // public List<Log> FindLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
-        // {
+        public List<Log> FindLogsByDate(DateTime date, bool exact)
+        {
+            List<Log> logToFind = new List<Log>();
 
-        // }
+            for (int i = 0; i < _log.Count; i++)
+            {
+                if (_log[i].TransactionTime == date)
+                {
+                    logToFind.Add(_log[i]);
+                }
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetLogsByDate(date, exact);
+            }
 
-        // public List<Log> FindLogsByModelTypeAndId(TypeEnum type, int id)
-        // {
+            return logToFind;
+        }
 
-        // }
+        public List<Log> FindLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
+        {
+            List<Log> logToFind = new List<Log>();
 
-        // public List<Log> FindLogsByClientID(int id)
-        // {
+            for (int i = 0; i < _log.Count; i++)
+            {
+                if (_log[i].TransactionTime >= dateStart && _log[i].TransactionTime <= dateEnd)
+                {
+                    logToFind.Add(_log[i]);
+                }
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetLogsByPeriod(dateStart, dateEnd, exact);
+            }
 
-        // }
+            return logToFind;
+        }
 
-        // public List<Log> FindLogsByCopyID(int id)
-        // {
+        public List<Log> FindLogsByModelTypeAndId(TypeEnum type, int id)
+        {
+            List<Log> logToFind = new List<Log>();
 
-        // }
+            for (int i = 0; i < _log.Count; i++)
+            {
+                if (_log[i].ModelType == type && _log[i].ModelID == id)
+                {
+                    logToFind.Add(_log[i]);
+                }
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetLogsByModelTypeAndId(type, id);
+            }
 
-        // public List<Log> FindLogsByTransaction(int transac)
-        // {
+            return logToFind;
+        }
 
-        // }
+        public List<Log> FindLogsByClientID(int id)
+        {
+            List<Log> logToFind = new List<Log>();
 
-        //  public List<SessionModel> TransactionUpdate()
-        // {
+            for (int i = 0; i < _log.Count; i++)
+            {
+                if (_log[i].ClientID == id)
+                {
+                    logToFind.Add(_log[i]);
+                }
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetLogsByClientID(id);
+            }
 
-        // }
+            return logToFind;
+        }
+
+        public List<Log> FindLogsByCopyID(int id)
+        {
+            List<Log> logToFind = new List<Log>();
+
+            for (int i = 0; i < _log.Count; i++)
+            {
+                if (_log[i].ModelCopyID == id)
+                {
+                    logToFind.Add(_log[i]);
+                }
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetLogsByCopyID(id);
+            }
+
+            return logToFind;
+        }
+
+        public List<Log> FindLogsByTransaction(int transac)
+        {
+            List<Log> logToFind = new List<Log>();
+
+            for (int i = 0; i < _log.Count; i++)
+            {
+                if (_log[i].Transaction == transac)
+                {
+                    logToFind.Add(_log[i]);
+                }
+            }
+            if (logToFind.Count == 0)
+            {
+                logToFind = _db.GetLogsByCopyID(transac);
+            }
+
+            return logToFind;
+        }
+
+        // TODO: public List<SessionModel> TransactionUpdate() {}
+
 
 
     }
