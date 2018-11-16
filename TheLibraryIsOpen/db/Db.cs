@@ -2931,5 +2931,335 @@ namespace TheLibraryIsOpen.Database
         }
 
         #endregion
+
+        #region logs
+
+        public List<Log> GetAllLogs()
+        {
+            //Create a list of unknown size to store the result
+            List<Log> list = new List<Log>();
+            string query = "SELECT * FROM logs;";
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        while (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByDate(DateTime dateTime, bool exact)
+        {
+            List<Log> list = new List<Log>();
+            string query = "";
+            if (!exact)
+            {
+                string dateString = dateTime.ToShortDateString();
+                query = $"SELECT * FROM logs WHERE DATE(transactionTime) = '{dateString}';";
+            }
+            else
+            {
+                string dateTimeString = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                query = $"SELECT * FROM logs WHERE transactionTime = '{dateTimeString}';";
+            }
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Log> GetLogsByClientID(int id)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT * FROM logs WHERE clientID = \"{id}\";";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByCopyID(int copyID)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT * FROM logs WHERE modelCopyID = \"{copyID}\";";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByTransaction(TransactionType transac)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT * FROM logs WHERE transaction = \"{(int)transac}\";";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByModelTypeAndId(TypeEnum type, int id)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT logs.logID, logs.clientID, logs.modelCopyID, logs.transaction, logs.transactionTime FROM logs INNER JOIN modelcopies ON modelcopies.id = logs.modelCopyID WHERE modelcopies.modelID = \"{id}\" AND modelcopies.modelType = \"{(int)type}\" ;";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
+        {
+            List<Log> list = new List<Log>();
+            string query = "";
+            if (!exact)
+            {
+                String dateStartString = dateStart.ToShortDateString();
+                String dateEndString = dateEnd.ToShortDateString();
+                query = $"SELECT * FROM logs WHERE DATE(transactionTime) BETWEEN '{dateStartString}' AND '{dateEndString}';";
+            }
+            else
+            {
+                String dateStartString = dateStart.ToString("yyyy-MM-dd HH:mm:ss");
+                String dateEndString = dateEnd.ToString("yyyy-MM-dd HH:mm:ss");
+                query = $"SELECT * FROM logs WHERE transactionTime BETWEEN '{dateStartString}' AND '{dateEndString}';";
+            }
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public void AddLog(Log log)
+        {
+            string query = $"INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES(\"{log.ClientID}\", \"{log.ModelCopyID}\", \"{(int)log.Transaction}\", \"{log.TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\");";
+            QuerySend(query);
+        }
+
+        public void DeleteLog(Log log)
+        {
+            string query = $"DELETE FROM logs WHERE (logID = \"{log.LogID}\");";
+            QuerySend(query);
+        }
+
+
+        public void AddLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"(\"{logs[i].ClientID}\", \"{logs[i].ModelCopyID}\", \"{(int)logs[i].Transaction}\", \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        public void DeleteLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE ");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"logID = \"{logs[i].LogID}\") {(i + 1 < logs.Length ? " OR " : ";")}");
+            }
+
+            QuerySend(sb.ToString());
+        }
+
+        public void UpdateLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE logs set");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"clientID = \"{logs[i].ClientID}\", modelCopyID = \"{logs[i].ModelCopyID}\",transaction = \"{(int)logs[i].Transaction}\", transactionTime = \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        public void ClearAllLogsBefore(DateTime date)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString("yyyy-MM-dd HH:mm:ss")}\"");
+
+            QuerySend(sb.ToString());
+        }
+        #endregion
+
     }
 }

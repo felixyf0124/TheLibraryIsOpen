@@ -65,15 +65,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         //Find methods (by id, isbn10, isbn13)
 
-        public Task<Magazine> FindByIdAsync(string magazineId)
+        public async Task<Magazine> FindByIdAsync(string magazineId)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                Magazine magazine = _im.FindMagazine(int.Parse(magazineId));
+            Magazine magazine = await _im.FindMagazine(int.Parse(magazineId));
 
-                return magazine;
-            });
-            throw new ArgumentNullException("magazineId");
+            return magazine;
         }
 
         public Task<Magazine> FindByIsbn10Async(string isbn10)
@@ -148,16 +144,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         }
 
-        public Task<List<ModelCopy>> getModelCopies(Magazine magazine)
+        public async Task<List<ModelCopy>> getModelCopies(Magazine magazine)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                List<ModelCopy> copies = _im.FindModelCopies(magazine.MagazineId, TypeEnum.Magazine);
-
-
-                return copies;
-
-            });
+            List<ModelCopy> copies = await _im.FindModelCopies(magazine.MagazineId, TypeEnum.Magazine);
+            
+            return copies;
 
         }
 
