@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
@@ -61,13 +60,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
         //Find methods (by id)
-        public Task<Music> FindMusicByIdAsync(string musicId)
+        public async Task<Music> FindMusicByIdAsync(string musicId)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return _im.FindMusic((int.Parse(musicId)));
-            });
-            throw new ArgumentNullException("musicId");
+            return await _im.FindMusic((int.Parse(musicId)));
         }
 
         public Task<IdentityResult> UpdateMusicAsync(Music music)
@@ -113,17 +108,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         }
 
-        public Task<List<ModelCopy>> getModelCopies(Music music)
+        public async Task<List<ModelCopy>> getModelCopies(Music music)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                List<ModelCopy> copies = _im.FindModelCopies(music.MusicId, TypeEnum.Music);
-
-
-                return copies;
-
-            });
-
+            return await _im.FindModelCopies(music.MusicId, TypeEnum.Music);
         }
     }
 }

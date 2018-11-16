@@ -2974,15 +2974,15 @@ namespace TheLibraryIsOpen.Database
         {
             List<Log> list = new List<Log>();
             string query = "";
-            if (exact == true)
+            if (!exact)
             {
-                String dateString = dateTime.ToShortDateString();
-                query = $"SELECT * FROM logs WHERE transactionTime = \"{dateString}\";";
+                string dateString = dateTime.ToShortDateString();
+                query = $"SELECT * FROM logs WHERE DATE(transactionTime) = '{dateString}';";
             }
             else
             {
-                String dateTimeString = dateTime.ToString();
-                query = $"SELECT * FROM logs WHERE transactionTime LIKE \"{dateTimeString}\"%;";
+                string dateTimeString = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                query = $"SELECT * FROM logs WHERE transactionTime = '{dateTimeString}';";
             }
 
             //Open connection
@@ -3089,10 +3089,10 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        public List<Log> GetLogsByTransaction(int transac)
+        public List<Log> GetLogsByTransaction(TransactionType transac)
         {
             List<Log> list = new List<Log>();
-            string query = $"SELECT * FROM logs WHERE transaction = \"{transac}\";";
+            string query = $"SELECT * FROM logs WHERE transaction = \"{(int)transac}\";";
 
             //Open connection
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -3128,7 +3128,7 @@ namespace TheLibraryIsOpen.Database
         public List<Log> GetLogsByModelTypeAndId(TypeEnum type, int id)
         {
             List<Log> list = new List<Log>();
-            string query = $"SELECT logs.logID, logs.clientID, logs.modelCopyID, logs.transaction, logs.transactionTime FROM logs INNER JOIN modelcopies ON modelcopies.id = logs.modelCopyID WHERE modelcopies.modelID = \"{id}\" AND modelcopies.modelType = \"{type}\" ;";
+            string query = $"SELECT logs.logID, logs.clientID, logs.modelCopyID, logs.transaction, logs.transactionTime FROM logs INNER JOIN modelcopies ON modelcopies.id = logs.modelCopyID WHERE modelcopies.modelID = \"{id}\" AND modelcopies.modelType = \"{(int)type}\" ;";
 
             //Open connection
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -3165,17 +3165,17 @@ namespace TheLibraryIsOpen.Database
         {
             List<Log> list = new List<Log>();
             string query = "";
-            if (exact == true)
+            if (!exact)
             {
                 String dateStartString = dateStart.ToShortDateString();
                 String dateEndString = dateEnd.ToShortDateString();
-                query = $"SELECT * FROM logs WHERE transactionTime >= \"{dateStartString}\" AND  transactionTime <= \"{dateEndString}\";";
+                query = $"SELECT * FROM logs WHERE DATE(transactionTime) BETWEEN '{dateStartString}' AND '{dateEndString}';";
             }
             else
             {
-                String dateStartString = dateStart.ToString();
-                String dateEndString = dateEnd.ToString();
-                query = $"SELECT * FROM logs WHERE transactionTime >= \"{dateStartString}\" AND  transactionTime <= \"{dateEndString}\";";
+                String dateStartString = dateStart.ToString("yyyy-MM-dd HH:mm:ss");
+                String dateEndString = dateEnd.ToString("yyyy-MM-dd HH:mm:ss");
+                query = $"SELECT * FROM logs WHERE transactionTime BETWEEN '{dateStartString}' AND '{dateEndString}';";
             }
 
             //Open connection
@@ -3211,7 +3211,7 @@ namespace TheLibraryIsOpen.Database
 
         public void AddLog(Log log)
         {
-            string query = $"INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES(\"{log.ClientID}\", \"{log.ModelCopyID}\", \"{log.Transaction}\", \"{log.TransactionTime.ToString()}\");";
+            string query = $"INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES(\"{log.ClientID}\", \"{log.ModelCopyID}\", \"{(int)log.Transaction}\", \"{log.TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\");";
             QuerySend(query);
         }
 
@@ -3227,7 +3227,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES");
             for (int i = 0; i < logs.Length; ++i)
             {
-                sb.Append($"(\"{logs[i].ClientID}\", \"{logs[i].ModelCopyID}\", \"{logs[i].Transaction}\", \"{logs[i].TransactionTime.ToString()}\"){(i + 1 < logs.Length ? "," : ";")}");
+                sb.Append($"(\"{logs[i].ClientID}\", \"{logs[i].ModelCopyID}\", \"{(int)logs[i].Transaction}\", \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
             }
             QuerySend(sb.ToString());
         }
@@ -3237,7 +3237,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE ");
             for (int i = 0; i < logs.Length; ++i)
             {
-                sb.Append($"logID = \"{logs[i].ClientID}\") {(i + 1 < logs.Length ? " OR " : ";")}");
+                sb.Append($"logID = \"{logs[i].LogID}\") {(i + 1 < logs.Length ? " OR " : ";")}");
             }
 
             QuerySend(sb.ToString());
@@ -3248,14 +3248,14 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE logs set");
             for (int i = 0; i < logs.Length; ++i)
             {
-                sb.Append($"clientID = \"{logs[i].ClientID}\", modelCopyID = \"{logs[i].ModelCopyID}\",transaction = \"{logs[i].Transaction}\", transactionTime = \"{logs[i].TransactionTime.ToString()}\"){(i + 1 < logs.Length ? "," : ";")}");
+                sb.Append($"clientID = \"{logs[i].ClientID}\", modelCopyID = \"{logs[i].ModelCopyID}\",transaction = \"{(int)logs[i].Transaction}\", transactionTime = \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
             }
             QuerySend(sb.ToString());
         }
 
         public void ClearAllLogsBefore(DateTime date)
         {
-            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString()}\"");
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString("yyyy-MM-dd HH:mm:ss")}\"");
 
             QuerySend(sb.ToString());
         }

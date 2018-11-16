@@ -12,14 +12,14 @@ namespace TheLibraryIsOpen.Models.DBModels
         public int LogID { get; set; }
         public int ClientID { get; set; }
         public int ModelCopyID { get; set; }
-        public int Transaction { get; set; }
+        public TransactionType Transaction { get; set; }
         public int ModelID { get; set; }
         public TypeEnum ModelType { get; set; }
         public DateTime TransactionTime { get; set; }
 
         public Log() { }
 
-        public Log(int clientID, int modelCopyID, int transaction, DateTime transactionTime)
+        public Log(int clientID, int modelCopyID, TransactionType transaction, DateTime transactionTime)
         {
             ClientID = clientID;
             ModelCopyID = modelCopyID;
@@ -27,7 +27,7 @@ namespace TheLibraryIsOpen.Models.DBModels
             TransactionTime = transactionTime;
         }
 
-        public Log(int clientID, int modelCopyID, int transaction, int modelID, TypeEnum modelType, DateTime transactionTime)
+        public Log(int clientID, int modelCopyID, TransactionType transaction, int modelID, TypeEnum modelType, DateTime transactionTime)
         {
             ClientID = clientID;
             ModelCopyID = modelCopyID;
@@ -37,7 +37,7 @@ namespace TheLibraryIsOpen.Models.DBModels
             ModelType = modelType;
         }
 
-        public Log(int logID, int clientID, int modelCopyID, int transaction, DateTime transactionTime)
+        public Log(int logID, int clientID, int modelCopyID, TransactionType transaction, DateTime transactionTime)
         {
             LogID = logID;
             ClientID = clientID;

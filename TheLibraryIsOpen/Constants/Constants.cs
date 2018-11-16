@@ -22,8 +22,13 @@ namespace TheLibraryIsOpen.Constants
             Borrowed = 0,
             NotBorrowed = 1,
             Any = 3
-
         };
+
+        public enum TransactionType
+        {
+            Borrow = 0,
+            Return = 1
+        }
 
         private static Dictionary<Type, TypeEnum> typeDict = new Dictionary<Type, TypeEnum>
         {
