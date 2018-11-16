@@ -2958,7 +2958,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3002,7 +3002,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
 
@@ -3039,7 +3039,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
 
@@ -3075,7 +3075,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
 
@@ -3111,7 +3111,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
 
@@ -3147,7 +3147,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
 
@@ -3195,7 +3195,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            int transaction = (int)dr["transaction"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
 
