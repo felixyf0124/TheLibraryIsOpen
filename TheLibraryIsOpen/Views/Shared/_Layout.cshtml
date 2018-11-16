@@ -7,7 +7,7 @@
     bool signedIn = User.Identity.IsAuthenticated;
     // get clientEmail
     string clientEmail = User.Identity.Name;
-    int cartCount = Context.Session.GetInt32("ItemsCount").HasValue ? (int)Context.Session.GetInt32("ItemsCount") : 0;
+    int cartCount = Context.Session.GetInt32("ItemsCount") ?? 0;
 }
 <!DOCTYPE html>
 <html>
