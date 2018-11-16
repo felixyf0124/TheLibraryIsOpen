@@ -3152,12 +3152,66 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+        public List<Log> GetLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
+        {
+            List<Log> list = new List<Log>();
+            string query = "";
+            if (exact == true)
+            {
+                String dateStartString = dateStart.ToShortDateString();
+                String dateEndString = dateEnd.ToShortDateString();
+                query = $"SELECT * FROM logs WHERE transactionTime >= \"{dateStartString}\" AND  transactionTime <= \"{dateEndString}\";";
+            }
+            else
+            {
+                String dateStartString = dateStart.ToString();
+                String dateEndString = dateEnd.ToString();
+                query = $"SELECT * FROM logs WHERE transactionTime >= \"{dateStartString}\" AND  transactionTime <= \"{dateEndString}\";";
+            }
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            int transaction = (int)dr["transaction"];
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
 
         public void AddLog(Log log)
         {
             string query = $"INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES(\"{log.ClientID}\", \"{log.ModelCopyID}\", \"{log.Transaction}\", \"{log.TransactionTime.ToString()}\");";
             QuerySend(query);
         }
+
+        public void DeleteLog(Log log)
+        {
+            string query = $"DELETE FROM logs WHERE (logID = \"{log.LogID}\");";
+            QuerySend(query);
+        }
+
 
         public void AddLogs(params Log[] logs)
         {
@@ -3169,13 +3223,31 @@ namespace TheLibraryIsOpen.Database
             QuerySend(sb.ToString());
         }
 
-        public void TransactionUpdate(params Log[] logs)
+        public void DeleteLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE ");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"logID = \"{logs[i].ClientID}\") {(i + 1 < logs.Length ? " OR " : ";")}");
+            }
+
+            QuerySend(sb.ToString());
+        }
+
+        public void UpdateLogs(params Log[] logs)
         {
             StringBuilder sb = new StringBuilder("UPDATE logs set");
             for (int i = 0; i < logs.Length; ++i)
             {
                 sb.Append($"clientID = \"{logs[i].ClientID}\", modelCopyID = \"{logs[i].ModelCopyID}\",transaction = \"{logs[i].Transaction}\", transactionTime = \"{logs[i].TransactionTime.ToString()}\"){(i + 1 < logs.Length ? "," : ";")}");
             }
+            QuerySend(sb.ToString());
+        }
+
+        public void ClearAllLogsBefore(DateTime date)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString()}\"");
+
             QuerySend(sb.ToString());
         }
         #endregion
