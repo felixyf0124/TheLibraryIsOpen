@@ -88,12 +88,12 @@
 
                         if (@cartCount != 0)
                         {
-                            <li><a asp-area="" asp-controller="TODO" asp-action="Cart">Cart (@cartCount)</a></li>
+                            <li><a asp-area="" asp-controller="TODO" asp-action="Cart"><span class="glyphicon glyphicon-shopping-cart"></span> (@cartCount)</a></li>
                         }
 
                         else
                         {
-                            <li><a asp-area="" asp-controller="TODO" asp-action="Cart">Cart </a></li>
+                            <li><a asp-area="" asp-controller="TODO" asp-action="Cart"><span class="glyphicon glyphicon-shopping-cart"></span> </a></li>
                         }
 
                         <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
