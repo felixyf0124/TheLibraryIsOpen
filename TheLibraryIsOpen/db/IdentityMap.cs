@@ -93,6 +93,11 @@ namespace TheLibraryIsOpen.db
                                 mc.Add((ModelCopy)item);
                                 break;
                             }
+                        case TypeEnum.Log:
+                            {
+                                log.Add((Log)item);
+                                break;
+                            }
                         default:
                             {
                                 return false;
@@ -113,6 +118,8 @@ namespace TheLibraryIsOpen.db
                         _db.CreatePeople(people.ToArray());
                     if (mc.Count > 0)
                         _db.CreateModelCopies(mc.ToArray());
+                    if (log.Count > 0)
+                        _db.AddLogs(log.ToArray());
                     return true;
                 }
                 catch
@@ -134,7 +141,6 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
-                List<Log> log = new List<Log>();
 
                 foreach (var item in objectsToEdit)
                 {
@@ -168,11 +174,6 @@ namespace TheLibraryIsOpen.db
                         case TypeEnum.ModelCopy:
                             {
                                 mc.Add((ModelCopy)item);
-                                break;
-                            }
-                        case TypeEnum.Log:
-                            {
-                                log.Add((Log)item);
                                 break;
                             }
                         default:
@@ -334,24 +335,6 @@ namespace TheLibraryIsOpen.db
 
                         _db.UpdateModelCopies(mc.ToArray());
                     }
-                    if (log.Count > 0)
-                    {
-                        log.ForEach(temp =>
-                        {
-                            while (!_logLock.TryEnterReadLock(10)) ;
-                            bool hasLog = _log.ContainsKey(temp.LogID);
-                            _logLock.ExitReadLock();
-
-                            while (!_logLock.TryEnterWriteLock(10)) ;
-                            if (!hasLog)
-                                _log.Add(temp.LogID, temp);
-                            else
-                                _log[temp.LogID] = temp;
-                            _logLock.ExitWriteLock();
-                        });
-
-                        _db.TransactionUpdate(log.ToArray());
-                    }
                     return true;
                 }
                 catch (Exception e)
@@ -372,6 +355,8 @@ namespace TheLibraryIsOpen.db
                 List<Music> music = new List<Music>();
                 List<Person> people = new List<Person>();
                 List<ModelCopy> mc = new List<ModelCopy>();
+                List<Log> log = new List<Log>();
+
                 foreach (var item in objectsToDelete)
                 {
                     switch (GetTypeNum(item.GetType()))
@@ -404,6 +389,11 @@ namespace TheLibraryIsOpen.db
                         case TypeEnum.ModelCopy:
                             {
                                 mc.Add((ModelCopy)item);
+                                break;
+                            }
+                        case TypeEnum.Log:
+                            {
+                                log.Add((Log)item);
                                 break;
                             }
                         default:
@@ -461,6 +451,14 @@ namespace TheLibraryIsOpen.db
                         _modelCopyLock.ExitWriteLock();
 
                         _db.DeleteModelCopies(mc.ToArray());
+                    }
+                    if (log.Count > 0)
+                    {
+                        while (!_logLock.TryEnterWriteLock(10)) ;
+                        log.ForEach(temp => _log.Remove(temp.LogID));
+                        _logLock.ExitWriteLock();
+
+                        _db.DeleteLogs(log.ToArray());
                     }
                     return true;
                 }
@@ -650,14 +648,46 @@ namespace TheLibraryIsOpen.db
             }
         }
 
-        
+        // public List<Log> GetAllLogs()
+        // {
 
-        // TODO: BOOK find by isbn 13, isbn 10 and GetAllBooks
+        // }
 
-        // TODO: MAGAZINE find by isbn 13, isbn 10 and GetAllMagazines
+        // public List<Log> FindLogsByDate(DateTime date, bool exact)
+        // {
 
-        // TODO: MOVIE GetAllMovies, getAllPerson, GetAllMovieProducers, GetAllMovieActors
+        // }
 
-        // TODO: MUSIC GetAllMusic
+        // public List<Log> FindLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
+        // {
+
+        // }
+
+        // public List<Log> FindLogsByModelTypeAndId(TypeEnum type, int id)
+        // {
+
+        // }
+
+        // public List<Log> FindLogsByClientID(int id)
+        // {
+
+        // }
+
+        // public List<Log> FindLogsByCopyID(int id)
+        // {
+
+        // }
+
+        // public List<Log> FindLogsByTransaction(int transac)
+        // {
+
+        // }
+
+        //  public List<SessionModel> TransactionUpdate()
+        // {
+
+        // }
+
+
     }
 }
