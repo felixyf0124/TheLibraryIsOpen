@@ -10,57 +10,45 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.LogID)
+                Client
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ClientID)
+                Transaction
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ModelCopyID)
+                Item Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Transaction)
+                Copy ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ModelID)
+                Item ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ModelType)
+                Date of Transaction
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TransactionTime)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.LogID)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ClientID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModelCopyID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Transaction)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ModelID)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ModelType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TransactionTime)
+                @Html.DisplayFor(modelItem => item.ModelCopyID)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.DisplayFor(modelItem => item.ModelID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionTime)
             </td>
         </tr>
 }
