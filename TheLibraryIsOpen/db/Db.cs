@@ -2930,6 +2930,29 @@ namespace TheLibraryIsOpen.Database
             return count;
         }
 
+        public int CountModelCopiesOfClient(int clientId)
+        {
+            string query = null;
+
+            query = $"SELECT COUNT(modelID) FROM modelcopies WHERE borrowerID = {clientId};";
+
+            int count = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return count;
+        }
+
         #endregion
 
         #region logs
