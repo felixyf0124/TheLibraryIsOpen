@@ -11,5 +11,10 @@ namespace TheLibraryIsOpen.Models.DBModels
         public int borrowerID { get; set; }
         public DateTime borrowedDate { get; set; }
         public DateTime returnDate { get; set; }
+
+        public static implicit operator ModelCopy(Magazine v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

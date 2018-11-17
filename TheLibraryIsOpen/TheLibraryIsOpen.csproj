@@ -18,6 +18,8 @@
   <ItemGroup>
     <Folder Include="Views\Magazine\" />
     <Folder Include="Models\Search\" />
+    <Folder Include="Views\Cart\" />
+    <Folder Include="Models\Cart\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
