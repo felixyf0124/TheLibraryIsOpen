@@ -58,8 +58,28 @@
         <dd>
             @Html.DisplayFor(model => model.Isbn13)
         </dd>
+        @if (isAdmin)
+        {
+            <dt>
+                Available copies:
+            </dt>
+            <dd>
+                @TempData["AvailableCopies"]
+                @if (inStoke)
+                {
+                    <a asp-action="deleteModelCopy" class="btn btn-sm btn-success" asp-route-id="@Model.MagazineId"> - </a>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-success" disabled> - </a>
+                }
+                <a asp-action="addModelCopy" class="btn btn-sm btn-danger" asp-route-id="@Model.MagazineId"> + </a>
+            </dd>
+        }
     </dl>
 </div>
+
+
 <div>
     @if (inStoke)
     {

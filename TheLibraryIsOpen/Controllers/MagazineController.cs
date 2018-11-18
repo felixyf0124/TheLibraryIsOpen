@@ -172,5 +172,19 @@ namespace TheLibraryIsOpen.Controllers
         {
             return (_mc.FindByIdAsync(id) != null);
         }
+
+        public async Task<IActionResult> AddModelCopy(string id, Magazine magazine)
+        {
+            await _mc.addModelCopy(id, magazine);
+            await _mc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
+        public async Task<IActionResult> DeleteModelCopy(string id, Magazine magazine)
+        {
+            await _mc.deleteFreeModelCopy(id, magazine);
+            await _mc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
     }
 }

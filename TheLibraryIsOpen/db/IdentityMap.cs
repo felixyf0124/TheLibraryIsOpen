@@ -621,6 +621,13 @@ namespace TheLibraryIsOpen.db
              return mcToFind;});
         }
 
+        public Task<bool> DeleteFreeModelCopy(ModelCopy mc, int id)
+        {
+            return Task.Factory.StartNew(() => {
+                _db.DeleteFreeModelCopy(mc, id);
+                return true;
+            });
+        }
 
         public Task<List<ModelCopy>> FindModelCopiesByClient(int clientId)
         {

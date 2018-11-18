@@ -2685,12 +2685,20 @@ namespace TheLibraryIsOpen.Database
         // Deletes several books from the db
         public void DeleteModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("DELETE FROM modelcopy WHERE id IN (");
+            StringBuilder sb = new StringBuilder("DELETE FROM modelcopies WHERE id IN (");
             for (int i = 0; i < mcs.Length; ++i)
             {
                 sb.Append($"{mcs[i].id}{(i + 1 < mcs.Length ? "," : ");")}");
             }
             QuerySend(sb.ToString());
+        }
+
+        // Deletes one free modelCopy from the db
+        public void DeleteFreeModelCopy(ModelCopy mc, int modelID)
+        {
+            string query = $"DELETE FROM library.modelcopies WHERE modelType = \"{(int)mc.modelType}\" and modelID = \"{modelID}\" and borrowerID IS NULL LIMIT 1;";
+            System.Diagnostics.Debug.WriteLine(query);
+            QuerySend(query);
         }
 
         // Returns a list of all clients in the db converted to client object.
@@ -2735,18 +2743,22 @@ namespace TheLibraryIsOpen.Database
         // Inserts several new books into the db
         public void CreateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (modelID, modelType) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO modelcopies (modelID, modelType) VALUES");
+            
             for (int i = 0; i < mcs.Length; ++i)
-            {
-                sb.Append($"(\"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
+            {            
+                sb.Append($"(\"{mcs[i].modelID}\", \"{(int)mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
+                // System.Diagnostics.Debug.WriteLine((int)mcs[i].modelType);
             }
+            System.Diagnostics.Debug.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
+            
         }
 
         //update books information
         public void UpdateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("UPDATE modelcopy SET ");
+            StringBuilder sb = new StringBuilder("UPDATE modelcopies SET ");
             for (int i = 0; i < mcs.Length; ++i)
             {
                 sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
@@ -2757,7 +2769,7 @@ namespace TheLibraryIsOpen.Database
 
         public ModelCopy GetModelCopyById(int id)
         {
-            string query = $"SELECT * FROM modelcopy WHERE ID = \" { id } \";";
+            string query = $"SELECT * FROM modelcopies WHERE ID = \" { id } \";";
 
             ModelCopy mc = null;
             using (MySqlConnection connection = new MySqlConnection(connectionString))

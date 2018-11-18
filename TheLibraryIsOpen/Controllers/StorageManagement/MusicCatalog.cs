@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
@@ -111,6 +112,49 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public async Task<List<ModelCopy>> getModelCopies(Music music)
         {
             return await _im.FindModelCopies(music.MusicId, TypeEnum.Music);
+        }
+
+        public Task<IdentityResult> addModelCopy(string id, Music music)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    // TODO: manage error if register returns false
+
+                    _unitOfWork.RegisterNew(new ModelCopy
+                    {
+                        modelID = Int32.Parse(id),
+                        modelType = TypeEnum.Music
+                    });
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Music was null" });
+            });
+        }
+        public Task<IdentityResult> deleteFreeModelCopy(string id, Music music)
+        {
+            if (music != null)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    // TODO: manage error if register returns false
+                    ModelCopy temp = new ModelCopy
+                    {
+                        modelID = Int32.Parse(id),
+                        modelType = TypeEnum.Music
+                    };
+                    _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Music was null" });
+            });
         }
     }
 }

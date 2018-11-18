@@ -185,5 +185,22 @@ namespace TheLibraryIsOpen.Controllers
         {
             return (_bc.FindByIdAsync(id) != null);
         }
+        
+
+        public async Task<IActionResult> AddModelCopy(string id, Book book)
+        {
+            await _bc.addModelCopy(id, book);
+            await _bc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
+        public async Task<IActionResult> DeleteModelCopy(string id, Book book)
+        {
+            await _bc.deleteFreeModelCopy(id, book);
+            await _bc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
+
     }
 }
