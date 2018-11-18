@@ -2982,14 +2982,17 @@ namespace TheLibraryIsOpen.Database
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            int modelID = (int)dr["modelID"];
+                            TypeEnum modelType = (TypeEnum)Enum.Parse(typeof(TypeEnum), ((int)dr["modelType"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            list.Add(new Log(clientID, modelCopyID, transaction, modelID, modelType, transactionTime));
                         }
                     }
                 }
                 catch (Exception e) { Console.WriteLine(e); }
             }
+            list.Reverse();
             return list;
         }
 
