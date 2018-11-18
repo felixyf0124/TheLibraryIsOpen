@@ -25,10 +25,11 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
+        private UnitOfWork _unitOfWork;
        
 
 
-        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
+        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap, UnitOfWork uow)
         {
             _cm = cm;
             _bookc = bc;
@@ -36,7 +37,7 @@ namespace TheLibraryIsOpen.Controllers
             _musicc = muc;
             _magazinec = mac;
             _identityMap = imap;
-
+            _unitOfWork = uow;
         }
 
         public async Task<IActionResult> Index()
@@ -136,5 +137,68 @@ namespace TheLibraryIsOpen.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        //registers modelcopies of selected items to the client
+        [HttpPost]
+        public async void Borrrow(List<CartViewModel> modelsToBorrow) {
+            //TODO what is the correct return type?
+            //TODO is the list supposed to be a parameter? Not sure with POST
+
+            //check for available modelcopies
+            List<ModelCopy> copiesToRegister = new List<ModelCopy>();
+            foreach (CartViewModel cm in modelsToBorrow) 
+            {
+                List<ModelCopy> copies = await _identityMap.FindModelCopies(cm.ModelId, cm.Type);
+                foreach (ModelCopy copy in copies) 
+                {
+                    //TODO must be a better way to check if a copy is not currently checked out?
+                    if (copy.borrowerID.ToString().Equals("") || copy.returnDate.ToString().Equals("") || copy.borrowedDate.ToString().Equals("")) 
+                    {
+                        copiesToRegister.Add(copy);
+                        break;
+                    }
+                    //TODO return error here : model copy of this item is not available
+                }
+
+            }
+
+            //register copies to current client
+            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
+            int clientId = client.clientId;
+            foreach (ModelCopy mc in copiesToRegister) 
+            {
+                mc.borrowerID = clientId;
+                mc.borrowedDate = DateTime.Today;
+                switch (mc.modelType)
+                {
+                    case TypeEnum.Book:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(7);
+                            break;
+                        }
+                    case TypeEnum.Magazine:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(7);
+                            break;
+                        }
+                    case TypeEnum.Movie:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(2);
+                            break;
+                        }
+                    case TypeEnum.Music:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(2);
+                            break;
+                        }
+                }
+                _unitOfWork.RegisterDirty(mc);
+            }
+
+            //TODO return to home index?
+
+        }
+    
+
     }
 }
