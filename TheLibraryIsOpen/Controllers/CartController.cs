@@ -148,18 +148,14 @@ namespace TheLibraryIsOpen.Controllers
             List<ModelCopy> copiesToRegister = new List<ModelCopy>();
             foreach (CartViewModel cm in modelsToBorrow) 
             {
-                List<ModelCopy> copies = await _identityMap.FindModelCopies(cm.ModelId, cm.Type);
-                foreach (ModelCopy copy in copies) 
+                List<ModelCopy> copies = await _identityMap.FindModelCopiesWithBorrowType(cm.ModelId, cm.Type, BorrowType.NotBorrowed);
+                if (copies.Count != 0)
                 {
-                    //TODO must be a better way to check if a copy is not currently checked out?
-                    if (copy.borrowerID.ToString().Equals("") || copy.returnDate.ToString().Equals("") || copy.borrowedDate.ToString().Equals("")) 
-                    {
-                        copiesToRegister.Add(copy);
-                        break;
-                    }
+                    copiesToRegister.Add(copies.First());
+                }
+                else {
                     //TODO return error here : model copy of this item is not available
                 }
-
             }
 
             //register copies to current client
