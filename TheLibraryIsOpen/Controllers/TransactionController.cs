@@ -15,6 +15,7 @@ namespace TheLibraryIsOpen.Controllers
         {
             _tc = tc;
         }
+
         public async Task<IActionResult> Index()
         {
             return View(await _tc.getLogs());

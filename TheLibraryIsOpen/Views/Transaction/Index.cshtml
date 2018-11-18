@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TheLibraryIsOpen.Models.DBModels.Log>
+﻿@model IEnumerable<TheLibraryIsOpen.Models.PrintedLog>
 
 @{
     ViewData["Title"] = "Index";
@@ -19,10 +19,10 @@
                 Item Type
             </th>
             <th>
-                Copy ID
+                Item Name
             </th>
             <th>
-                Item ID
+                Physical Copy
             </th>
             <th>
                 Date of Transaction
@@ -33,7 +33,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ClientID)
+                @Html.DisplayFor(modelItem => item.ClientName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Transaction)
@@ -42,10 +42,10 @@
                 @Html.DisplayFor(modelItem => item.ModelType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ModelCopyID)
+                @Html.DisplayFor(modelItem => item.ModelName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ModelID)
+                @Html.DisplayFor(modelItem => item.ModelCopyID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TransactionTime)
