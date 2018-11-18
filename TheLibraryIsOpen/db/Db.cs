@@ -2685,7 +2685,7 @@ namespace TheLibraryIsOpen.Database
         // Deletes several books from the db
         public void DeleteModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("DELETE FROM modelcopy WHERE id IN (");
+            StringBuilder sb = new StringBuilder("DELETE FROM modelcopies WHERE id IN (");
             for (int i = 0; i < mcs.Length; ++i)
             {
                 sb.Append($"{mcs[i].id}{(i + 1 < mcs.Length ? "," : ");")}");
@@ -2698,7 +2698,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<ModelCopy> mcs = new List<ModelCopy>();
-            string query = "SELECT * FROM modelcopy;";
+            string query = "SELECT * FROM modelcopies;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2716,9 +2716,9 @@ namespace TheLibraryIsOpen.Database
                             int id = (int)dr["id"];
                             int modelID = (int)dr["modelID"];
                             int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
+                            Nullable<int> borrowerID = dr["borrowerID"].GetType() == typeof(DBNull) ? null : (Nullable<int>)dr["borrowerID"];
+                            Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
+                            Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
 
                             ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
                             //Console.Write(book);
@@ -2735,7 +2735,7 @@ namespace TheLibraryIsOpen.Database
         // Inserts several new books into the db
         public void CreateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (modelID, modelType) VALUES");
+            StringBuilder sb = new StringBuilder("INSERT INTO modelcopies (modelID, modelType) VALUES");
             for (int i = 0; i < mcs.Length; ++i)
             {
                 sb.Append($"(\"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
@@ -2746,7 +2746,7 @@ namespace TheLibraryIsOpen.Database
         //update books information
         public void UpdateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("UPDATE modelcopy SET ");
+            StringBuilder sb = new StringBuilder("UPDATE modelcopies SET ");
             for (int i = 0; i < mcs.Length; ++i)
             {
                 sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
@@ -2757,7 +2757,7 @@ namespace TheLibraryIsOpen.Database
 
         public ModelCopy GetModelCopyById(int id)
         {
-            string query = $"SELECT * FROM modelcopy WHERE ID = \" { id } \";";
+            string query = $"SELECT * FROM modelcopies WHERE ID = \" { id } \";";
 
             ModelCopy mc = null;
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -2776,9 +2776,9 @@ namespace TheLibraryIsOpen.Database
                             int Id = (int)dr["id"];
                             int modelID = (int)dr["modelID"];
                             int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
+                            Nullable<int> borrowerID = dr["borrowerID"].GetType() == typeof(DBNull) ? null : (Nullable<int>)dr["borrowerID"];
+                            Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
+                            Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
 
                             mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
                         }
@@ -2788,6 +2788,7 @@ namespace TheLibraryIsOpen.Database
             }
             return mc;
         }
+
 
         //Find modelCopies of model by model ID, returns list of modelCopy
         public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType, BorrowType borrowId = BorrowType.Any)
@@ -2982,11 +2983,9 @@ namespace TheLibraryIsOpen.Database
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            int modelID = (int)dr["modelID"];
-                            TypeEnum modelType = (TypeEnum)Enum.Parse(typeof(TypeEnum), ((int)dr["modelType"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
-                            list.Add(new Log(clientID, modelCopyID, transaction, modelID, modelType, transactionTime));
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
                         }
                     }
                 }

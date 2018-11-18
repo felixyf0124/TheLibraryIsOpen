@@ -23,24 +23,25 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 List<PrintedLog> results = new List<PrintedLog>();
                 foreach(Log log in logs)
                 {
+                    ModelCopy modelCopy =  _db.GetModelCopyById(log.ModelCopyID);
                     string modelName = "";
-                    switch(log.ModelType)
+                    switch(modelCopy.modelType)
                     {
                         case Constants.TypeConstants.TypeEnum.Book:
-                            modelName = _db.GetBookById(log.ModelID).Title;
+                            modelName = _db.GetBookById(modelCopy.modelID).Title;
                             break;
                         case Constants.TypeConstants.TypeEnum.Magazine:
-                            modelName = _db.GetMagazineById(log.ModelID).Title;
+                            modelName = _db.GetMagazineById(modelCopy.modelID).Title;
                             break;
                         case Constants.TypeConstants.TypeEnum.Movie:
-                            modelName = _db.GetMovieById(log.ModelID).Title;
+                            modelName = _db.GetMovieById(modelCopy.modelID).Title;
                             break;
                         case Constants.TypeConstants.TypeEnum.Music:
-                            modelName = _db.GetMusicById(log.ModelID).Title;
+                            modelName = _db.GetMusicById(modelCopy.modelID).Title;
                             break;
                     }
                     Client client = _db.GetClientById(log.ClientID);
-                    results.Add(new PrintedLog(client.FirstName + " " +client.LastName, log.Transaction, log.ModelType, modelName, log.ModelCopyID, log.TransactionTime));
+                    results.Add(new PrintedLog(client.FirstName + " " +client.LastName, log.Transaction, modelCopy.modelType, modelName, log.ModelCopyID, log.TransactionTime));
                 }
 
                 return results;
