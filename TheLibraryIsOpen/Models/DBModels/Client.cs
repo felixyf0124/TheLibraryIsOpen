@@ -16,6 +16,7 @@ namespace TheLibraryIsOpen.Models.DBModels
         public string PhoneNo { get; set; }
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
+        public int BorrowMax { get; set; } = 10;
 
         //required for implementing IUser
         public string Id { get => clientId.ToString(); set => clientId = Int32.Parse(value); }
@@ -32,7 +33,7 @@ namespace TheLibraryIsOpen.Models.DBModels
          * The last id just entered from table would be assigned to clientId for the client object. So that to avoid same id appears when server gets restarted.
         */
 
-        public Client(string firstName, string lastName, string emailAddress, string homeAddress, string phoneNo, string password, bool isAdmin = false)
+        public Client(string firstName, string lastName, string emailAddress, string homeAddress, string phoneNo, string password, bool isAdmin = false, int borrowMax = 10)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -41,10 +42,11 @@ namespace TheLibraryIsOpen.Models.DBModels
             PhoneNo = phoneNo;
             Password = password;
             IsAdmin = isAdmin;
+            BorrowMax = borrowMax;
         }
         // another construcor who  assigns client id is added as requested.
-        public Client(int cId, string firstName, string lastName, string emailAddress, string homeAddress, string phoneNo, string password, bool isAdmin = false) :
-            this(firstName, lastName, emailAddress, homeAddress, phoneNo, password, isAdmin)
+        public Client(int cId, string firstName, string lastName, string emailAddress, string homeAddress, string phoneNo, string password, bool isAdmin = false, int borrowMax = 10) :
+            this(firstName, lastName, emailAddress, homeAddress, phoneNo, password, isAdmin, borrowMax)
         {
             clientId = cId;
         }

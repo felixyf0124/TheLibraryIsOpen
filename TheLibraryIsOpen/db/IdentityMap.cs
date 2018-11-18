@@ -621,6 +621,31 @@ namespace TheLibraryIsOpen.db
              return mcToFind;});
         }
 
+
+        public Task<List<ModelCopy>> FindModelCopiesByClient(int clientId)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                List<ModelCopy> mcToFind = _db.FindModelCopiesOfClient(clientId);
+                mcToFind.ForEach(mc =>
+                {
+                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                    _modelCopy.TryAdd(mc.id, mc);
+                    _modelCopyLock.ExitWriteLock();
+                });
+                return mcToFind;
+            });
+        }
+
+        public Task<int> CountModelCopiesOfClient(int clientId)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.CountModelCopiesOfClient(clientId);
+            });
+        }
+
+
         public Task<List<Log>> GetAllLogs()
          {return Task.Factory.StartNew(() => {
 
