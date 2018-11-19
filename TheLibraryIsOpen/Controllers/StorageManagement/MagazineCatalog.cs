@@ -152,10 +152,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         }
 
-        public Task<IdentityResult> addModelCopy(string id, Magazine magazine)
+        public Task<IdentityResult> addModelCopy(string id)
         {
-            if (magazine != null)
-            {
                 return Task.Factory.StartNew(() =>
                 {
                     // TODO: manage error if register returns false
@@ -165,19 +163,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                         modelID = Int32.Parse(id),
                         modelType = TypeEnum.Magazine
                     });
-                    System.Diagnostics.Debug.WriteLine(magazine.MagazineId);
                     return IdentityResult.Success;
                 });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "book was null" });
-            });
         }
-        public Task<IdentityResult> deleteFreeModelCopy(string id, Magazine magazine)
+        public Task<IdentityResult> deleteFreeModelCopy(string id)
         {
-            if (magazine != null)
-            {
                 return Task.Factory.StartNew(() =>
                 {
                     // TODO: manage error if register returns false
@@ -189,11 +179,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
                     return IdentityResult.Success;
                 });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Magazine was null" });
-            });
         }
     }
 }
