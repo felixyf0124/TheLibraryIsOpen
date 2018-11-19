@@ -138,7 +138,7 @@ namespace TheLibraryIsOpen.Controllers
 
         //registers modelcopies of selected items to the client
         [HttpPost]
-        public async void Borrrow() {
+        public async void Borrow() {
             //TODO what is the correct return type?
 
             List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
