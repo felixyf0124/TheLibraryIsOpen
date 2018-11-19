@@ -2788,7 +2788,7 @@ namespace TheLibraryIsOpen.Database
                         {
                             int Id = (int)dr["id"];
                             int modelID = (int)dr["modelID"];
-                            int modelType = (int)dr["modelType"];
+                            int modelType = (int)(sbyte)dr["modelType"];
                             Nullable<int> borrowerID = dr["borrowerID"].GetType() == typeof(DBNull) ? null : (Nullable<int>)dr["borrowerID"];
                             Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
                             Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
@@ -2995,7 +2995,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
