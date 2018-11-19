@@ -622,17 +622,11 @@ namespace TheLibraryIsOpen.db
              return mcToFind;});
         }
 
-        public Task<List<ModelCopy>> FindModelCopiesWithBorrowType(int mId, TypeEnum mType, BorrowType bType)
+        public Task<bool> DeleteFreeModelCopy(ModelCopy mc, int id)
         {
             return Task.Factory.StartNew(() => {
-                List<ModelCopy> mcToFind = _db.FindModelCopiesOfModel(mId, mType, bType);
-                mcToFind.ForEach(mc =>
-                {
-                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
-                    _modelCopy.TryAdd(mc.id, mc);
-                    _modelCopyLock.ExitWriteLock();
-                });
-                return mcToFind;
+                _db.DeleteFreeModelCopy(mc, id);
+                return true;
             });
         }
 

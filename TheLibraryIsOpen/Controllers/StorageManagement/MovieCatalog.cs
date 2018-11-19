@@ -197,5 +197,37 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return await _im.FindModelCopies(movie.MovieId, TypeEnum.Movie);
         }
+
+        public Task<IdentityResult> addModelCopy(string id)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                // TODO: manage error if register returns false
+
+                _unitOfWork.RegisterNew(new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Movie
+                });
+                return IdentityResult.Success;
+            });
+            
+        }
+        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                // TODO: manage error if register returns false
+                ModelCopy temp = new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Movie
+                };
+                _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                return IdentityResult.Success;
+            });
+           
+        }
     }
 }
+
