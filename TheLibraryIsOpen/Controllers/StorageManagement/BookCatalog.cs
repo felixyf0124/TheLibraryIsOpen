@@ -114,27 +114,19 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<IdentityResult> addModelCopy(Book book)
+        public Task<IdentityResult> addModelCopy(string id)
         {
-            if (book != null)
-            {
-
-                return Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
                 {
                     // TODO: manage error if register returns false
 
                     _unitOfWork.RegisterNew(new ModelCopy
                     {
-                        modelID = book.BookId,
+                        modelID = Int32.Parse(id),
                         modelType = TypeEnum.Book
                     });
                     return IdentityResult.Success;
                 });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "book was null" });
-            });
         }
 
         //Get all Books
@@ -169,6 +161,22 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             List<ModelCopy> copies = await _im.FindModelCopies(book.BookId, TypeEnum.Book);
             return copies;
+        }
+
+        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        {
+             return Task.Factory.StartNew(() =>
+                {
+                    // TODO: manage error if register returns false
+                    ModelCopy temp = new ModelCopy
+                    {
+                        modelID = Int32.Parse(id),
+                        modelType = TypeEnum.Book
+                    };
+                    _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                    return IdentityResult.Success;
+                });
+            
         }
     }
 }

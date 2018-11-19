@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.db;
@@ -86,26 +87,43 @@ namespace TheLibraryIsOpen
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            string email = Configuration["DefaultAdmin:Email"];
-            string password = Configuration["DefaultAdmin:Password"];
-
-            Client x = await cm.FindByEmailAsync(email);
-
-            if (x == null)
+            try
             {
-                await cm.CreateAsync(new Client
+
+                string email = Configuration["DefaultAdmin:Email"];
+                string password = Configuration["DefaultAdmin:Password"];
+
+                Client x = await cm.FindByEmailAsync(email);
+
+                if (x == null)
                 {
-                    EmailAddress = email,
-                    Password = password,
-                    IsAdmin = true
-                });
+                    await cm.CreateAsync(new Client
+                    {
+                        EmailAddress = email,
+                        Password = password,
+                        IsAdmin = true
+                    });
+                }
+                else if (!x.IsAdmin)
+                {
+
+                    x.IsAdmin = true;
+                    await cm.UpdateAsync(x);
+
+                }
             }
-            else if (!x.IsAdmin)
+            catch (ArgumentNullException)
             {
+                var bg = Console.BackgroundColor;
+                var fg = Console.ForegroundColor;
 
-                x.IsAdmin = true;
-                await cm.UpdateAsync(x);
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.White;
 
+                Console.WriteLine("appsettings.json was not found. Skipping adding default admin.");
+
+                Console.BackgroundColor = bg;
+                Console.ForegroundColor = fg;
             }
         }
     }

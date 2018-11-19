@@ -141,5 +141,19 @@ namespace TheLibraryIsOpen.Controllers
             return RedirectToAction(nameof(Details), new { id = id });
         }
 
+        public async Task<IActionResult> AddModelCopy(string id)
+        {
+            await _mc.addModelCopy(id);
+            await _mc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
+        public async Task<IActionResult> DeleteModelCopy(string id)
+        {
+            await _mc.deleteFreeModelCopy(id);
+            await _mc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
     }
 }
