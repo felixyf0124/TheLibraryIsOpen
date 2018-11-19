@@ -1760,7 +1760,7 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE person SET ");
             for (int i = 0; i < people.Length; ++i)
             {
-                sb.Append($"firstname = \"{people[i].FirstName}\", lastname = \"{people[i].LastName}\" WHERE cdID = \"{people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
+                sb.Append($"firstname = \"{people[i].FirstName}\", lastname = \"{people[i].LastName}\" WHERE personID = \"{people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
             }
             Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
@@ -1774,7 +1774,7 @@ namespace TheLibraryIsOpen.Database
             {
                 sb.Append($"WHERE personID = \"{ people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
             }
-            // Console.WriteLine(sb.ToString());
+            Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 

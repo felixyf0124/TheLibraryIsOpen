@@ -54,6 +54,7 @@ namespace TheLibraryIsOpen
             services.AddScoped(typeof(MagazineCatalog));
             services.AddScoped(typeof(BookCatalog));
             services.AddScoped(typeof(MusicCatalog));
+            services.AddScoped(typeof(PersonCatalog));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
