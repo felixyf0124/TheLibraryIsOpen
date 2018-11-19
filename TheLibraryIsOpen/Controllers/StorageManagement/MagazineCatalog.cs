@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -66,15 +65,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         //Find methods (by id, isbn10, isbn13)
 
-        public Task<Magazine> FindByIdAsync(string magazineId)
+        public async Task<Magazine> FindByIdAsync(string magazineId)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                Magazine magazine = _im.FindMagazine(int.Parse(magazineId));
+            Magazine magazine = await _im.FindMagazine(int.Parse(magazineId));
 
-                return magazine;
-            });
-            throw new ArgumentNullException("magazineId");
+            return magazine;
         }
 
         public Task<Magazine> FindByIsbn10Async(string isbn10)
@@ -134,6 +129,27 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
+        }
+
+        public Task<int> getNoOfAvailableModelCopies(Magazine magazine)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(magazine.MagazineId, (int)TypeEnum.Magazine, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public async Task<List<ModelCopy>> getModelCopies(Magazine magazine)
+        {
+            List<ModelCopy> copies = await _im.FindModelCopies(magazine.MagazineId, TypeEnum.Magazine);
+            
+            return copies;
+
         }
 
     }

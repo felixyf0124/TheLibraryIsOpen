@@ -1,22 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Database;
-using TheLibraryIsOpen.Models.Authentication;
+using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models.Movie;
+using static TheLibraryIsOpen.Constants.SessionExtensions;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -102,6 +93,8 @@ namespace TheLibraryIsOpen.Controllers
             toDetails.Producers = await _mc.GetAllMovieProducerDataAsync(id);
             toDetails.Actors = await _mc.GetAllMovieActorDataAsync(id);
 
+            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(toDetails);
+
             return View(toDetails);
 
         }
@@ -137,5 +130,16 @@ namespace TheLibraryIsOpen.Controllers
                 return RedirectToAction("Home", "Index");
             }
         }
+
+        public IActionResult AddToCart(int id)
+        {
+            var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
+                ?? new List<SessionModel>();
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Movie });
+            HttpContext.Session.SetObject("Items", Items);
+            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
     }
 }

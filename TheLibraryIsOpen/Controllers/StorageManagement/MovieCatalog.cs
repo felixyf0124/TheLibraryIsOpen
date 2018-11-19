@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
-
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -83,13 +82,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<Movie> GetMovieByIdAsync(int movieId)
+        public async Task<Movie> GetMovieByIdAsync(int movieId)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return _im.FindMovie(movieId);
-            });
-            throw new ArgumentNullException("movieId");
+            return await _im.FindMovie(movieId);
         }
 
 
@@ -150,13 +145,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<Person> GetPersonByIdAsync(int personId)
+        public async Task<Person> GetPersonByIdAsync(int personId)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return _im.FindPerson(personId);
-            });
-            throw new ArgumentNullException("personId");
+            return await _im.FindPerson(personId);
         }
 
         /*
@@ -187,6 +178,24 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
+        }
+
+        public Task<int> getNoOfAvailableModelCopies(Movie movie)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(movie.MovieId, (int)TypeEnum.Movie, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public async Task<List<ModelCopy>> getModelCopies(Movie movie)
+        {
+            return await _im.FindModelCopies(movie.MovieId, TypeEnum.Movie);
         }
     }
 }

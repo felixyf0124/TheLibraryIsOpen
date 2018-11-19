@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
-
+using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.Models.DBModels;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
@@ -65,15 +63,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         //Find methods (by id, isbn10, isbn13)
 
-        public Task<Book> FindByIdAsync(string bookId)
+        public async Task<Book> FindByIdAsync(string bookId)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                Book book = _im.FindBook(int.Parse(bookId));
+            Book book = await _im.FindBook(int.Parse(bookId));
 
-                return book;
-            });
-            throw new ArgumentNullException("bookId");
+            return book;
         }
 
         public Task<Book> FindByIsbn10Async(string isbn10)
@@ -120,6 +114,28 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
+        public Task<IdentityResult> addModelCopy(Book book)
+        {
+            if (book != null)
+            {
+
+                return Task.Factory.StartNew(() =>
+                {
+                    // TODO: manage error if register returns false
+
+                    _unitOfWork.RegisterNew(new ModelCopy
+                    {
+                        modelID = book.BookId,
+                        modelType = TypeEnum.Book
+                    });
+                    return IdentityResult.Success;
+                });
+            }
+            return Task.Factory.StartNew(() =>
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "book was null" });
+            });
+        }
 
         //Get all Books
         public Task<List<Book>> GetAllBookDataAsync()
@@ -134,6 +150,25 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
+        }
+
+        public Task<int> getNoOfAvailableModelCopies(Book book)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(book.BookId, (int)TypeEnum.Book, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public async Task<List<ModelCopy>> getModelCopies(Book book)
+        {
+            List<ModelCopy> copies = await _im.FindModelCopies(book.BookId, TypeEnum.Book);
+            return copies;
         }
     }
 }

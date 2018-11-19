@@ -1,15 +1,9 @@
-using Microsoft.AspNet.Identity;
 //using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace TheLibraryIsOpen.Models.DBModels
 {
-    public class Book 
+    public class Book
     {
         public int BookId { get; set; }
         public string Title { get; set; }
@@ -44,7 +38,7 @@ namespace TheLibraryIsOpen.Models.DBModels
 
         // another construcor who  assigns book id is added as requested.
         public Book(int bId, string title, string author, string format, int pages, string publisher, DateTime date, string language, string isbn10, string isbn13)
-        { 
+        {
             BookId = bId;
             Title = title;
             Author = author;
@@ -60,8 +54,8 @@ namespace TheLibraryIsOpen.Models.DBModels
         // Return information about the book
         public override string ToString()
         {
-            return "Book:\nBook ID:" + BookId+ "\nTitle:" + Title + "\nAuthor: " + Author+ "\nFormat:" + Format + "\nPages:" + Pages+ "\nPublisher:" + Publisher + "\nDate:" + Date +
-                "\nLanguage:" + Language  + "\nISBN10:" + Isbn10 + "\nISBN13:" + Isbn13 + "\nBook ID:" + BookId;
+            return "Book:\nBook ID:" + BookId + "\nTitle:" + Title + "\nAuthor: " + Author + "\nFormat:" + Format + "\nPages:" + Pages + "\nPublisher:" + Publisher + "\nDate:" + Date +
+                "\nLanguage:" + Language + "\nISBN10:" + Isbn10 + "\nISBN13:" + Isbn13 + "\nBook ID:" + BookId;
         }
     }
 }

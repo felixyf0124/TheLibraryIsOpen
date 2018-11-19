@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TheLibraryIsOpen.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
+using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
+using static TheLibraryIsOpen.Constants.SessionExtensions;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -43,6 +43,8 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
+
+            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(magazine);
 
             return View(magazine);
         }
@@ -154,6 +156,16 @@ namespace TheLibraryIsOpen.Controllers
             await _mc.DeleteAsync(magazine);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult AddToCart(int id)
+        {
+            var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
+                ?? new List<SessionModel>();
+            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Magazine});
+            HttpContext.Session.SetObject("Items", Items);
+            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
         private bool MagazineExists(string id)

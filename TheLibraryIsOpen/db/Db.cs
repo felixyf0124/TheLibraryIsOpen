@@ -67,18 +67,27 @@
             movieid int(11)
             personid int(11)
 
+    Table: modelCopy
+    Columns:
+            id int(11) AI PK 
+            modelType int() 
+            modelID int(11) 
+            borrowerID int(12) FK
+            borrowedDate date
+            returnDate date
+            foreign key (borrowerID) references users(clientID)	    
+
     One things for query language:
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
  */
 
-using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using TheLibraryIsOpen.Models.DBModels;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Database
 {
@@ -166,7 +175,49 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
-        // Selects a client by id and returns a client object.
+
+
+        //Find modelCopy by Client ID, returns list
+        public List<Client> FindClientByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM users WHERE clientID = \"{mc.borrowerID}\";";
+            List<Client> client = new List<Client>();
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int clientID = (int)dr["clientID"];
+                            string firstName = dr["firstName"] + "";
+                            string lastName = dr["lastName"] + "";
+                            string emailAddress = dr["emailAddress"] + "";
+                            string homeAddress = dr["homeAddress"] + "";
+                            string phoneNumber = dr["phoneNumber"] + "";
+                            string password = dr["password"] + "";
+                            bool isAdmin = (bool)dr["isAdmin"];
+
+                            client.Add(new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return client;
+        }
+
+        // Selects a client by id and returns a client object
         public Client GetClientById(int id)
         {
             string query = $"SELECT * FROM users WHERE clientID = \"{id}\";";
@@ -676,6 +727,43 @@ namespace TheLibraryIsOpen.Database
             return list;
         }
 
+
+        // find magazine by modelCopy
+        public List<Magazine> FindMagazineByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM magazines WHERE magazineID = \"{mc.modelID}\";";
+            List<Magazine> mag = new List<Magazine>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int magazineID = (int)dr["magazineID"];
+                            string title = dr["title"] + "";
+                            string publisher = dr["publisher"] + "";
+                            string language = dr["language"] + "";
+                            DateTime date = DateTime.Parse(dr["date"] + "");
+                            string isbn10 = dr["isbn10"] + "";
+                            string isbn13 = dr["isbn13"] + "";
+
+                            mag.Add(new Magazine(magazineID, title, publisher, language, date, isbn10, isbn13));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return mag;
+        }
+
         #endregion SearchMagazines
 
         #endregion magazines
@@ -1048,6 +1136,44 @@ namespace TheLibraryIsOpen.Database
 
             return list;
         }
+
+
+        // find music by modelCopy
+        public List<Music> FindMusicByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM cds WHERE cdID = \"{mc.modelID}\";";
+            List<Music> music = new List<Music>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int cdID = (int)dr["cdID"];
+                            string type = dr["type"] + "";
+                            string title = dr["title"] + "";
+                            string artist = dr["artist"] + "";
+                            string label = dr["label"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string asin = dr["asin"] + "";
+
+                            music.Add(new Music(cdID, type, title, artist, label, releaseDate, asin));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return music;
+        }
+
 
         #endregion SearchMusic
 
@@ -1561,6 +1687,45 @@ namespace TheLibraryIsOpen.Database
                 catch (Exception e) { Console.WriteLine(e); }
             }
             return list;
+        }
+
+
+
+        // find movie by modelCopy
+        public List<Movie> FindMovieByModelCopy(ModelCopy mc)
+        {
+            string query = $"SELECT * FROM movies WHERE movieID = \"{mc.modelID}\";";
+            List<Movie> movie = new List<Movie>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int movieID = (int)dr["movieID"];
+                            string title = dr["title"] + "";
+                            string director = dr["director"] + "";
+                            string language = dr["language"] + "";
+                            string subtitles = dr["subtitles"] + "";
+                            string dubbed = dr["dubbed"] + "";
+                            DateTime releaseDate = DateTime.Parse(dr["releasedate"] + "");
+                            string runtime = dr["runtime"] + "";
+
+                            movie.Add(new Movie(movieID, title, director, language, subtitles, dubbed, releaseDate, runtime));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return movie;
         }
 
         #endregion SearchMovies
@@ -2513,7 +2678,611 @@ namespace TheLibraryIsOpen.Database
         }
 
         #endregion SearchBooks
-
         #endregion books
+
+        #region modelCopy
+
+        // Deletes several books from the db
+        public void DeleteModelCopies(params ModelCopy[] mcs)
+        {
+            StringBuilder sb = new StringBuilder("DELETE FROM modelcopy WHERE id IN (");
+            for (int i = 0; i < mcs.Length; ++i)
+            {
+                sb.Append($"{mcs[i].id}{(i + 1 < mcs.Length ? "," : ");")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        // Returns a list of all clients in the db converted to client object.
+        public List<ModelCopy> GetAllModelCopies()
+        {
+            //Create a list of unknown size to store the result
+            List<ModelCopy> mcs = new List<ModelCopy>();
+            string query = "SELECT * FROM modelcopy;";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        while (dr.Read())
+                        {
+                            int id = (int)dr["id"];
+                            int modelID = (int)dr["modelID"];
+                            int modelType = (int)dr["modelType"];
+                            int borrowerID = (int)dr["borrowerID"];
+                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
+                            DateTime returnDate = (DateTime)dr["returnDate"];
+
+                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
+                            //Console.Write(book);
+
+                            mcs.Add(mc);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return mcs;
+        }
+
+        // Inserts several new books into the db
+        public void CreateModelCopies(params ModelCopy[] mcs)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO modelcopy (modelID, modelType) VALUES");
+            for (int i = 0; i < mcs.Length; ++i)
+            {
+                sb.Append($"(\"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        //update books information
+        public void UpdateModelCopies(params ModelCopy[] mcs)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE modelcopy SET ");
+            for (int i = 0; i < mcs.Length; ++i)
+            {
+                sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
+            }
+
+            QuerySend(sb.ToString());
+        }
+
+        public ModelCopy GetModelCopyById(int id)
+        {
+            string query = $"SELECT * FROM modelcopy WHERE ID = \" { id } \";";
+
+            ModelCopy mc = null;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create book object and store in list
+                        if (dr.Read())
+                        {
+                            int Id = (int)dr["id"];
+                            int modelID = (int)dr["modelID"];
+                            int modelType = (int)dr["modelType"];
+                            int borrowerID = (int)dr["borrowerID"];
+                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
+                            DateTime returnDate = (DateTime)dr["returnDate"];
+
+                            mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            return mc;
+        }
+
+        //Find modelCopies of model by model ID, returns list of modelCopy
+        public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType, BorrowType borrowId = BorrowType.Any)
+        {
+            int mType = (int)enumType;
+            string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\"";
+            switch (borrowId)
+            {
+                case BorrowType.Borrowed:
+                    query += " AND NOT borrowerID IS NULL;";
+                        break;
+                case BorrowType.NotBorrowed:
+                    query += " AND borrowerID IS NULL;";
+                    break;
+                case BorrowType.Any:
+                    query += ";";
+                    break;
+            }
+            List<ModelCopy> modelCopies = new List<ModelCopy>();
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data
+                        if (dr.Read())
+                        {
+                            int id = (int)dr["id"];
+                            int modelType = (int)dr["modelType"];
+                            int modelID = (int)dr["modelID"];
+                            int borrowerID = (int)dr["borrowerID"];
+                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
+                            DateTime returnDate = (DateTime)dr["returnDate"];
+
+                            modelCopies.Add(new ModelCopy
+                            {
+                                id = id,
+                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
+                                modelID = modelID,
+                                borrowerID = borrowerID,
+                                borrowedDate = borrowedDate,
+                                returnDate = returnDate
+                            });
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return modelCopies;
+        }
+
+
+        //Find modelCopies of client by Client ID, returns list of modelCopy
+        public List<ModelCopy> FindModelCopiesOfClient(int clientId)
+        {
+            string query = $"SELECT * FROM modelcopies WHERE borrowerID = \"{clientId}\";";
+            List<ModelCopy> modelCopies = new List<ModelCopy>();
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data
+                        if (dr.Read())
+                        {
+                            int id = (int)dr["id"];
+                            int modelType = (int)dr["modelType"];
+                            int modelID = (int)dr["modelID"];
+                            int borrowerID = (int)dr["borrowerID"];
+                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
+                            DateTime returnDate = (DateTime)dr["returnDate"];
+
+                            modelCopies.Add(new ModelCopy
+                            {
+                                id = id,
+                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
+                                modelID = modelID,
+                                borrowerID = borrowerID,
+                                borrowedDate = borrowedDate,
+                                returnDate = returnDate
+                            });
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return modelCopies;
+        }
+
+
+        //counts number of copies borrowed of a specific model
+
+        public int CountModelCopiesOfModel(int modelId, int mType, BorrowType borrowId)
+        {
+            string query = null;
+            switch (borrowId)
+            {
+                case BorrowType.Borrowed:
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\" AND NOT borrowerID IS NULL;";
+                    break;
+                case BorrowType.NotBorrowed:
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\" AND borrowerID IS NULL;";
+                    break;
+                case BorrowType.Any:
+                    query = $"SELECT COUNT(modelID) FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\";";
+                    break;
+            }
+            int count = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return count;
+        }
+
+        public int CountModelCopiesOfClient(int clientId)
+        {
+            string query = null;
+
+            query = $"SELECT COUNT(modelID) FROM modelcopies WHERE borrowerID = {clientId};";
+
+            int count = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return count;
+        }
+
+        #endregion
+
+        #region logs
+
+        public List<Log> GetAllLogs()
+        {
+            //Create a list of unknown size to store the result
+            List<Log> list = new List<Log>();
+            string query = "SELECT * FROM logs;";
+
+            //Open connection
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        while (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByDate(DateTime dateTime, bool exact)
+        {
+            List<Log> list = new List<Log>();
+            string query = "";
+            if (!exact)
+            {
+                string dateString = dateTime.ToShortDateString();
+                query = $"SELECT * FROM logs WHERE DATE(transactionTime) = '{dateString}';";
+            }
+            else
+            {
+                string dateTimeString = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                query = $"SELECT * FROM logs WHERE transactionTime = '{dateTimeString}';";
+            }
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+
+        }
+
+        public List<Log> GetLogsByClientID(int id)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT * FROM logs WHERE clientID = \"{id}\";";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByCopyID(int copyID)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT * FROM logs WHERE modelCopyID = \"{copyID}\";";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByTransaction(TransactionType transac)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT * FROM logs WHERE transaction = \"{(int)transac}\";";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByModelTypeAndId(TypeEnum type, int id)
+        {
+            List<Log> list = new List<Log>();
+            string query = $"SELECT logs.logID, logs.clientID, logs.modelCopyID, logs.transaction, logs.transactionTime FROM logs INNER JOIN modelcopies ON modelcopies.id = logs.modelCopyID WHERE modelcopies.modelID = \"{id}\" AND modelcopies.modelType = \"{(int)type}\" ;";
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<Log> GetLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
+        {
+            List<Log> list = new List<Log>();
+            string query = "";
+            if (!exact)
+            {
+                String dateStartString = dateStart.ToShortDateString();
+                String dateEndString = dateEnd.ToShortDateString();
+                query = $"SELECT * FROM logs WHERE DATE(transactionTime) BETWEEN '{dateStartString}' AND '{dateEndString}';";
+            }
+            else
+            {
+                String dateStartString = dateStart.ToString("yyyy-MM-dd HH:mm:ss");
+                String dateEndString = dateEnd.ToString("yyyy-MM-dd HH:mm:ss");
+                query = $"SELECT * FROM logs WHERE transactionTime BETWEEN '{dateStartString}' AND '{dateEndString}';";
+            }
+
+            //Open connection
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        if (dr.Read())
+                        {
+                            int logID = (int)dr["logID"];
+                            int clientID = (int)dr["clientID"];
+                            int modelCopyID = (int)dr["modelCopyID"];
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+
+
+                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                        }
+                    }
+
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public void AddLog(Log log)
+        {
+            string query = $"INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES(\"{log.ClientID}\", \"{log.ModelCopyID}\", \"{(int)log.Transaction}\", \"{log.TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\");";
+            QuerySend(query);
+        }
+
+        public void DeleteLog(Log log)
+        {
+            string query = $"DELETE FROM logs WHERE (logID = \"{log.LogID}\");";
+            QuerySend(query);
+        }
+
+
+        public void AddLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder("INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"(\"{logs[i].ClientID}\", \"{logs[i].ModelCopyID}\", \"{(int)logs[i].Transaction}\", \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        public void DeleteLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE ");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"logID = \"{logs[i].LogID}\") {(i + 1 < logs.Length ? " OR " : ";")}");
+            }
+
+            QuerySend(sb.ToString());
+        }
+
+        public void UpdateLogs(params Log[] logs)
+        {
+            StringBuilder sb = new StringBuilder("UPDATE logs set");
+            for (int i = 0; i < logs.Length; ++i)
+            {
+                sb.Append($"clientID = \"{logs[i].ClientID}\", modelCopyID = \"{logs[i].ModelCopyID}\",transaction = \"{(int)logs[i].Transaction}\", transactionTime = \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+        public void ClearAllLogsBefore(DateTime date)
+        {
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString("yyyy-MM-dd HH:mm:ss")}\"");
+
+            QuerySend(sb.ToString());
+        }
+        #endregion
+
     }
 }

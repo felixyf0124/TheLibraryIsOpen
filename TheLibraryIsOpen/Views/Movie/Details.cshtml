@@ -9,6 +9,11 @@
     Client client = await cm.FindByEmailAsync(clientEmail);
     bool isAdmin = client.IsAdmin;
 }
+
+@{
+    bool inStoke = (int)TempData["AvailableCopies"] > 0;
+}
+
 @{
     ViewData["Title"] = "Details";
 }
@@ -79,6 +84,13 @@
         </dd>
     </dl>
 </div>
+<div>
+    @if (inStoke)
+    {
+        <a asp-action="AddToCart" asp-route-id="@Model.MovieId" class="btn btn-lg btn-warning"><label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Add To Cart</a>
+    }
+</div>
+<div style="height: 6px;"></div>
 <div>
     @if (isAdmin)
     {
