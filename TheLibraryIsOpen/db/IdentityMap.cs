@@ -654,9 +654,12 @@ namespace TheLibraryIsOpen.db
             });
         }
 
-        public bool ReserveModelCopiesToClient(List<SessionModel> models, int clientId)
+        public Task<bool> ReserveModelCopiesToClient(List<SessionModel> models, int clientId)
         {
-            return _db.ReserveModelCopiesToClient(models, clientId);
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.ReserveModelCopiesToClient(models, clientId);
+            });
         }
 
         public Task<List<Log>> GetAllLogs()

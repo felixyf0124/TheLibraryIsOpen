@@ -135,7 +135,7 @@ namespace TheLibraryIsOpen.Controllers
         }
 
         //registers modelcopies of selected items to the client
-        [HttpPost]
+        //[HttpPost]
         public async Task<IActionResult> Borrow() {
             //TODO what is the correct return type?
 
@@ -145,7 +145,7 @@ namespace TheLibraryIsOpen.Controllers
             List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
 
             //Borrow all available copies of selected items
-            Boolean successfulReservation = _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
+            Boolean successfulReservation = await _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
 
             //if not all items were borrowed, determine which ones were not borrowed and display them to the client
             if (!successfulReservation) {
