@@ -87,6 +87,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Models.Cart;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Database
@@ -2952,6 +2953,64 @@ namespace TheLibraryIsOpen.Database
             }
             return count;
         }
+
+
+        public bool ReserveModelCopiesToClient(List<CartViewModel> cartModels, int clientId)
+        {
+            int numAlreadyBorrowed = CountModelCopiesOfClient(clientId);
+            int numToBorrow = cartModels.Count;
+            List<ModelCopy> copiesToBorrow = new List<ModelCopy>();
+
+            foreach (CartViewModel cartModel in cartModels)
+            {
+                ModelCopy newCopy = FindModelCopiesOfModel(cartModel.ModelId, cartModel.Type, BorrowType.NotBorrowed).First();
+                if (!newCopy.Equals(null))
+                {
+                    copiesToBorrow.Add(newCopy);
+                }
+            }
+
+            foreach (ModelCopy mc in copiesToBorrow)
+            {
+                mc.borrowerID = clientId;
+                mc.borrowedDate = DateTime.Today;
+                switch (mc.modelType)
+                {
+                    case TypeEnum.Book:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(7);
+                            break;
+                        }
+                    case TypeEnum.Magazine:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(7);
+                            break;
+                        }
+                    case TypeEnum.Movie:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(2);
+                            break;
+                        }
+                    case TypeEnum.Music:
+                        {
+                            mc.returnDate = mc.borrowedDate.AddDays(2);
+                            break;
+                        }
+                }
+
+            }
+
+            UpdateModelCopies(copiesToBorrow.ToArray());
+
+            int numNowBorrowed = CountModelCopiesOfClient(clientId);
+            if ((numNowBorrowed - numAlreadyBorrowed) == numToBorrow) 
+            { 
+                return true; 
+            }
+            return false;
+
+        }
+
 
         #endregion
 

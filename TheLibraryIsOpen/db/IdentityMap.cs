@@ -621,6 +621,20 @@ namespace TheLibraryIsOpen.db
              return mcToFind;});
         }
 
+        public Task<List<ModelCopy>> FindModelCopiesWithBorrowType(int mId, TypeEnum mType, BorrowType bType)
+        {
+            return Task.Factory.StartNew(() => {
+                List<ModelCopy> mcToFind = _db.FindModelCopiesOfModel(mId, mType, bType);
+                mcToFind.ForEach(mc =>
+                {
+                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                    _modelCopy.TryAdd(mc.id, mc);
+                    _modelCopyLock.ExitWriteLock();
+                });
+                return mcToFind;
+            });
+        }
+
 
         public Task<List<ModelCopy>> FindModelCopiesByClient(int clientId)
         {

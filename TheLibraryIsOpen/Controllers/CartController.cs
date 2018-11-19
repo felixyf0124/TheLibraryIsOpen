@@ -25,11 +25,10 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
-        private UnitOfWork _unitOfWork;
        
 
 
-        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap, UnitOfWork uow)
+        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
         {
             _cm = cm;
             _bookc = bc;
@@ -37,7 +36,6 @@ namespace TheLibraryIsOpen.Controllers
             _musicc = muc;
             _magazinec = mac;
             _identityMap = imap;
-            _unitOfWork = uow;
         }
 
         public async Task<IActionResult> Index()
@@ -144,55 +142,45 @@ namespace TheLibraryIsOpen.Controllers
             //TODO what is the correct return type?
             //TODO is the list supposed to be a parameter? Not sure with POST
 
-            //check for available modelcopies
-            List<ModelCopy> copiesToRegister = new List<ModelCopy>();
-            foreach (CartViewModel cm in modelsToBorrow) 
+            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
+            List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
+
+            Boolean successfulReservation;
+            lock (this)
             {
-                List<ModelCopy> copies = await _identityMap.FindModelCopiesWithBorrowType(cm.ModelId, cm.Type, BorrowType.NotBorrowed);
-                if (copies.Count != 0)
-                {
-                    copiesToRegister.Add(copies.First());
-                }
-                else {
-                    //TODO return error here : model copy of this item is not available
-                }
+                successfulReservation = _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
             }
 
-            //register copies to current client
-            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
-            int clientId = client.clientId;
-            foreach (ModelCopy mc in copiesToRegister) 
-            {
-                mc.borrowerID = clientId;
-                mc.borrowedDate = DateTime.Today;
-                switch (mc.modelType)
+            if (!successfulReservation) {
+                List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
+                HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
+                List<CartViewModel> notBorrowed = new List<CartViewModel>();
+
+                foreach (CartViewModel cartModel in modelsToBorrow)
                 {
-                    case TypeEnum.Book:
+                    bool matchfound = false;
+                    foreach (ModelCopy mc in borrowed)
+                    {
+                        if (mc.modelID == cartModel.ModelId && mc.modelType.Equals(cartModel.Type))
                         {
-                            mc.returnDate = mc.borrowedDate.AddDays(7);
+                            matchfound = true;
                             break;
                         }
-                    case TypeEnum.Magazine:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(7);
-                            break;
-                        }
-                    case TypeEnum.Movie:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(2);
-                            break;
-                        }
-                    case TypeEnum.Music:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(2);
-                            break;
-                        }
+                    }
+
+                    if (!matchfound) {
+                        notBorrowed.Add(cartModel);
+                    }
                 }
-                _unitOfWork.RegisterDirty(mc);
+
+
+                //TODO return notBorrowed (list of cartModels not reserved
+
             }
+
 
             //TODO return to home index?
-
+            
         }
     
 
