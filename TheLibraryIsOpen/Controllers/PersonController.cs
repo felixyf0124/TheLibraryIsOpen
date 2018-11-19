@@ -43,9 +43,6 @@ namespace TheLibraryIsOpen.Controllers
             {
                 return NotFound();
             }
-
-            //TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(magazine);
-
             return View(person);
         }
 
@@ -111,7 +108,7 @@ namespace TheLibraryIsOpen.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MagazineExists(id))
+                    if (!PersonExists(id))
                     {
                         return NotFound();
                     }
@@ -125,6 +122,7 @@ namespace TheLibraryIsOpen.Controllers
             }
             return View(person);
         }
+
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
@@ -158,33 +156,10 @@ namespace TheLibraryIsOpen.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult AddToCart(int id)
-        {
-            var Items = HttpContext.Session.GetObject<List<SessionModel>>("Items")
-                ?? new List<SessionModel>();
-            Items.Add(new SessionModel { Id = id, ModelType = TypeEnum.Magazine});
-            HttpContext.Session.SetObject("Items", Items);
-            HttpContext.Session.SetInt32("ItemsCount", Items.Count);
-            return RedirectToAction(nameof(Details), new { id = id.ToString() });
-        }
-
-        private bool MagazineExists(string id)
+        private bool PersonExists(string id)
         {
             return (_mc.FindByIdAsync(id) != null);
         }
 
-        public async Task<IActionResult> AddModelCopy(string id)
-        {
-            await _mc.addModelCopy(id);
-            await _mc.CommitAsync();
-            return RedirectToAction(nameof(Details), new { id = id.ToString() });
-        }
-
-        public async Task<IActionResult> DeleteModelCopy(string id)
-        {
-            await _mc.deleteFreeModelCopy(id);
-            await _mc.CommitAsync();
-            return RedirectToAction(nameof(Details), new { id = id.ToString() });
-        }
     }
 }

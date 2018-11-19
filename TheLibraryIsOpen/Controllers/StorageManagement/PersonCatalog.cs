@@ -42,7 +42,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         }
 
 
-        //Delete Magazine
+        //Delete Person
         public Task<IdentityResult> DeleteAsync(Person person)
         {
             if (person != null)
@@ -63,7 +63,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         { }
 
 
-        //Find methods (by id, isbn10, isbn13)
+        //Find methods (by id)
 
         public async Task<Person> FindByIdAsync(string personID)
         {
@@ -72,33 +72,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return person;
         }
 
-        public Task<Magazine> FindByIsbn10Async(string isbn10)
-        {
-            if (!string.IsNullOrEmpty(isbn10))
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: replace with _im
-                    return _db.GetMagazineByIsbn10(isbn10);
-                });
-            }
-            throw new ArgumentNullException("isbn10");
-        }
-
-        public Task<Magazine> FindByIsbn13Async(string isbn13)
-        {
-            if (!string.IsNullOrEmpty(isbn13))
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: replace with _im
-                    return _db.GetMagazineByIsbn13(isbn13);
-                });
-            }
-            throw new ArgumentNullException("isbn13");
-        }
-
-
+        //Update methods
         public Task<IdentityResult> UpdateAsync(Person person)
         {
             if (person != null)
@@ -129,56 +103,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
-        }
-
-        public Task<int> getNoOfAvailableModelCopies(Magazine magazine)
-        {
-            return Task.Factory.StartNew(() =>
-            {
-
-                int AvailableCopies = _db.CountModelCopiesOfModel(magazine.MagazineId, (int)TypeEnum.Magazine, BorrowType.NotBorrowed);
-
-                return AvailableCopies;
-
-            });
-
-        }
-
-        public async Task<List<ModelCopy>> getModelCopies(Magazine magazine)
-        {
-            List<ModelCopy> copies = await _im.FindModelCopies(magazine.MagazineId, TypeEnum.Magazine);
-            
-            return copies;
-
-        }
-
-        public Task<IdentityResult> addModelCopy(string id)
-        {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: manage error if register returns false
-
-                    _unitOfWork.RegisterNew(new ModelCopy
-                    {
-                        modelID = Int32.Parse(id),
-                        modelType = TypeEnum.Magazine
-                    });
-                    return IdentityResult.Success;
-                });
-        }
-        public Task<IdentityResult> deleteFreeModelCopy(string id)
-        {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: manage error if register returns false
-                    ModelCopy temp = new ModelCopy
-                    {
-                        modelID = Int32.Parse(id),
-                        modelType = TypeEnum.Magazine
-                    };
-                    _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
-                    return IdentityResult.Success;
-                });
         }
     }
 }
