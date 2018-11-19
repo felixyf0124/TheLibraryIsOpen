@@ -135,10 +135,8 @@ namespace TheLibraryIsOpen.Controllers
         }
 
         //registers modelcopies of selected items to the client
-        //[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Borrow() {
-            //TODO what is the correct return type?
-
             List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
 
             Client client = await _cm.FindByEmailAsync(User.Identity.Name);
@@ -151,8 +149,8 @@ namespace TheLibraryIsOpen.Controllers
             if (!successfulReservation) {
                 List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
                 HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
-                List<SessionModel> notBorrowed = new List<SessionModel>();
 
+                List<SessionModel> notBorrowed = new List<SessionModel>();
                 foreach (SessionModel sm in modelsToBorrow)
                 {
                     bool matchfound = false;
@@ -170,10 +168,12 @@ namespace TheLibraryIsOpen.Controllers
                     }
                 }
 
-                //TODO return to cart with notBorrowed (list of cartModels not reserved)
+                HttpContext.Session.SetObject("Items", notBorrowed);
+                HttpContext.Session.SetInt32("ItemsCount", notBorrowed.Count);
                 return RedirectToAction(nameof(Index));
             }
 
+            //TODO Return to Home?
             return RedirectToAction(nameof(Index));
 
         }

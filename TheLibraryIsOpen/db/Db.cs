@@ -3020,12 +3020,7 @@ namespace TheLibraryIsOpen.Database
 
             //Check if all items selected by the Client have been successfully borrowed
             int numNowBorrowed = CountModelCopiesOfClient(clientId);
-            if ((numNowBorrowed - numAlreadyBorrowed) == numToBorrow) 
-            { 
-                return true; 
-            }
-            return false;
-
+            return ((numNowBorrowed - numAlreadyBorrowed) == numToBorrow);
         }
 
 
