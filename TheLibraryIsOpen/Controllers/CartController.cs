@@ -26,8 +26,6 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
        
-
-
         public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
         {
             _cm = cm;
@@ -138,7 +136,7 @@ namespace TheLibraryIsOpen.Controllers
 
         //registers modelcopies of selected items to the client
         [HttpPost]
-        public async void Borrow() {
+        public async Task<IActionResult> Borrow() {
             //TODO what is the correct return type?
 
             List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
@@ -172,14 +170,12 @@ namespace TheLibraryIsOpen.Controllers
                     }
                 }
 
-
-                //TODO return notBorrowed (list of cartModels not reserved)
-
+                //TODO return to cart with notBorrowed (list of cartModels not reserved)
+                return RedirectToAction(nameof(Index));
             }
 
+            return RedirectToAction(nameof(Index));
 
-            //TODO return to home index?
-            
         }
     
 
