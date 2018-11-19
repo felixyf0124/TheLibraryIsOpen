@@ -138,32 +138,29 @@ namespace TheLibraryIsOpen.Controllers
 
         //registers modelcopies of selected items to the client
         [HttpPost]
-        public async void Borrrow(List<CartViewModel> modelsToBorrow) {
+        public async void Borrrow() {
             //TODO what is the correct return type?
-            //TODO is the list supposed to be a parameter? Not sure with POST
+
+            List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
 
             Client client = await _cm.FindByEmailAsync(User.Identity.Name);
             List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
 
             //Borrow all available copies of selected items
-            Boolean successfulReservation;
-            lock (this)
-            {
-                successfulReservation = _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
-            }
+            Boolean successfulReservation = _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
 
             //if not all items were borrowed, determine which ones were not borrowed and display them to the client
             if (!successfulReservation) {
                 List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
                 HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
-                List<CartViewModel> notBorrowed = new List<CartViewModel>();
+                List<SessionModel> notBorrowed = new List<SessionModel>();
 
-                foreach (CartViewModel cartModel in modelsToBorrow)
+                foreach (SessionModel sm in modelsToBorrow)
                 {
                     bool matchfound = false;
                     foreach (ModelCopy mc in borrowed)
                     {
-                        if (mc.modelID == cartModel.ModelId && mc.modelType.Equals(cartModel.Type))
+                        if (mc.modelID == sm.Id && mc.modelType.Equals(sm.ModelType))
                         {
                             matchfound = true;
                             break;
@@ -171,7 +168,7 @@ namespace TheLibraryIsOpen.Controllers
                     }
 
                     if (!matchfound) {
-                        notBorrowed.Add(cartModel);
+                        notBorrowed.Add(sm);
                     }
                 }
 

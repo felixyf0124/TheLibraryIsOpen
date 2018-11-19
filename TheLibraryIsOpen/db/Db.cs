@@ -87,7 +87,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Models.Cart;
+using TheLibraryIsOpen.Models;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Database
@@ -2955,16 +2955,16 @@ namespace TheLibraryIsOpen.Database
         }
 
 
-        public bool ReserveModelCopiesToClient(List<CartViewModel> cartModels, int clientId)
+        public bool ReserveModelCopiesToClient(List<SessionModel> cartModels, int clientId)
         {
             int numAlreadyBorrowed = CountModelCopiesOfClient(clientId);
             int numToBorrow = cartModels.Count;
             List<ModelCopy> copiesToBorrow = new List<ModelCopy>();
 
             //Find ModelCopies for all items
-            foreach (CartViewModel cartModel in cartModels)
+            foreach (SessionModel sm in cartModels)
             {
-                ModelCopy newCopy = FindModelCopiesOfModel(cartModel.ModelId, cartModel.Type, BorrowType.NotBorrowed).First();
+                ModelCopy newCopy = FindModelCopiesOfModel(sm.Id, sm.ModelType, BorrowType.NotBorrowed).First();
                 if (!newCopy.Equals(null))
                 {
                     copiesToBorrow.Add(newCopy);
@@ -3003,7 +3003,7 @@ namespace TheLibraryIsOpen.Database
             }
 
             //Push updates to the Db
-            UpdateModelCopies(copiesToBorrow.ToArray());
+            lock(this) { UpdateModelCopies(copiesToBorrow.ToArray()); }
 
             //Check if all items selected by the Client have been successfully borrowed
             int numNowBorrowed = CountModelCopiesOfClient(clientId);
