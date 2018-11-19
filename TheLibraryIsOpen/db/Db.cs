@@ -2693,6 +2693,17 @@ namespace TheLibraryIsOpen.Database
             QuerySend(sb.ToString());
         }
 
+        // Deletes one free modelCopy from the db
+        public void DeleteFreeModelCopy(ModelCopy mc, int modelID)
+        {
+            string query = $"DELETE FROM library.modelcopies WHERE modelType = \"{(int)mc.modelType}\" and modelID = \"{modelID}\" and borrowerID IS NULL LIMIT 1;";
+            lock (this)
+            {
+                QuerySend(query);
+            }
+               
+        }
+
         // Returns a list of all clients in the db converted to client object.
         public List<ModelCopy> GetAllModelCopies()
         {
@@ -2736,11 +2747,13 @@ namespace TheLibraryIsOpen.Database
         public void CreateModelCopies(params ModelCopy[] mcs)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO modelcopies (modelID, modelType) VALUES");
+            
             for (int i = 0; i < mcs.Length; ++i)
-            {
-                sb.Append($"(\"{mcs[i].modelID}\", \"{mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
+            {            
+                sb.Append($"(\"{mcs[i].modelID}\", \"{(int)mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
+            
         }
 
         //update books information

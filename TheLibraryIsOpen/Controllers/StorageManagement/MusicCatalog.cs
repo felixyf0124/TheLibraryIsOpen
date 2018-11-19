@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
@@ -111,6 +112,36 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         public async Task<List<ModelCopy>> getModelCopies(Music music)
         {
             return await _im.FindModelCopies(music.MusicId, TypeEnum.Music);
+        }
+
+        public Task<IdentityResult> addModelCopy(string id)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                // TODO: manage error if register returns false
+
+                _unitOfWork.RegisterNew(new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Music
+                });
+                return IdentityResult.Success;
+            });
+            
+        }
+        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                // TODO: manage error if register returns false
+                ModelCopy temp = new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Music
+                };
+                _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                return IdentityResult.Success;
+            });
         }
     }
 }
