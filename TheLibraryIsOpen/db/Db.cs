@@ -2961,6 +2961,7 @@ namespace TheLibraryIsOpen.Database
             int numToBorrow = cartModels.Count;
             List<ModelCopy> copiesToBorrow = new List<ModelCopy>();
 
+            //Find ModelCopies for all items
             foreach (CartViewModel cartModel in cartModels)
             {
                 ModelCopy newCopy = FindModelCopiesOfModel(cartModel.ModelId, cartModel.Type, BorrowType.NotBorrowed).First();
@@ -2970,6 +2971,7 @@ namespace TheLibraryIsOpen.Database
                 }
             }
 
+            //Update the found ModelCopies with the ClientId, BorrowDate and ReturnDate
             foreach (ModelCopy mc in copiesToBorrow)
             {
                 mc.borrowerID = clientId;
@@ -3000,8 +3002,10 @@ namespace TheLibraryIsOpen.Database
 
             }
 
+            //Push updates to the Db
             UpdateModelCopies(copiesToBorrow.ToArray());
 
+            //Check if all items selected by the Client have been successfully borrowed
             int numNowBorrowed = CountModelCopiesOfClient(clientId);
             if ((numNowBorrowed - numAlreadyBorrowed) == numToBorrow) 
             { 

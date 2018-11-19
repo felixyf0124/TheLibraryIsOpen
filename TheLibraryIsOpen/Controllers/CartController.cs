@@ -145,12 +145,14 @@ namespace TheLibraryIsOpen.Controllers
             Client client = await _cm.FindByEmailAsync(User.Identity.Name);
             List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
 
+            //Borrow all available copies of selected items
             Boolean successfulReservation;
             lock (this)
             {
                 successfulReservation = _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
             }
 
+            //if not all items were borrowed, determine which ones were not borrowed and display them to the client
             if (!successfulReservation) {
                 List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
                 HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
@@ -174,7 +176,7 @@ namespace TheLibraryIsOpen.Controllers
                 }
 
 
-                //TODO return notBorrowed (list of cartModels not reserved
+                //TODO return notBorrowed (list of cartModels not reserved)
 
             }
 
