@@ -31,11 +31,12 @@ To compile, the .net core runtime must be installed on the host computer.
 It's easier to have visual studio 2017 with the .net core packages installed to run it. However, it can still be done via console:
 
 1) cd to the root folder of the project and run the command `dotnet build --configuration Release`.
-2) cd to `TheLibraryIsOpen\bin\Release\netcoreapp2.1` and run the command `dotnet TheLibraryIsOpen.dll`
-3) the console will show a few messages, among which:
+2) navigate to `~\TheLibraryIsOpen` and copy the `wwwroot` folder and `appsettings.json`, and paste them into `~\TheLibraryIsOpen\bin\Release\netcoreapp2.1`
+3) cd to `~\TheLibraryIsOpen\bin\Release\netcoreapp2.1` and run the command `dotnet TheLibraryIsOpen.dll`
+4) the console will show a few messages, among which:
     * "Now listening on: http://<span></span>localhost:[portnb1]"
     * "Now listening on: https://<span></span>localhost:[portnb2]"
-4) pick whichever link and put it into a browser
+5) pick whichever link and put it into a browser
     
 ## Admin account
 * username: admin@thelibraryisopen<span></span>.com
