@@ -177,16 +177,16 @@ namespace TheLibraryIsOpen.Controllers
             return (_mc.FindMusicByIdAsync(id) != null);
         }
 
-        public async Task<IActionResult> AddModelCopy(string id, Music music)
+        public async Task<IActionResult> AddModelCopy(string id)
         {
-            await _mc.addModelCopy(id, music);
+            await _mc.addModelCopy(id);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
-        public async Task<IActionResult> DeleteModelCopy(string id, Music music)
+        public async Task<IActionResult> DeleteModelCopy(string id)
         {
-            await _mc.deleteFreeModelCopy(id, music);
+            await _mc.deleteFreeModelCopy(id);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }

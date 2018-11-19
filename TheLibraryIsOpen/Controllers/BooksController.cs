@@ -187,16 +187,16 @@ namespace TheLibraryIsOpen.Controllers
         }
         
 
-        public async Task<IActionResult> AddModelCopy(string id, Book book)
+        public async Task<IActionResult> AddModelCopy(string id)
         {
-            await _bc.addModelCopy(id, book);
+            await _bc.addModelCopy(id);
             await _bc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
-        public async Task<IActionResult> DeleteModelCopy(string id, Book book)
+        public async Task<IActionResult> DeleteModelCopy(string id)
         {
-            await _bc.deleteFreeModelCopy(id, book);
+            await _bc.deleteFreeModelCopy(id);
             await _bc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }

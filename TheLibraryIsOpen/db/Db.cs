@@ -2697,8 +2697,11 @@ namespace TheLibraryIsOpen.Database
         public void DeleteFreeModelCopy(ModelCopy mc, int modelID)
         {
             string query = $"DELETE FROM library.modelcopies WHERE modelType = \"{(int)mc.modelType}\" and modelID = \"{modelID}\" and borrowerID IS NULL LIMIT 1;";
-            System.Diagnostics.Debug.WriteLine(query);
-            QuerySend(query);
+            lock (this)
+            {
+                QuerySend(query);
+            }
+               
         }
 
         // Returns a list of all clients in the db converted to client object.
@@ -2748,9 +2751,7 @@ namespace TheLibraryIsOpen.Database
             for (int i = 0; i < mcs.Length; ++i)
             {            
                 sb.Append($"(\"{mcs[i].modelID}\", \"{(int)mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
-                // System.Diagnostics.Debug.WriteLine((int)mcs[i].modelType);
             }
-            System.Diagnostics.Debug.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
             
         }

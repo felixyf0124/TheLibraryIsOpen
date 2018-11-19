@@ -114,46 +114,33 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return await _im.FindModelCopies(music.MusicId, TypeEnum.Music);
         }
 
-        public Task<IdentityResult> addModelCopy(string id, Music music)
+        public Task<IdentityResult> addModelCopy(string id)
         {
-            if (music != null)
+            return Task.Factory.StartNew(() =>
             {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: manage error if register returns false
+                // TODO: manage error if register returns false
 
-                    _unitOfWork.RegisterNew(new ModelCopy
-                    {
-                        modelID = Int32.Parse(id),
-                        modelType = TypeEnum.Music
-                    });
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Music was null" });
-            });
-        }
-        public Task<IdentityResult> deleteFreeModelCopy(string id, Music music)
-        {
-            if (music != null)
-            {
-                return Task.Factory.StartNew(() =>
+                _unitOfWork.RegisterNew(new ModelCopy
                 {
-                    // TODO: manage error if register returns false
-                    ModelCopy temp = new ModelCopy
-                    {
-                        modelID = Int32.Parse(id),
-                        modelType = TypeEnum.Music
-                    };
-                    _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
-                    return IdentityResult.Success;
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Music
                 });
-            }
+                return IdentityResult.Success;
+            });
+            
+        }
+        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        {
             return Task.Factory.StartNew(() =>
             {
-                return IdentityResult.Failed(new IdentityError { Description = "Music was null" });
+                // TODO: manage error if register returns false
+                ModelCopy temp = new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Music
+                };
+                _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                return IdentityResult.Success;
             });
         }
     }

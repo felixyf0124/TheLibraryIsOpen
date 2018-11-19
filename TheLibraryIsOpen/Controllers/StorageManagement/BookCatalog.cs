@@ -114,11 +114,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<IdentityResult> addModelCopy(string id, Book book)
+        public Task<IdentityResult> addModelCopy(string id)
         {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
                 {
                     // TODO: manage error if register returns false
 
@@ -129,11 +127,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     });
                     return IdentityResult.Success;
                 });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "book was null" });
-            });
         }
 
         //Get all Books
@@ -170,11 +163,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return copies;
         }
 
-        public Task<IdentityResult> deleteFreeModelCopy(string id, Book book)
+        public Task<IdentityResult> deleteFreeModelCopy(string id)
         {
-            if (book != null)
-            {
-                return Task.Factory.StartNew(() =>
+             return Task.Factory.StartNew(() =>
                 {
                     // TODO: manage error if register returns false
                     ModelCopy temp = new ModelCopy
@@ -185,11 +176,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
                     return IdentityResult.Success;
                 });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "book was null" });
-            });
+            
         }
     }
 }
