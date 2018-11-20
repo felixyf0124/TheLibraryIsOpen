@@ -150,24 +150,7 @@ namespace TheLibraryIsOpen.Controllers
             if (!successfulReservation) {
                 List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
                 HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
-
-                List<SessionModel> notBorrowed = new List<SessionModel>();
-                foreach (SessionModel sm in modelsToBorrow)
-                {
-                    bool matchfound = false;
-                    foreach (ModelCopy mc in borrowed)
-                    {
-                        if (mc.modelID == sm.Id && mc.modelType.Equals(sm.ModelType))
-                        {
-                            matchfound = true;
-                            break;
-                        }
-                    }
-
-                    if (!matchfound) {
-                        notBorrowed.Add(sm);
-                    }
-                }
+                List<SessionModel> notBorrowed = modelsToBorrow.Select(m => new {Id=m.Id, MT=m.ModelType}).Except(borrowed.Select(m => new {Id=m.modelID, MT=m.modelType})).Select(c => new SessionModel {Id=c.Id, ModelType=c.MT}).ToList();
 
                 HttpContext.Session.SetObject("Items", notBorrowed);
                 HttpContext.Session.SetInt32("ItemsCount", notBorrowed.Count);
