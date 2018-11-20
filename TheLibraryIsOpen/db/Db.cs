@@ -1229,6 +1229,9 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+
+
+
         public void DeleteMovies(params Movie[] movies)
         {
             for (int i = 0; i < movies.Length; i++)
@@ -1284,6 +1287,66 @@ namespace TheLibraryIsOpen.Database
             }
             return movie;
         }
+
+        public List<int> GetMoviesIDByMovieActor(int movieActorID)
+        {
+
+            List<int> list = new List<int>();
+            string query = $"SELECT movieID FROM movieactor WHERE personID = \"{ movieActorID }\";";
+            
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            
+                            list.Add(movieId);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
+        public List<int> GetMoviesIDByMovieProducer(int movieProducerID)
+        {
+
+            List<int> list = new List<int>();
+            string query = $"SELECT movieID FROM movieproducer WHERE personID = \"{ movieProducerID }\";";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create movie object and store in list
+                        while (dr.Read())
+                        {
+                            int movieId = (int)dr["movieID"];
+                            list.Add(movieId);
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return list;
+        }
+
 
         // Returns a list of all movies in the db converted to movie object.
         public List<Movie> GetAllMovies()
@@ -1760,9 +1823,9 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE person SET ");
             for (int i = 0; i < people.Length; ++i)
             {
-                sb.Append($"firstname = \"{people[i].FirstName}\", lastname = \"{people[i].LastName}\" WHERE cdID = \"{people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
+                sb.Append($"firstname = \"{people[i].FirstName}\", lastname = \"{people[i].LastName}\" WHERE personID = \"{people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
             }
-            Console.WriteLine(sb.ToString());
+           // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 
@@ -1771,10 +1834,27 @@ namespace TheLibraryIsOpen.Database
         {
             StringBuilder sb = new StringBuilder("DELETE FROM person ");
             for (int i = 0; i < people.Length; ++i)
-            {
+            { 
+                List<int> movieIDByActor = GetMoviesIDByMovieActor(people[i].PersonId);
+                List<int> movieIDByProducer = GetMoviesIDByMovieProducer(people[i].PersonId);
+              //  Console.WriteLine(movieIDByActor.Count);
+                //Console.WriteLine(movieIDByProducer.Count);
+                for (int j = 0; j < movieIDByActor.Count; j++)
+                {
+                   //Console.WriteLine("**********************");
+                   //Console.WriteLine(movieID[j]);
+                    DeleteMovieActor(movieIDByActor[j],people[i].PersonId);
+                }
+                for (int k = 0; k < movieIDByProducer.Count; k++)
+                {
+                    //Console.WriteLine("**********************");
+                    //Console.WriteLine(movieID[j]);
+                    DeleteMovieProducer(movieIDByProducer[k], people[i].PersonId);
+                }
+
                 sb.Append($"WHERE personID = \"{ people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
             }
-            // Console.WriteLine(sb.ToString());
+            //Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 
@@ -1874,6 +1954,8 @@ namespace TheLibraryIsOpen.Database
             QuerySend(query);
         }
 
+        
+
         public void CreateMovieActors(int movieId, params int[] actorIds)
         {
             StringBuilder ma = new StringBuilder($"INSERT INTO movieactor (movieID, personID) VALUES ");
@@ -1885,9 +1967,10 @@ namespace TheLibraryIsOpen.Database
         }
 
         // Delete movie actor by movieID and personID from the database
-        public void DeleteMovieActor(string mid, string pid)
+        public void DeleteMovieActor(int mid, int pid)
         {
-            string query = $"DELETE FROM movieactor WHERE (movieID = \"{mid}\" AND personID = \"{pid}\");";
+            string query = $"DELETE FROM movieactor WHERE movieID = \"{mid}\" AND personID = \"{pid}\";";
+           // Console.WriteLine("666666666666666666666666666666666"+query);
             QuerySend(query);
         }
 
@@ -1970,7 +2053,7 @@ namespace TheLibraryIsOpen.Database
         }
 
         // Delete movieProducer by movieID and personID from the database
-        public void DeleteMovieProducer(string mid, string pid)
+        public void DeleteMovieProducer(int mid, int pid)
         {
             string query = $"DELETE FROM movieproducer WHERE (movieID = \"{mid}\" AND personID = \"{pid}\");";
             QuerySend(query);
