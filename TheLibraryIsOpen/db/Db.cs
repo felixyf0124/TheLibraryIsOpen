@@ -75,7 +75,22 @@
             borrowerID int(12) FK
             borrowedDate date
             returnDate date
-            foreign key (borrowerID) references users(clientID)	    
+            foreign key (borrowerID) references users(clientID)
+
+    TRIGGERS:
+        CREATE TRIGGER `LogModelCopyUpdate` AFTER UPDATE
+        ON `modelcopies`
+        FOR EACH ROW BEGIN
+		    IF NEW.borrowerID IS NULL THEN
+			    SET @trans = 1;
+                SET @client = OLD.borrowerID;
+		    ELSE
+			    SET @trans = 0;
+                SET @client = NEW.borrowerID;
+		    END IF;
+            INSERT INTO library.logs (clientID, modelCopyID, transaction, transactionTime)
+            VALUES (@client, NEW.id, @trans, current_timestamp());
+	    END
 
     One things for query language:
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
@@ -3143,7 +3158,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
                         }
@@ -3188,7 +3203,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3225,7 +3240,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3261,7 +3276,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3297,7 +3312,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3333,7 +3348,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3381,7 +3396,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3440,7 +3455,7 @@ WHERE
 
         public void ClearAllLogsBefore(DateTime date)
         {
-            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString("yyyy-MM-dd HH:mm:ss")}\"");
+            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}\"");
 
             QuerySend(sb.ToString());
         }
