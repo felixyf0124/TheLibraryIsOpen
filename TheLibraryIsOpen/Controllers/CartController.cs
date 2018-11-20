@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models;
-using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Models.Search;
-using static TheLibraryIsOpen.Constants.TypeConstants;
 using TheLibraryIsOpen.Models.Cart;
+using TheLibraryIsOpen.Models.DBModels;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -25,7 +23,7 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
-       
+
         public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
         {
             _cm = cm;
@@ -80,7 +78,7 @@ namespace TheLibraryIsOpen.Controllers
             }
 
             List<CartViewModel> result = new List<CartViewModel>(Items.Count);
-            
+
             result.AddRange(bookTasks.Select(t =>
             {
                 t.Wait();
@@ -129,15 +127,15 @@ namespace TheLibraryIsOpen.Controllers
             cartCount = cartCount - 1;
 
             HttpContext.Session.SetInt32("ItemsCount", cartCount);
-          
+
 
             return RedirectToAction(nameof(Index));
         }
 
 
         //registers modelcopies of selected items to the client
-        //[HttpPost]
-        public async Task<IActionResult> Borrow() {
+        public async Task<IActionResult> Borrow()
+        {
             List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
 
             Client client = await _cm.FindByEmailAsync(User.Identity.Name);
@@ -147,10 +145,16 @@ namespace TheLibraryIsOpen.Controllers
             Boolean successfulReservation = await _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
 
             //if not all items were borrowed, determine which ones were not borrowed and display them to the client
-            if (!successfulReservation) {
+            if (!successfulReservation)
+            {
                 List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
                 HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
-                List<SessionModel> notBorrowed = modelsToBorrow.Select(m => new {Id=m.Id, MT=m.ModelType}).Except(borrowed.Select(m => new {Id=m.modelID, MT=m.modelType})).Select(c => new SessionModel {Id=c.Id, ModelType=c.MT}).ToList();
+                List<SessionModel> notBorrowed = modelsToBorrow
+                                                    .Select(m => new { Id = m.Id, MT = m.ModelType })
+                                                    .Except(borrowed
+                                                            .Select(m => new { Id = m.modelID, MT = m.modelType }))
+                                                    .Select(c => new SessionModel { Id = c.Id, ModelType = c.MT })
+                                                    .ToList();
 
                 HttpContext.Session.SetObject("Items", notBorrowed);
                 HttpContext.Session.SetInt32("ItemsCount", notBorrowed.Count);
@@ -162,7 +166,7 @@ namespace TheLibraryIsOpen.Controllers
             HttpContext.Session.SetInt32("ItemsCount", 0);
             return RedirectToAction(nameof(Index));
         }
-    
+
 
     }
 }
