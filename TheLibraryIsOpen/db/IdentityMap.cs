@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Models;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.db
@@ -629,6 +630,7 @@ namespace TheLibraryIsOpen.db
             });
         }
 
+
         public Task<List<ModelCopy>> FindModelCopiesByClient(int clientId)
         {
             return Task.Factory.StartNew(() =>
@@ -652,6 +654,13 @@ namespace TheLibraryIsOpen.db
             });
         }
 
+        public Task<bool> ReserveModelCopiesToClient(List<SessionModel> models, int clientId)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.ReserveModelCopiesToClient(models, clientId);
+            });
+        }
 
         public Task<List<Log>> GetAllLogs()
          {return Task.Factory.StartNew(() => {

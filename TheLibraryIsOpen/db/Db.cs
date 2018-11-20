@@ -86,6 +86,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -127,7 +128,10 @@ namespace TheLibraryIsOpen.Database
                     //Execute command
                     cmd.ExecuteNonQuery();
                 }
-                catch (Exception e) { Console.WriteLine(e.Message); }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
 
@@ -2784,7 +2788,7 @@ namespace TheLibraryIsOpen.Database
             {
                 QuerySend(query);
             }
-               
+
         }
 
         // Returns a list of all clients in the db converted to client object.
@@ -2830,13 +2834,13 @@ namespace TheLibraryIsOpen.Database
         public void CreateModelCopies(params ModelCopy[] mcs)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO modelcopies (modelID, modelType) VALUES");
-            
+
             for (int i = 0; i < mcs.Length; ++i)
-            {            
+            {
                 sb.Append($"(\"{mcs[i].modelID}\", \"{(int)mcs[i].modelType}\"){(i + 1 < mcs.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
-            
+
         }
 
         //update books information
@@ -2895,7 +2899,7 @@ namespace TheLibraryIsOpen.Database
             {
                 case BorrowType.Borrowed:
                     query += " AND NOT borrowerID IS NULL;";
-                        break;
+                    break;
                 case BorrowType.NotBorrowed:
                     query += " AND borrowerID IS NULL;";
                     break;
@@ -3049,6 +3053,66 @@ namespace TheLibraryIsOpen.Database
             }
             return count;
         }
+
+
+        public bool ReserveModelCopiesToClient(List<SessionModel> models, int clientId)
+        {
+            int numAlreadyBorrowed = CountModelCopiesOfClient(clientId);
+            int numToBorrow = models.Count;
+
+            DateTime borrowedDate = DateTime.Now;
+            //Create all update queries and append to a single string
+            StringBuilder updateString = new StringBuilder();
+            foreach (SessionModel sm in models)
+            {
+                DateTime returnDate = new DateTime();
+                switch (sm.ModelType)
+                {
+                    case TypeEnum.Book:
+                        {
+                            returnDate = borrowedDate.AddDays(7);
+                            break;
+                        }
+                    case TypeEnum.Magazine:
+                        {
+                            returnDate = borrowedDate.AddDays(7);
+                            break;
+                        }
+                    case TypeEnum.Movie:
+                        {
+                            returnDate = borrowedDate.AddDays(2);
+                            break;
+                        }
+                    case TypeEnum.Music:
+                        {
+                            returnDate = borrowedDate.AddDays(2);
+                            break;
+                        }
+                }
+                updateString.Append($@"
+UPDATE
+    modelcopies as mc,
+(
+    SELECT
+        id from modelcopies
+    WHERE
+        modelType = {(int)(sm.ModelType)} AND modelID = {sm.Id} AND borrowerID is null LIMIT 1
+) as chosenCopy
+SET
+    mc.borrowerID = {clientId}, mc.borrowedDate = '{borrowedDate.ToString("yyyy-MM-dd HH:mm:ss")}', mc.returnDate = '{returnDate.ToString("yyyy-MM-dd HH:mm:ss")}'
+WHERE
+    mc.id = chosenCopy.id;");
+            }
+            lock (this)
+            {
+                QuerySend(updateString.ToString());
+            }
+
+            //Check if all items selected by the Client have been successfully borrowed
+            int numNowBorrowed = CountModelCopiesOfClient(clientId);
+            return ((numNowBorrowed - numAlreadyBorrowed) == numToBorrow);
+        }
+
 
         #endregion
 
