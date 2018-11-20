@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNet.Identity
-@using TheLibraryIsOpen.Controllers.StorageManagement
+﻿@using TheLibraryIsOpen.Controllers.StorageManagement
 @using TheLibraryIsOpen.Models.DBModels
 @using Microsoft.AspNetCore.Http
 @inject ClientManager cm
@@ -37,26 +36,24 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"><label class="glyphicon glyphicon-home"></label></a>
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand"><label class="glyphicon glyphicon-home"></label></a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Catalog">All Catalogs</a></li>
+                    <li><a asp-controller="Home" asp-action="About">About</a></li>
+                    <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-controller="Home" asp-action="Catalog">All Catalogs</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (!signedIn)
-
                     {
-
-                        <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
-                        <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
+                        <li><a asp-controller="Authentication" asp-action="Register">Register</a></li>
+                        <li><a asp-controller="Authentication" asp-action="Login">Login</a></li>
                     }
                     else
                     {
-                        string controller = (string) ViewContext.RouteData.Values["Controller"];
-                        string action = (string) ViewContext.RouteData.Values["Action"];
+                        string controller = (string)ViewContext.RouteData.Values["Controller"];
+                        string action = (string)ViewContext.RouteData.Values["Action"];
                         if (!(controller == "Home" && action == "Index"))
                         {
                             <li class="form-inline" style="margin-top:7px;">
@@ -73,32 +70,32 @@
                                     <span class="glyphicon glyphicon-circle-arrow-down"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a asp-area="" asp-controller="Books" asp-action="Index">Books</a></li>
-                                    <li><a asp-area="" asp-controller="Magazine" asp-action="Index">Magazines</a></li>
-                                    <li><a asp-area="" asp-controller="Music" asp-action="Index">Music</a></li>
-                                    <li><a asp-area="" asp-controller="Movie" asp-action="Index">Movies</a></li>
-                                    <li><a asp-area="" asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li>
-                                    <li><a asp-area="" asp-controller="Person" asp-action="Index">Person</a></li>
-                                    <li><a asp-area="" asp-controller="Transaction" asp-action="Index">Transaction Logs</a></li>
+                                    <li><a asp-controller="Books" asp-action="Index">Books</a></li>
+                                    <li><a asp-controller="Magazine" asp-action="Index">Magazines</a></li>
+                                    <li><a asp-controller="Music" asp-action="Index">Music</a></li>
+                                    <li><a asp-controller="Movie" asp-action="Index">Movies</a></li>
+                                    <li><a asp-controller="Home" asp-action="ListOfClients">List Of Clients</a></li>
+                                    <li><a asp-controller="Person" asp-action="Index">Person</a></li>
+                                    <li><a asp-controller="Transaction" asp-action="Index">Transaction Logs</a></li>
                                 </ul>
                             </li>
                         }
                         else
                         {
-                            <li>Welcome, @client.FirstName!</li>
+                            <li class="navbar-text">Welcome, @client.FirstName!</li>
                         }
 
                         if (@cartCount != 0)
                         {
-                            <li><a asp-area="" asp-controller="Cart" asp-action="Index"><span class="glyphicon glyphicon-shopping-cart"></span> (@cartCount)</a></li>
+                            <li><a asp-controller="Cart" asp-action="Index"><span class="glyphicon glyphicon-shopping-cart"></span> (@cartCount)</a></li>
                         }
 
                         else
                         {
-                            <li><a asp-area="" asp-controller="Cart" asp-action="Index"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+                            <li><a asp-controller="Cart" asp-action="Index"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
                         }
 
-                        <li><a asp-area="" asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
+                        <li><a asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
                     }
                 </ul>
             </div>
