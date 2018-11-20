@@ -1,0 +1,56 @@
+﻿@model IEnumerable<TheLibraryIsOpen.Models.PrintedLog>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Transaction Logs</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Client
+            </th>
+            <th>
+                Transaction
+            </th>
+            <th>
+                Item Type
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Physical Copy ID
+            </th>
+            <th>
+                Date of Transaction
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Transaction)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelCopyID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionTime)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

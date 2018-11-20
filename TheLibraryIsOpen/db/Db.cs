@@ -2792,7 +2792,7 @@ namespace TheLibraryIsOpen.Database
         {
             //Create a list of unknown size to store the result
             List<ModelCopy> mcs = new List<ModelCopy>();
-            string query = "SELECT * FROM modelcopy;";
+            string query = "SELECT * FROM modelcopies;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -2810,9 +2810,9 @@ namespace TheLibraryIsOpen.Database
                             int id = (int)dr["id"];
                             int modelID = (int)dr["modelID"];
                             int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
+                            Nullable<int> borrowerID = dr["borrowerID"].GetType() == typeof(DBNull) ? null : (Nullable<int>)dr["borrowerID"];
+                            Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
+                            Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
 
                             ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
                             //Console.Write(book);
@@ -2871,10 +2871,10 @@ namespace TheLibraryIsOpen.Database
                         {
                             int Id = (int)dr["id"];
                             int modelID = (int)dr["modelID"];
-                            int modelType = (int)dr["modelType"];
-                            int borrowerID = (int)dr["borrowerID"];
-                            DateTime borrowedDate = (DateTime)dr["borrowedDate"];
-                            DateTime returnDate = (DateTime)dr["returnDate"];
+                            int modelType = (int)(sbyte)dr["modelType"];
+                            Nullable<int> borrowerID = dr["borrowerID"].GetType() == typeof(DBNull) ? null : (Nullable<int>)dr["borrowerID"];
+                            Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
+                            Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
 
                             mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
                         }
@@ -2884,6 +2884,7 @@ namespace TheLibraryIsOpen.Database
             }
             return mc;
         }
+
 
         //Find modelCopies of model by model ID, returns list of modelCopy
         public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType, BorrowType borrowId = BorrowType.Any)
@@ -3077,7 +3078,7 @@ namespace TheLibraryIsOpen.Database
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
                             DateTime transactionTime = (DateTime)dr["transactionTime"];
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3086,6 +3087,7 @@ namespace TheLibraryIsOpen.Database
                 }
                 catch (Exception e) { Console.WriteLine(e); }
             }
+            list.Reverse();
             return list;
         }
 

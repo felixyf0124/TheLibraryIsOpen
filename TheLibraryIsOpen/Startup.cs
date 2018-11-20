@@ -56,6 +56,8 @@ namespace TheLibraryIsOpen
             services.AddScoped(typeof(MusicCatalog));
             services.AddScoped(typeof(PersonCatalog));
 
+            services.AddScoped(typeof(TransactionCatalog));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDistributedMemoryCache();
