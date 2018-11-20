@@ -2968,55 +2968,57 @@ namespace TheLibraryIsOpen.Database
         }
 
 
-        public bool ReserveModelCopiesToClient(List<SessionModel> cartModels, int clientId)
+        public bool ReserveModelCopiesToClient(List<SessionModel> models, int clientId)
         {
             int numAlreadyBorrowed = CountModelCopiesOfClient(clientId);
-            int numToBorrow = cartModels.Count;
-            List<ModelCopy> copiesToBorrow = new List<ModelCopy>();
+            int numToBorrow = models.Count;
 
-            //Find ModelCopies for all items
-            foreach (SessionModel sm in cartModels)
+            lock(this) 
             {
-                ModelCopy newCopy = FindModelCopiesOfModel(sm.Id, sm.ModelType, BorrowType.NotBorrowed).First();
-                if (!newCopy.Equals(null))
+                //Create all update queries and append to a single string
+                StringBuilder updateString = new StringBuilder();
+                foreach (SessionModel sm in models)
                 {
-                    copiesToBorrow.Add(newCopy);
-                }
-            }
-
-            //Update the found ModelCopies with the ClientId, BorrowDate and ReturnDate
-            foreach (ModelCopy mc in copiesToBorrow)
-            {
-                mc.borrowerID = clientId;
-                mc.borrowedDate = DateTime.Today;
-                switch (mc.modelType)
-                {
-                    case TypeEnum.Book:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(7);
-                            break;
-                        }
-                    case TypeEnum.Magazine:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(7);
-                            break;
-                        }
-                    case TypeEnum.Movie:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(2);
-                            break;
-                        }
-                    case TypeEnum.Music:
-                        {
-                            mc.returnDate = mc.borrowedDate.AddDays(2);
-                            break;
-                        }
+                    DateTime borrowedDate = DateTime.Today;
+                    DateTime returnDate = new DateTime();
+                    switch (sm.ModelType)
+                    {
+                        case TypeEnum.Book:
+                            {
+                                returnDate = borrowedDate.AddDays(7);
+                                break;
+                            }
+                        case TypeEnum.Magazine:
+                            {
+                                returnDate = borrowedDate.AddDays(7);
+                                break;
+                            }
+                        case TypeEnum.Movie:
+                            {
+                                returnDate = borrowedDate.AddDays(2);
+                                break;
+                            }
+                        case TypeEnum.Music:
+                            {
+                                returnDate = borrowedDate.AddDays(2);
+                                break;
+                            }
+                    }
+                    updateString.Append($"UPDATE modelcopies as mc, (SELECT id from modelcopies WHERE modelType = {(int)(sm.ModelType)} AND modelID = {sm.Id} AND borrowerID is null LIMIT 1) as chosenCopy SET mc.borrowerID = {clientId}, mc.borrowedDate = {borrowedDate}, mcreturnDate = {returnDate} WHERE mc.id = chosenCopy.id;");
                 }
 
-            }
+                //send collection of queries to the database
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    try
+                    {
+                        connection.Open();
+                        MySqlCommand cmd = new MySqlCommand(updateString.ToString(), connection);
+                    }
+                    catch (Exception e) { Console.WriteLine(e); }
 
-            //Push updates to the Db
-            lock(this) { UpdateModelCopies(copiesToBorrow.ToArray()); }
+                }
+            }
 
             //Check if all items selected by the Client have been successfully borrowed
             int numNowBorrowed = CountModelCopiesOfClient(clientId);

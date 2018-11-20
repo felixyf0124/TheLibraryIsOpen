@@ -134,8 +134,9 @@ namespace TheLibraryIsOpen.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         //registers modelcopies of selected items to the client
-        [HttpPost]
+        //[HttpPost]
         public async Task<IActionResult> Borrow() {
             List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
 
@@ -174,8 +175,9 @@ namespace TheLibraryIsOpen.Controllers
             }
 
             //TODO Return to Home?
+            HttpContext.Session.SetObject("Items", null);
+            HttpContext.Session.SetInt32("ItemsCount", 0);
             return RedirectToAction(nameof(Index));
-
         }
     
 
