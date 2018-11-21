@@ -19,6 +19,9 @@
     <Content Remove="bundleconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\Return\index.html" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="bundleconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -40,5 +43,8 @@
     <Content Update="Views\Person\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Return\Index.cshtml" />
   </ItemGroup>
 </Project>

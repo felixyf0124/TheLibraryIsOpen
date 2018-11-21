@@ -1,0 +1,78 @@
+﻿@model List<TheLibraryIsOpen.Models.Cart.CartViewModel>
+@using static TheLibraryIsOpen.Constants.TypeConstants
+@{
+    ViewData["Title"] = "Return Page";
+    bool canBorrow = (bool)TempData["canBorrow"];
+    int totalBorrowed = (int)TempData["totalBorrowed"];
+    int borrowMax = (int)TempData["borrowMax"];
+}
+
+@if (!canBorrow)
+{
+    <div class="row">
+
+        <div class="alert alert-danger col-md-6 col-md-offset-3" style="text-align:center;">
+            <strong> You have exceeded the maximum number of borrowed items allowed!</strong>
+        </div>
+
+    </div>
+
+}
+
+<h2>Cart</h2><hr />
+
+<div class="row table-bordered rounded-left rounded-right" style="padding:1em 1em 1em 1em;">
+
+    <div class="row" style="padding: 2em 2em 2em 2em;">
+        @foreach (var element in Model)
+        {
+            <div class="row">
+                <div class="col-md-11">
+                    <h3>
+                        @switch (element.Type)
+                        {
+                            case TypeEnum.Book:
+                                <label class="glyphicon glyphicon-book"></label>
+                                break;
+                            case TypeEnum.Magazine:
+                                <label class="glyphicon glyphicon-file"></label>
+                                break;
+                            case TypeEnum.Movie:
+                                <label class="glyphicon glyphicon-film"></label>
+                                break;
+                            case TypeEnum.Music:
+                                <label class="glyphicon glyphicon-music"></label>
+                                break;
+                        }
+                        @element.Title
+                    </h3>
+                </div>
+                <div class="col-sm-1">
+                    <a class="btn btn-danger btn-sm" asp-action="RemoveFromSessionModel" asp-route-modelId="@element.ModelId" asp-route-mt="@element.Type"><label class="glyphicon glyphicon-remove"></label></a>
+                </div>
+            </div><hr />
+        }
+        <div class="row">
+            <div class="col-md-10">
+            </div>
+            <div class="col-md-2">
+                @if (canBorrow)
+                {
+                    <a asp-controller="Cart" asp-action="Borrow" class="btn btn-primary">
+                        <label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Checkout
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Cart" asp-action="Borrow" class="btn btn-primary" disabled>
+                        <label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Checkout
+                    </a>
+                }
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+

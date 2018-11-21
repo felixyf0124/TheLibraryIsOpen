@@ -3114,6 +3114,18 @@ WHERE
         }
 
 
+        public void returnItems(params ModelCopy[] modelCopies)
+        {
+
+            StringBuilder sb = new StringBuilder("UPDATE modelcopies SET borrowerId = NULL WHERE id IN (");
+            for (int i = 0; i < modelCopies.Length; ++i)
+            {
+                sb.Append($"{modelCopies[i].id}{(i + 1 < modelCopies.Length ? ", " : ");")}");
+            }
+            QuerySend(sb.ToString());
+        }
+
+
         #endregion
 
         #region logs
