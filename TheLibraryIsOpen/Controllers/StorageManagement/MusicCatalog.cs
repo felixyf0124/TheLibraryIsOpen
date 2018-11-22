@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -96,7 +96,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return _unitOfWork.CommitAsync();
         }
 
-        public Task<int> getNoOfAvailableModelCopies(Music music)
+        public Task<int> GetNoOfAvailableModelCopies(Music music)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -109,12 +109,12 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         }
 
-        public async Task<List<ModelCopy>> getModelCopies(Music music)
+        public async Task<List<ModelCopy>> GetModelCopies(Music music)
         {
             return await _im.FindModelCopies(music.MusicId, TypeEnum.Music);
         }
 
-        public Task<IdentityResult> addModelCopy(string id)
+        public Task<IdentityResult> AddModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -129,7 +129,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
             
         }
-        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        public Task<IdentityResult> DeleteFreeModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
             {

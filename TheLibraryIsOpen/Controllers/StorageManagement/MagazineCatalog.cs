@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -58,11 +58,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return IdentityResult.Failed(new IdentityError { Description = "magazine was null" });
             });
         }
-
-        public void Dispose()
-        { }
-
-
+        
         //Find methods (by id, isbn10, isbn13)
 
         public async Task<Magazine> FindByIdAsync(string magazineId)
@@ -71,33 +67,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
             return magazine;
         }
-
-        public Task<Magazine> FindByIsbn10Async(string isbn10)
-        {
-            if (!string.IsNullOrEmpty(isbn10))
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: replace with _im
-                    return _db.GetMagazineByIsbn10(isbn10);
-                });
-            }
-            throw new ArgumentNullException("isbn10");
-        }
-
-        public Task<Magazine> FindByIsbn13Async(string isbn13)
-        {
-            if (!string.IsNullOrEmpty(isbn13))
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: replace with _im
-                    return _db.GetMagazineByIsbn13(isbn13);
-                });
-            }
-            throw new ArgumentNullException("isbn13");
-        }
-
 
         public Task<IdentityResult> UpdateAsync(Magazine magazine)
         {
@@ -131,7 +100,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return _unitOfWork.CommitAsync();
         }
 
-        public Task<int> getNoOfAvailableModelCopies(Magazine magazine)
+        public Task<int> GetNoOfAvailableModelCopies(Magazine magazine)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -144,15 +113,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         }
 
-        public async Task<List<ModelCopy>> getModelCopies(Magazine magazine)
-        {
-            List<ModelCopy> copies = await _im.FindModelCopies(magazine.MagazineId, TypeEnum.Magazine);
-            
-            return copies;
-
-        }
-
-        public Task<IdentityResult> addModelCopy(string id)
+        public Task<IdentityResult> AddModelCopy(string id)
         {
                 return Task.Factory.StartNew(() =>
                 {
@@ -166,7 +127,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                     return IdentityResult.Success;
                 });
         }
-        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        public Task<IdentityResult> DeleteFreeModelCopy(string id)
         {
                 return Task.Factory.StartNew(() =>
                 {
