@@ -2881,7 +2881,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime().ToLocalTime();
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
                         }
@@ -2926,7 +2926,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -2963,7 +2963,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -2999,7 +2999,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3035,7 +3035,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3071,7 +3071,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3119,7 +3119,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));

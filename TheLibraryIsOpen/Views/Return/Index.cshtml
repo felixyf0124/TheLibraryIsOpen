@@ -6,6 +6,7 @@
     int borrowedItems = (int)TempData["totalBorrowed"];
     int borrowMax = (int)TempData["borrowMax"];
 }
+
 <h2>Items Borrowed</h2><hr />
 <div class="row table-bordered rounded-left rounded-right" style="        padding: 1em 1em 1em 1em;">
     <div class="row" style="        padding: 2em 2em 2em 2em;">
@@ -17,7 +18,7 @@
         else
         {
             <form method="post" action="/Cart/Return">
-                @for(int i = 0; i < Model.Count; ++i)
+                @for (int i = 0; i < Model.Count; ++i)
                 {
 
                     <div class="row">
@@ -43,17 +44,22 @@
                             </h3>
                         </div>
                         <div class="col-sm-1">
-                                @Html.HiddenFor(model => model[i].Title)
-                                @Html.HiddenFor(model => model[i].BorrowDate)
-                                @Html.HiddenFor(model => model[i].ModelCopyId)
-                                @Html.HiddenFor(model => model[i].ModelId)
-                                @Html.HiddenFor(model => model[i].ModelType)
-                                @Html.EditorFor(model => model[i].ToReturn)
+                            @Html.HiddenFor(model => model[i].Title)
+                            @Html.HiddenFor(model => model[i].BorrowDate)
+                            @Html.HiddenFor(model => model[i].ModelCopyId)
+                            @Html.HiddenFor(model => model[i].ModelId)
+                            @Html.HiddenFor(model => model[i].ModelType)
+                            @Html.CheckBoxFor(model => model[i].ToReturn, new { @class = "form-control" })
                         </div>
-                    </div><hr /> 
-                    
-                } 
-                <input type="submit" value="Submit"/>
+                    </div><hr />
+
+                }
+                <div class="row">
+                    <div class="col-md-10"></div>
+                    <div class="col-md-2">
+                        <input type="submit" class="btn btn-default btn-info" value="Submit" />
+                    </div>
+                </div>
             </form>
         }
 
