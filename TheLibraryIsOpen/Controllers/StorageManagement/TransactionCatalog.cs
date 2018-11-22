@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
@@ -23,10 +24,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             var logs = await _identityMap.GetAllLogs();
             List<PrintedLog> results = new List<PrintedLog>();
             List<Task<PrintedLog>> tasker = new List<Task<PrintedLog>>(logs.Count);
-            foreach (var log in logs)
-            {
-                tasker.Add((GetPLog(log)));
-            }
+
+            tasker.AddRange(logs.Select(log => GetPLog(log)));
 
             foreach (var task in tasker)
             {
