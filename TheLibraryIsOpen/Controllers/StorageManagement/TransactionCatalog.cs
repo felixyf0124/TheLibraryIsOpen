@@ -3,49 +3,62 @@ using System.Threading.Tasks;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers.StorageManagement
 {
     public class TransactionCatalog
     {
-        private readonly Db _db;
+        private readonly IdentityMap _identityMap;
+        private readonly ClientManager _clientManager;
 
-        public TransactionCatalog(Db db)
+        public TransactionCatalog(IdentityMap identityMap, ClientManager clientManager)
         {
-            _db = db;
+            _identityMap = identityMap;
+            _clientManager = clientManager;
         }
 
-        public Task<List<PrintedLog>> getLogs()
+        public async Task<List<PrintedLog>> GetLogs()
         {
-            return Task.Factory.StartNew(() =>
+            var logs = await _identityMap.GetAllLogs();
+            List<PrintedLog> results = new List<PrintedLog>();
+            List<Task<PrintedLog>> tasker = new List<Task<PrintedLog>>(logs.Count);
+            foreach (var log in logs)
             {
-                List<Log> logs = _db.GetAllLogs();
-                List<PrintedLog> results = new List<PrintedLog>();
-                foreach(Log log in logs)
+                tasker.Add((GetPLog(log)));
+            }
+
+            foreach (var task in tasker)
+            {
+                results.Add(await task);
+            }
+
+            return results;
+
+            async Task<PrintedLog> GetPLog(Log log)
+            {
+                ModelCopy modelCopy = await _identityMap.FindModelCopy(log.ModelCopyID).ConfigureAwait(false);
+                string modelName = "";
+                switch (modelCopy.modelType)
                 {
-                    ModelCopy modelCopy =  _db.GetModelCopyById(log.ModelCopyID);
-                    string modelName = "";
-                    switch(modelCopy.modelType)
-                    {
-                        case Constants.TypeConstants.TypeEnum.Book:
-                            modelName = _db.GetBookById(modelCopy.modelID).Title;
-                            break;
-                        case Constants.TypeConstants.TypeEnum.Magazine:
-                            modelName = _db.GetMagazineById(modelCopy.modelID).Title;
-                            break;
-                        case Constants.TypeConstants.TypeEnum.Movie:
-                            modelName = _db.GetMovieById(modelCopy.modelID).Title;
-                            break;
-                        case Constants.TypeConstants.TypeEnum.Music:
-                            modelName = _db.GetMusicById(modelCopy.modelID).Title;
-                            break;
-                    }
-                    Client client = _db.GetClientById(log.ClientID);
-                    results.Add(new PrintedLog(client.FirstName + " " +client.LastName, log.Transaction, modelCopy.modelType, modelName, log.ModelCopyID, log.TransactionTime));
+                    case TypeEnum.Book:
+                        modelName = (await _identityMap.FindBook(modelCopy.modelID))?.Title;
+                        break;
+                    case TypeEnum.Magazine:
+                        modelName = (await _identityMap.FindMagazine(modelCopy.modelID))?.Title;
+                        break;
+                    case TypeEnum.Movie:
+                        modelName = (await _identityMap.FindMovie(modelCopy.modelID))?.Title;
+                        break;
+                    case TypeEnum.Music:
+                        modelName = (await _identityMap.FindMusic(modelCopy.modelID))?.Title;
+                        break;
                 }
 
-                return results;
-            });
+                Client client = await _clientManager.FindByIdAsync(log.ClientID.ToString());
+                return new PrintedLog(client.FirstName + " " + client.LastName, log.Transaction,
+                    modelCopy.modelType, modelName, log.ModelCopyID, log.TransactionTime);
+            }
         }
     }
 }
