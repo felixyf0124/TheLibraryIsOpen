@@ -2649,7 +2649,7 @@ namespace TheLibraryIsOpen.db
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int id = (int)dr["id"];
                             int modelType = (int)dr["modelType"];
@@ -2696,10 +2696,10 @@ namespace TheLibraryIsOpen.db
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int id = (int)dr["id"];
-                            int modelType = (int)dr["modelType"];
+                            int modelType = (int)(sbyte) dr["modelType"];
                             int modelID = (int)dr["modelID"];
                             int borrowerID = (int)dr["borrowerID"];
                             DateTime borrowedDate = (DateTime)dr["borrowedDate"];
