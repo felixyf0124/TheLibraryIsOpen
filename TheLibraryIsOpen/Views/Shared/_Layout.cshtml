@@ -85,7 +85,7 @@
                             <li class="navbar-text">Welcome, @client.FirstName!</li>
                         }
 
-                        if (@cartCount != 0)
+                        if (cartCount != 0)
                         {
                             <li><a asp-controller="Cart" asp-action="Index"><span class="glyphicon glyphicon-shopping-cart"></span> (@cartCount)</a></li>
                         }

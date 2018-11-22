@@ -41,8 +41,8 @@ namespace TheLibraryIsOpen.Models.Movie
                 Dubbed = mov.Dubbed,
                 ReleaseDate = mov.ReleaseDate,
                 RunTime = mov.RunTime,
-                Actors = mov.Actors?.Select(a => a.PersonId)?.ToList() ?? new List<int>(),
-                Producers = mov.Producers?.Select(p => p.PersonId)?.ToList() ?? new List<int>()
+                Actors = mov.Actors?.Select(a => a.PersonId).ToList() ?? new List<int>(),
+                Producers = mov.Producers?.Select(p => p.PersonId).ToList() ?? new List<int>()
             };
         }
     }

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models.Search;
@@ -33,11 +33,6 @@ namespace TheLibraryIsOpen.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Book()
         {
             return View();
         }

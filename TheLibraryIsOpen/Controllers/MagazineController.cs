@@ -44,7 +44,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(magazine);
+            TempData["AvailableCopies"] = await _mc.GetNoOfAvailableModelCopies(magazine);
 
             return View(magazine);
         }
@@ -175,14 +175,14 @@ namespace TheLibraryIsOpen.Controllers
 
         public async Task<IActionResult> AddModelCopy(string id)
         {
-            await _mc.addModelCopy(id);
+            await _mc.AddModelCopy(id);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
         public async Task<IActionResult> DeleteModelCopy(string id)
         {
-            await _mc.deleteFreeModelCopy(id);
+            await _mc.DeleteFreeModelCopy(id);
             await _mc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
