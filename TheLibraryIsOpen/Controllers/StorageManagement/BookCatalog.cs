@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
-using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -104,11 +103,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         //Get all Books
         public Task<List<Book>> GetAllBookDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllBooks();
-            });
+                return _im.GetAllBooks();
         }
 
         public Task<bool> CommitAsync()
