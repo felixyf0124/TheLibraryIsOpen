@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
-using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.db; 
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -13,14 +12,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
-        private readonly Db _db; // TODO: delete this when db code is removed
+      
 
-
-        public PersonCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
+        public PersonCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _im = im;
-            _db = db; // TODO: delete this when db code is removed
+          
         }
 
         //Create Person
@@ -30,7 +28,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: manage error if register return false
                     _unitOfWork.RegisterNew(person);
                     return IdentityResult.Success;
                 });
@@ -88,11 +85,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         //Get all person
         public Task<List<Person>> GetAllPersonDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllPerson();
-            });
+                return _im.GetAllPerson();
         }
 
         public Task<bool> CommitAsync()

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -14,14 +13,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
-        private readonly Db _db; // TODO: delete this when db code is removed
-
-
-        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
+       
+        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _im = im;
-            _db = db; // TODO: delete this when db code is removed
 
         }
 
@@ -84,11 +80,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<List<Music>> GetAllMusicDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                //TODO: replace with_im
-                return _db.GetAllMusic();
-            });
+
+          return _im.GetAllMusic();
+         
         }
 
         public Task<bool> CommitAsync()
@@ -96,18 +90,15 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return _unitOfWork.CommitAsync();
         }
 
+
+
         public Task<int> GetNoOfAvailableModelCopies(Music music)
         {
-            return Task.Factory.StartNew(() =>
-            {
 
-                int AvailableCopies = _db.CountModelCopiesOfModel(music.MusicId, (int)TypeEnum.Music, BorrowType.NotBorrowed);
-
-                return AvailableCopies;
-
-            });
+           return _im.CountModelCopiesOfModel(music.MusicId, (int)TypeEnum.Music, BorrowType.NotBorrowed);
 
         }
+
 
         public async Task<List<ModelCopy>> GetModelCopies(Music music)
         {
@@ -118,8 +109,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                // TODO: manage error if register returns false
-
                 _unitOfWork.RegisterNew(new ModelCopy
                 {
                     modelID = Int32.Parse(id),
@@ -133,7 +122,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                // TODO: manage error if register returns false
+               
                 ModelCopy temp = new ModelCopy
                 {
                     modelID = Int32.Parse(id),
