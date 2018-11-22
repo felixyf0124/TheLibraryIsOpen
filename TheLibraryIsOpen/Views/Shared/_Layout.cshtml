@@ -61,7 +61,7 @@
                             </li>
                         }
                         Client client = await cm.FindByEmailAsync(clientEmail);
-                        bool isAdmin = client.IsAdmin;
+                        bool isAdmin = client?.IsAdmin ?? false;
                         if (isAdmin)
                         {
                             <li class="dropdown">
@@ -82,7 +82,7 @@
                         }
                         else
                         {
-                            <li class="navbar-text">Welcome, @client.FirstName!</li>
+                            <li class="navbar-text">Welcome, @client?.FirstName!</li>
                         }
 
                         if (cartCount != 0)

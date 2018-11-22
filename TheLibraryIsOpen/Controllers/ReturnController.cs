@@ -42,8 +42,47 @@ namespace TheLibraryIsOpen.Controllers
             TempData["totalBorrowed"] = cartCount + numModels;
             TempData["canBorrow"] = cartCount + numModels <= borrowMax;
             TempData["borrowMax"] = borrowMax;
+            var modelCopies = await _identityMap.FindModelCopiesByClient(client.clientId);
+            var returnViewModels = new List<ReturnViewModel>(modelCopies.Count);
 
-            return View();
+            foreach (ModelCopy element in modelCopies)
+            {
+                string title = "";
+                switch (element.modelType)
+                {
+                    case TypeEnum.Book:
+                        {
+                            title = (await _identityMap.FindBook(element.modelID)).Title;
+                            break;
+                        }
+                    case TypeEnum.Magazine:
+                        {
+                            title = (await _identityMap.FindMagazine(element.modelID)).Title;
+                            break;
+                        }
+                    case TypeEnum.Movie:
+                        {
+                            title = (await _identityMap.FindMovie(element.modelID)).Title;
+                            break;
+                        }
+                    case TypeEnum.Music:
+                        {
+                            title = (await _identityMap.FindMusic(element.modelID)).Title;
+                            break;
+                        }
+
+                }
+
+                returnViewModels.Add(new ReturnViewModel { 
+                    BorrowDate = element.borrowedDate, 
+                    ModelCopyId = element.id, 
+                    ModelId = element.modelID, 
+                    ModelType = element.modelType, 
+                    ReturnDate = element.returnDate, 
+                    Title = title });
+            }
+
+            return View(returnViewModels);
         }
 
     }
