@@ -2570,13 +2570,12 @@ namespace TheLibraryIsOpen.db
 
         }
 
-        //update books information
         public void UpdateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("UPDATE modelcopies SET ");
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mcs.Length; ++i)
             {
-                sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
+                sb.Append($"UPDATE modelcopies SET modelType = {(int)mcs[i].modelType}, modelID = {mcs[i].modelID}, borrowerID = {mcs[i].borrowerID?.ToString() ?? "NULL"}, borrowedDate = '{mcs[i].borrowedDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "NULL"}', returnDate = {mcs[i].returnDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "NULL"} WHERE (ID = {mcs[i].id});");
             }
 
             QuerySend(sb.ToString());

@@ -22,6 +22,7 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
+        private readonly ModelCopyCatalog _modelCopyCatalog;
 
         public ReturnController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
         {

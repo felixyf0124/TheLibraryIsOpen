@@ -180,8 +180,13 @@ namespace TheLibraryIsOpen.Controllers
             List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
             //
 
-            var modelsToReturn = mtr.Where(rvm => rvm.ToReturn).Select(rvm => new ModelCopy { id = rvm.ModelCopyId, modelType = rvm.ModelType, 
-                borrowedDate = rvm.BorrowDate, borrowerID = null, returnDate = rvm.ReturnDate});
+            var modelsToReturn = mtr.Where(rvm => rvm.ToReturn).Select(rvm => new ModelCopy { 
+                id = rvm.ModelCopyId, 
+                modelType = rvm.ModelType, 
+                borrowedDate = rvm.BorrowDate, 
+                borrowerID = null, 
+                returnDate = rvm.ReturnDate,
+                modelID = rvm.ModelId});
             foreach (var item in modelsToReturn)
             {
                await _modelCopyCatalog.UpdateAsync(item);
