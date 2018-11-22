@@ -189,7 +189,7 @@ namespace TheLibraryIsOpen.Controllers
 
            await _modelCopyCatalog.CommitAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Return", nameof(Index));
         }
 
 

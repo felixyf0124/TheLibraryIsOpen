@@ -2,15 +2,23 @@
 @using static TheLibraryIsOpen.Constants.TypeConstants
 @{
     ViewData["Title"] = "Return Page";
+    bool canBorrow = (bool)TempData["canBorrow"];
+    int borrowedItems = (int)TempData["totalBorrowed"];
+    int borrowMax = (int)TempData["borrowMax"];
 }
-
-<h2>Borrowed</h2><hr />
-
+<h2>Items Borrowed</h2><hr />
 <div class="row table-bordered rounded-left rounded-right" style="padding:1em 1em 1em 1em;">
-
     <div class="row" style="padding: 2em 2em 2em 2em;">
-        
+
+        @if (borrowedItems == 0)
+        {
+            <h3>Sorry! You haven't borrowed any items yet!</h3>
+        }
+        else
+        {
+
+        }
+
     </div>
 </div>
-
 

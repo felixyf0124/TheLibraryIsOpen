@@ -33,8 +33,16 @@ namespace TheLibraryIsOpen.Controllers
             _identityMap = imap;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
+            int borrowMax = client.BorrowMax;
+            int numModels = await _identityMap.CountModelCopiesOfClient(client.clientId);
+            int cartCount = HttpContext.Session.GetInt32("ItemsCount") ?? 0;
+            TempData["totalBorrowed"] = cartCount + numModels;
+            TempData["canBorrow"] = cartCount + numModels <= borrowMax;
+            TempData["borrowMax"] = borrowMax;
+
             return View();
         }
 
