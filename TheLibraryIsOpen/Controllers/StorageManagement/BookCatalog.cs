@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -43,7 +43,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-
         //Delete Book
         public Task<IdentityResult> DeleteAsync(Book book)
         {
@@ -70,33 +69,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return book;
         }
 
-        public Task<Book> FindByIsbn10Async(string isbn10)
-        {
-            if (!string.IsNullOrEmpty(isbn10))
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: replace with _im
-                    return _db.GetBookByIsbn10(isbn10);
-                });
-            }
-            throw new ArgumentNullException("isbn10");
-        }
-
-        public Task<Book> FindByIsbn13Async(string isbn13)
-        {
-            if (!string.IsNullOrEmpty(isbn13))
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    // TODO: replace with _im
-                    return _db.GetBookByIsbn13(isbn13);
-                });
-            }
-            throw new ArgumentNullException("isbn13");
-        }
-
-
         //Update Methods (per attribute, general)
         public Task<IdentityResult> UpdateAsync(Book book)
         {
@@ -114,7 +86,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
         }
 
-        public Task<IdentityResult> addModelCopy(string id)
+        public Task<IdentityResult> AddModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
                 {
@@ -144,7 +116,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return _unitOfWork.CommitAsync();
         }
 
-        public Task<int> getNoOfAvailableModelCopies(Book book)
+        public Task<int> GetNoOfAvailableModelCopies(Book book)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -157,13 +129,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         }
 
-        public async Task<List<ModelCopy>> getModelCopies(Book book)
-        {
-            List<ModelCopy> copies = await _im.FindModelCopies(book.BookId, TypeEnum.Book);
-            return copies;
-        }
-
-        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        public Task<IdentityResult> DeleteFreeModelCopy(string id)
         {
              return Task.Factory.StartNew(() =>
                 {

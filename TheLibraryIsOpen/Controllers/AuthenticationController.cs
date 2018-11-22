@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -7,12 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.Authentication;
 using TheLibraryIsOpen.Models.DBModels;
 
@@ -35,8 +32,8 @@ namespace TheLibraryIsOpen.Controllers
         [AllowAnonymous]
         public ActionResult Login()
         {
-           // Console.WriteLine(client.IsAdmin + "1111");
-            
+            // Console.WriteLine(client.IsAdmin + "1111");
+
             return View();
         }
 
@@ -54,16 +51,9 @@ namespace TheLibraryIsOpen.Controllers
             // TODO: Add insert logic here
 
             //ViewData["client"] = client;
-           // Console.WriteLine(client + "3333");
+            // Console.WriteLine(client + "3333");
 
             return RedirectToAction("Index", "Home");
-        }
-
-
-        [HttpGet]
-        public ActionResult Index()
-        {
-            return View();
         }
 
         [HttpGet]
@@ -111,7 +101,8 @@ namespace TheLibraryIsOpen.Controllers
                 FName = c.FirstName,
                 LName = c.LastName,
                 PhoneNumber = c.PhoneNo,
-                IsAdmin = c.IsAdmin
+                IsAdmin = c.IsAdmin,
+                Address = c.HomeAddress
             };
             return View(edit);
         }
@@ -120,43 +111,16 @@ namespace TheLibraryIsOpen.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, EditViewModel edit)
         {
-            try
-            {
-                Client c = await _cm.FindByIdAsync(id.ToString());
-                c.EmailAddress = edit.Email;
-                c.FirstName = edit.FName;
-                c.LastName = edit.LName;
-                c.PhoneNo = edit.PhoneNumber;
-                c.UserName = edit.Email;
-                c.IsAdmin = edit.IsAdmin;
-                await _cm.UpdateAsync(c);
-                return RedirectToAction(nameof(Edit), id);
-            }
-            catch
-            {
-                return RedirectToAction("Home","ListOfClients");
-            }
-        }
-
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            Client c = await _cm.FindByIdAsync(id.ToString());
+            c.EmailAddress = edit.Email;
+            c.FirstName = edit.FName;
+            c.LastName = edit.LName;
+            c.PhoneNo = edit.PhoneNumber;
+            c.UserName = edit.Email;
+            c.IsAdmin = edit.IsAdmin;
+            c.HomeAddress = edit.Address;
+            await _cm.UpdateAsync(c);
+            return RedirectToAction(nameof(Edit), id);
         }
 
         private async Task SignInAsync(Client user, bool isPersistent)

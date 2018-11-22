@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using TheLibraryIsOpen.Controllers.StorageManagement;
-using TheLibraryIsOpen.Database;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models.Search;

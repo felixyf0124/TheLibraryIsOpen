@@ -75,7 +75,22 @@
             borrowerID int(12) FK
             borrowedDate date
             returnDate date
-            foreign key (borrowerID) references users(clientID)	    
+            foreign key (borrowerID) references users(clientID)
+
+    TRIGGERS:
+        CREATE TRIGGER `LogModelCopyUpdate` AFTER UPDATE
+        ON `modelcopies`
+        FOR EACH ROW BEGIN
+		    IF NEW.borrowerID IS NULL THEN
+			    SET @trans = 1;
+                SET @client = OLD.borrowerID;
+		    ELSE
+			    SET @trans = 0;
+                SET @client = NEW.borrowerID;
+		    END IF;
+            INSERT INTO library.logs (clientID, modelCopyID, transaction, transactionTime)
+            VALUES (@client, NEW.id, @trans, current_timestamp());
+	    END
 
     One things for query language:
     Don't put space between {}. Ex : \"{ isbn13 }\" is wrong, and \"{isbn13}\" is right
@@ -90,7 +105,7 @@ using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
-namespace TheLibraryIsOpen.Database
+namespace TheLibraryIsOpen.db
 {
     public class Db
     {
@@ -326,14 +341,6 @@ namespace TheLibraryIsOpen.Database
          *  Magazine Table methods
          */
 
-        public void CreateMagazine(Magazine magazine)
-        {
-            string query =
-                $"INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES(\"{magazine.Title}\",\"{magazine.Publisher}\",\"{magazine.Language}\",\"{magazine.Date.ToShortDateString()}\",\"{magazine.Isbn10}\",\"{magazine.Isbn13}\");";
-
-            QuerySend(query);
-        }
-
         public void CreateMagazines(params Magazine[] magazines)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO magazines (title, publisher, language, date, isbn10, isbn13) VALUES");
@@ -349,26 +356,12 @@ namespace TheLibraryIsOpen.Database
             StringBuilder sb = new StringBuilder("UPDATE magazines SET ");
             for (int i = 0; i < magazines.Length; ++i)
             {
-                sb.Append($"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date.ToShortDateString()}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
+                sb.Append(
+                    $"title = \"{magazines[i].Title}\", publisher = \"{magazines[i].Publisher}\", language = \"{magazines[i].Language}\", date = \"{magazines[i].Date.ToShortDateString()}\", isbn10 = \"{magazines[i].Isbn10}\", isbn13 = \"{magazines[i].Isbn13}\" WHERE (magazineID = \"{magazines[i].MagazineId}\"){(i + 1 < magazines.Length ? "," : ";")}");
             }
+
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
-        }
-
-        // need improve
-        public void UpdateMagazine(Magazine magazine)
-        {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date.ToShortDateString()}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazine.MagazineId}\");";
-
-            QuerySend(query);
-        }
-
-        // update magazine by ID
-        public void UpdateMagazine(Magazine magazine, int magazineID)
-        {
-            string query = $"UPDATE magazines SET title = \"{magazine.Title}\", publisher = \"{magazine.Publisher}\", language = \"{magazine.Language}\", date = \"{magazine.Date.ToShortDateString()}\", isbn10 = \"{magazine.Isbn10}\", isbn13 = \"{magazine.Isbn13}\" WHERE (magazineID = \"{magazineID}\");";
-
-            QuerySend(query);
         }
 
         public void DeleteMagazines(params Magazine[] magazines)
@@ -381,26 +374,10 @@ namespace TheLibraryIsOpen.Database
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
-
-        // delete magazine by magazine instance
-        public void DeleteMagazine(Magazine magazine)
-        {
-            string query = $"DELETE FROM magazines WHERE (magazineID = \"{magazine.MagazineId}\");";
-
-            QuerySend(query);
-        }
-
-        // delete magazine by ID
-        public void DeleteMagazineByID(int magazineID)
-        {
-            string query = $"DELETE FROM magazines WHERE (magazineID = \"{magazineID}\");";
-
-            QuerySend(query);
-        }
-
+        
         public List<Magazine> GetAllMagazines()
         {
-            string query = $"SELECT * FROM magazines;";
+            string query = "SELECT * FROM magazines;";
 
             List<Magazine> magazines = new List<Magazine>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -440,26 +417,6 @@ namespace TheLibraryIsOpen.Database
             Magazine magazine = QueryRetrieveMaganize(query);
             return magazine;
         }
-
-        public Magazine GetMagazineByIsbn10(string isbn10)
-        {
-            string query = $"SELECT * FROM magazines WHERE isbn10 = \"{isbn10}\";";
-
-            Magazine magazine = QueryRetrieveMaganize(query);
-
-            return magazine;
-        }
-
-        //
-        public Magazine GetMagazineByIsbn13(string isbn13)
-        {
-            string query = $"SELECT * FROM magazines WHERE isbn13 = \"{isbn13}\";";
-
-            Magazine magazine = QueryRetrieveMaganize(query);
-
-            return magazine;
-        }
-
         /*
     * For retrieving ONE object ONLY
     * Method to retrieve maganize information by id or isbn10 or isbn13
@@ -819,14 +776,7 @@ namespace TheLibraryIsOpen.Database
             string query = $"SELECT * FROM cds WHERE cdID = \" { id } \";";
             return QueryRetrieveMusic(query);
         }
-
-        // Retrieve a music information by ISBN
-        public Music GetMusicByAsin(string ASIN)
-        {
-            string query = $"SELECT * FROM cds WHERE (asin = \"{ ASIN }\");";
-            return QueryRetrieveMusic(query);
-        }
-
+        
         /*
          * For retrieving ONE object ONLY
          * Method to retrieve music information by id or asin
@@ -1189,14 +1139,6 @@ namespace TheLibraryIsOpen.Database
          * The following methods are made for the movie table
          */
 
-        // Inserts a new movie into the database
-        public void CreateMovie(Movie movie)
-        {
-            string query = $"INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES(\"{movie.Title}\", \"{movie.Director}\", \"{ movie.Language}\", \"{movie.Subtitles}\", \"{movie.Dubbed}\", \"{movie.ReleaseDate.ToShortDateString()}\", \"{movie.RunTime}\");";
-            QuerySend(query);
-        }
-
-        //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
         public void CreateMovies(params Movie[] movies)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO movies (title, director, language, subtitles, dubbed, releasedate, runtime) VALUES");
@@ -1205,13 +1147,6 @@ namespace TheLibraryIsOpen.Database
                 sb.Append($"(\"{movies[i].Title}\", \"{movies[i].Director}\", \"{ movies[i].Language}\", \"{movies[i].Subtitles}\", \"{movies[i].Dubbed}\", \"{movies[i].ReleaseDate.ToShortDateString()}\", \"{movies[i].RunTime}\"){(i + 1 < movies.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
-        }
-
-        // Update a movie's information in the database by MovieID
-        public void UpdateMovie(Movie movie)
-        {
-            string query = $"UPDATE movies SET title = \"{movie.Title}\", director = \"{movie.Director}\", language = \"{movie.Language}\", subtitles = \"{movie.Subtitles}\", dubbed = \"{movie.Dubbed}\", releasedate = \"{movie.ReleaseDate.ToShortDateString()}\", runtime = \"{movie.RunTime}\" WHERE (movieID = \"{movie.MovieId}\");";
-            QuerySend(query);
         }
 
         public void UpdateMovies(params Movie[] movies)
@@ -1223,18 +1158,6 @@ namespace TheLibraryIsOpen.Database
             }
             QuerySend(sb.ToString());
         }
-
-        // Delete movie by movieId from the database
-        public void DeleteMovie(Movie movie)
-        {
-            DeleteMovieActors(movie);
-            DeleteMovieProducers(movie);
-            string query = $"DELETE FROM movies WHERE (movieID = \"{movie.MovieId}\");";
-            QuerySend(query);
-        }
-
-
-
 
         public void DeleteMovies(params Movie[] movies)
         {
@@ -1805,13 +1728,6 @@ namespace TheLibraryIsOpen.Database
          * The following methods are made for the person table
          */
 
-        // Inserts a new person into the database
-        public void CreatePerson(Person person)
-        {
-            string query = $"INSERT INTO person (firstname, lastname) VALUES(\"{person.FirstName}\", \"{person.LastName}\");";
-            QuerySend(query);
-        }
-
         public void CreatePeople(params Person[] people)
         {
             StringBuilder sb = new StringBuilder("INSERT INTO person (firstname, lastname) VALUES");
@@ -1833,7 +1749,6 @@ namespace TheLibraryIsOpen.Database
             QuerySend(sb.ToString());
         }
 
-        //       AND MOVIEPRODUCER ASSOCIATIONS ARE DELETED TOO
         public void DeletePeople(params Person[] people)
         {
             StringBuilder sb = new StringBuilder("DELETE FROM person ");
@@ -1860,20 +1775,6 @@ namespace TheLibraryIsOpen.Database
             }
             //Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
-        }
-
-        // Update a person's information in the database by PersonId
-        public void UpdatePerson(Person person)
-        {
-            string query = $"UPDATE person SET firstname = \"{person.FirstName}\", lastname = \"{person.LastName}\", WHERE (personID = \"{person.PersonId}\");";
-            QuerySend(query);
-        }
-
-        // Delete person by PersonId from the database
-        public void DeletePerson(Person person)
-        {
-            string query = $"DELETE FROM person WHERE (personID = \"{ person.PersonId}\");";
-            QuerySend(query);
         }
 
         // Retrieve a person information by id
@@ -1950,19 +1851,9 @@ namespace TheLibraryIsOpen.Database
         /*
          * The following methods are made for the movieActor table
          */
-
-        // Inserts a new movie actor into the database
-        public void CreateMovieActor(string mid, string pid)
-        {
-            string query = $"INSERT INTO movieactor (movieID, personID) VALUES(\"{mid}\", \"{pid}\");";
-            QuerySend(query);
-        }
-
-        
-
         public void CreateMovieActors(int movieId, params int[] actorIds)
         {
-            StringBuilder ma = new StringBuilder($"INSERT INTO movieactor (movieID, personID) VALUES ");
+            StringBuilder ma = new StringBuilder("INSERT INTO movieactor (movieID, personID) VALUES ");
             IEnumerable<string> strings = actorIds.Select(id => $"({movieId}, {id})");
             ma.AppendJoin(',', strings);
             ma.Append(";");
@@ -2038,17 +1929,10 @@ namespace TheLibraryIsOpen.Database
          * The following methods are made for the movieProducer table
          */
 
-        // Inserts a new movieProducer into the database
-        public void CreateMovieProducer(string mid, string pid)
-        {
-            string query = $"INSERT INTO movieproducer(movieID, personID) VALUES(\"{mid}\", \"{ pid}\");";
-            QuerySend(query);
-        }
-
         //insert producers into the database
         public void CreateMovieProducers(int movieId, params int[] producerIds)
         {
-            StringBuilder mp = new StringBuilder($"INSERT INTO movieproducer (movieID, personID) VALUES ");
+            StringBuilder mp = new StringBuilder("INSERT INTO movieproducer (movieID, personID) VALUES ");
             IEnumerable<string> strings = producerIds.Select(id => $"({movieId}, {id})");
             mp.AppendJoin(',', strings);
             mp.Append(";");
@@ -2121,12 +2005,6 @@ namespace TheLibraryIsOpen.Database
 
         #region books
 
-        public void DeleteBook(Book book)
-        {
-            string query = $"DELETE FROM books WHERE (bookID = \"{book.BookId}\");";
-            QuerySend(query);
-        }
-
         // Deletes several books from the db
         public void DeleteBooks(params Book[] books)
         {
@@ -2180,54 +2058,6 @@ namespace TheLibraryIsOpen.Database
             }
             return books;
         }
-
-        // Return book get from isbn 10
-        public Book GetBooksByIsbn(string isbn)
-        {
-            string query = $"SELECT * FROM books WHERE isbn10 = \"{isbn}\";";
-            Book book = null;
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create client object and store in list
-                        if (dr.Read())
-                        {
-                            int bookId = (int)dr["bookID"];
-                            string title = dr["title"] + "";
-                            string author = dr["author"] + "";
-                            string format = dr["format"] + "";
-                            int pages = (int)dr["pages"];
-                            string publisher = dr["publisher"] + "";
-                            DateTime year = DateTime.Parse(dr["date"] + "");
-                            string language = dr["language"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            book = new Book(bookId, title, author, format, pages, publisher, year, language, isbn10, isbn13);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return book;
-        }
-
-        // Inserts a new book into the db
-        public void CreateBook(Book book)
-        {
-            string query = $"INSERT INTO books (title, author, format, pages, publisher, date, language, isbn10, isbn13) VALUES(\"{book.Title}\", \"{book.Author}\", \"{book.Format}\", \"{book.Pages}\", \"{book.Publisher}\", \"{book.Date.ToShortDateString()}\", \"{book.Language}\",\"{book.Isbn10}\",\"{book.Isbn13}\")";
-
-            QuerySend(query);
-        }
-
         // Inserts several new books into the db
         public void CreateBooks(params Book[] books)
         {
@@ -2237,15 +2067,6 @@ namespace TheLibraryIsOpen.Database
                 sb.Append($"(\"{books[i].Title}\", \"{books[i].Author}\", \"{books[i].Format}\", \"{books[i].Pages}\", \"{books[i].Publisher}\", \"{books[i].Date.ToShortDateString()}\", \"{books[i].Language}\",\"{books[i].Isbn10}\",\"{books[i].Isbn13}\"){(i + 1 < books.Length ? "," : ";")}");
             }
             QuerySend(sb.ToString());
-        }
-
-        // Update a book information in the database by book ID
-        // We can add other function to update book
-        public void UpdateBook(Book book)
-        {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date.ToShortDateString()}\", language = \"{book.Language}\", isbn10 = \"{book.Isbn10}\", isbn13 = \"{book.Isbn13}\" WHERE (bookID = \"{book.BookId}\");";
-
-            QuerySend(query);
         }
 
         //update books information
@@ -2258,22 +2079,6 @@ namespace TheLibraryIsOpen.Database
             }
 
             QuerySend(sb.ToString());
-        }
-
-        // Update a book information in the database by isbn10
-        public void UpdateBookByIsbn(Book book, string isbn10)
-        {
-            string query = $"UPDATE books SET title = \"{book.Title}\", author = \"{book.Author}\", format = \"{book.Format}\", pages = \"{book.Pages}\", publisher = \"{book.Publisher}\", date = \"{book.Date.ToShortDateString()}\", language = \"{book.Language}\", isbn13 = \"{book.Isbn13}\" WHERE (isbn10 = \"{isbn10}\");";
-
-            QuerySend(query);
-        }
-
-        // Delete a book information in db by isbn10
-        public void DeleteBookByIsbn10(string isbn10)
-        {
-            string query = $"DELETE FROM books WHERE (isbn10 = \"{isbn10}\");";
-
-            QuerySend(query);
         }
 
         public Book GetBookById(int id)
@@ -2301,84 +2106,6 @@ namespace TheLibraryIsOpen.Database
                             int pages = (int)dr["pages"];
                             string publisher = dr["publisher"] + "";
                             DateTime year = DateTime.Parse(dr["date"] + "");
-                            string language = dr["language"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            book = new Book(bookId, title, author, format,
-                                pages, publisher, year, language, isbn10, isbn13);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return book;
-        }
-
-        public Book GetBookByIsbn10(string Isbn10)
-        {
-            string query = $"SELECT * FROM books WHERE isbn10 = \" { Isbn10 } \";";
-
-            Book book = null;
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create magazine object and store in list
-                        if (dr.Read())
-                        {
-                            int bookId = (int)dr["bookID"];
-                            string title = dr["title"] + "";
-                            string author = dr["author"] + "";
-                            string format = dr["format"] + "";
-                            int pages = (int)dr["pages"];
-                            string publisher = dr["publisher"] + "";
-                            DateTime year = DateTime.Parse(dr["year"] + "");
-                            string language = dr["language"] + "";
-                            string isbn10 = dr["isbn10"] + "";
-                            string isbn13 = dr["isbn13"] + "";
-
-                            book = new Book(bookId, title, author, format,
-                                pages, publisher, year, language, isbn10, isbn13);
-                        }
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-            return book;
-        }
-
-        public Book GetBookByIsbn13(string Isbn13)
-        {
-            string query = $"SELECT * FROM books WHERE isbn13 = \" { Isbn13 } \";";
-
-            Book book = null;
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    //Create Command
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    //Create a data reader and Execute the command
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        //Read the data, create magazine object and store in list
-                        if (dr.Read())
-                        {
-                            int bookId = (int)dr["bookID"];
-                            string title = dr["title"] + "";
-                            string author = dr["author"] + "";
-                            string format = dr["format"] + "";
-                            int pages = (int)dr["pages"];
-                            string publisher = dr["publisher"] + "";
-                            DateTime year = DateTime.Parse(dr["year"] + "");
                             string language = dr["language"] + "";
                             string isbn10 = dr["isbn10"] + "";
                             string isbn13 = dr["isbn13"] + "";
@@ -2818,7 +2545,7 @@ namespace TheLibraryIsOpen.Database
                             Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
                             Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
 
-                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
+                            ModelCopy mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (TypeEnum)modelType, returnDate = returnDate };
                             //Console.Write(book);
 
                             mcs.Add(mc);
@@ -2880,7 +2607,7 @@ namespace TheLibraryIsOpen.Database
                             Nullable<DateTime> borrowedDate = dr["borrowedDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["borrowedDate"];
                             Nullable<DateTime> returnDate = dr["returnDate"].GetType() == typeof(DBNull) ? null : (Nullable<DateTime>)dr["returnDate"];
 
-                            mc = new ModelCopy { id = id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (Constants.TypeConstants.TypeEnum)modelType, returnDate = returnDate };
+                            mc = new ModelCopy { id = Id, modelID = modelID, borrowerID = borrowerID, borrowedDate = borrowedDate, modelType = (TypeEnum)modelType, returnDate = returnDate };
                         }
                     }
                 }
@@ -2891,7 +2618,7 @@ namespace TheLibraryIsOpen.Database
 
 
         //Find modelCopies of model by model ID, returns list of modelCopy
-        public List<ModelCopy> FindModelCopiesOfModel(int modelId, Constants.TypeConstants.TypeEnum enumType, BorrowType borrowId = BorrowType.Any)
+        public List<ModelCopy> FindModelCopiesOfModel(int modelId, TypeEnum enumType, BorrowType borrowId = BorrowType.Any)
         {
             int mType = (int)enumType;
             string query = $"SELECT * FROM modelcopies WHERE modelID = \"{modelId}\" AND modelType = \"{mType}\"";
@@ -2934,7 +2661,7 @@ namespace TheLibraryIsOpen.Database
                             modelCopies.Add(new ModelCopy
                             {
                                 id = id,
-                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
+                                modelType = (TypeEnum)modelType,
                                 modelID = modelID,
                                 borrowerID = borrowerID,
                                 borrowedDate = borrowedDate,
@@ -2981,7 +2708,7 @@ namespace TheLibraryIsOpen.Database
                             modelCopies.Add(new ModelCopy
                             {
                                 id = id,
-                                modelType = (TheLibraryIsOpen.Constants.TypeConstants.TypeEnum)modelType,
+                                modelType = (TypeEnum)modelType,
                                 modelID = modelID,
                                 borrowerID = borrowerID,
                                 borrowedDate = borrowedDate,
@@ -3155,7 +2882,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
                         }
@@ -3200,7 +2927,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3237,7 +2964,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3273,7 +3000,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3309,7 +3036,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3345,7 +3072,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3393,7 +3120,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = (DateTime)dr["transactionTime"];
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3405,19 +3132,6 @@ WHERE
             }
             return list;
         }
-
-        public void AddLog(Log log)
-        {
-            string query = $"INSERT INTO logs (clientID, modelCopyID, transaction, transactionTime) VALUES(\"{log.ClientID}\", \"{log.ModelCopyID}\", \"{(int)log.Transaction}\", \"{log.TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\");";
-            QuerySend(query);
-        }
-
-        public void DeleteLog(Log log)
-        {
-            string query = $"DELETE FROM logs WHERE (logID = \"{log.LogID}\");";
-            QuerySend(query);
-        }
-
 
         public void AddLogs(params Log[] logs)
         {
@@ -3431,28 +3145,11 @@ WHERE
 
         public void DeleteLogs(params Log[] logs)
         {
-            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE ");
+            StringBuilder sb = new StringBuilder("DELETE FROM logs WHERE ");
             for (int i = 0; i < logs.Length; ++i)
             {
                 sb.Append($"logID = \"{logs[i].LogID}\") {(i + 1 < logs.Length ? " OR " : ";")}");
             }
-
-            QuerySend(sb.ToString());
-        }
-
-        public void UpdateLogs(params Log[] logs)
-        {
-            StringBuilder sb = new StringBuilder("UPDATE logs set");
-            for (int i = 0; i < logs.Length; ++i)
-            {
-                sb.Append($"clientID = \"{logs[i].ClientID}\", modelCopyID = \"{logs[i].ModelCopyID}\",transaction = \"{(int)logs[i].Transaction}\", transactionTime = \"{logs[i].TransactionTime.ToString("yyyy-MM-dd HH:mm:ss")}\"){(i + 1 < logs.Length ? ", " : ";")}");
-            }
-            QuerySend(sb.ToString());
-        }
-
-        public void ClearAllLogsBefore(DateTime date)
-        {
-            StringBuilder sb = new StringBuilder($"DELETE FROM logs WHERE transactionDate <= \"{date.ToString("yyyy-MM-dd HH:mm:ss")}\"");
 
             QuerySend(sb.ToString());
         }
