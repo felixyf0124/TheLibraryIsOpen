@@ -18,7 +18,7 @@ namespace TheLibraryIsOpen.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _tc.getLogs());
+            return View(await _tc.GetLogs());
         }
     }
 }
