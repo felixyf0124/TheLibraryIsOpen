@@ -39,36 +39,27 @@
                     <!option value="music" @(modelType == "music" ? "selected" : "")>Music</!option>
                     <!option value="magazine" @(modelType == "magazine" ? "selected" : "")>Magazine</!option>
                 </select>
-                @{
-                    if (modelType != "")
-                    {<input name="modelID" type="text" class="form-control " placeholder="ModelID" value="@modelID">}
-                    else
-                    {
-                        modelID = "";
-                    }
-                }
 
 
-                <select class="form-control">
+
+                <select name="datetype" id="_datetype" class="form-control">
                     <!option value="all" @(datefilter is null ? "selected" : "")>All</!option>
                     <!option value="date" @(datefilter == "date" ? "selected" : "")>Date</!option>
                     <!option value="period" @(datefilter == "period" ? "selected" : "")>Period</!option>
                 </select>
 
-                <input type="checkbox" value="@exactTime" /><label>Exact Time</label>
-                <input type="datetime" name="exacttime" value="@date1">
+                <div id=""
+                <input type="checkbox" id="_exact" value="@exactTime" /><label>Exact Time</label>
+                <input type="date" id="d1" name="date1" value="@date1">
+                <input type="date" id="d2" name="date2" value="@date2">
 
-                <input type="checkbox" value="@exactTime" /><label>Exact Time</label>
-                <input type="date" name="date1" value="@date1">
-                <input type="date" name="date2" value="@date2">
+                <input type="time" id="t1" name="time1" value="@time1" />
+                <input type="time" id="t2" name="time2" value="@time2" />
 
-                <input type="time" name="time1" value="@time1" />
-                <input type="time" name="time2" value="@time2" />
-
-                <select class="form-control ">
+                <select name ="transc"class="form-control ">
                     <!option value="" @(transac is null ? "selected" : "")>All</!option>
-                    <!option value="date" @(transac == "Borrow" ? "selected" : "")>Borrow</!option>
-                    <!option value="period" @(transac == "Return" ? "selected" : "")>Return</!option>
+                    <!option value="Borrow" @(transac == "Borrow" ? "selected" : "")>Borrow</!option>
+                    <!option value="Return" @(transac == "Return" ? "selected" : "")>Return</!option>
                 </select>
 
                 <span class="input-group-addon rounded-right">
@@ -78,7 +69,7 @@
                 </span>
             </div>
 
-        </div>
+            </div>
     </form>
 </div>
 
@@ -131,3 +122,47 @@
         }
     </tbody>
 </table>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function checkDatetype() {
+            var datetype = document.getElementsById("_datetype").value;
+            var exact = document.getElementsById("_exact");
+            var d1 = document.getElementsById("d1");
+            var d2 = document.getElementsById("d2");
+            var t1 = document.getElementsById("t1");
+            var t2 = document.getElementsById("t2");
+            if (datetype == "all") {
+                exact.style.hidden;
+                d1.style.hidden;
+                d2.style.hidden;
+                t1.style.hidden;
+                t2.style.hidden;
+
+            }
+            if (datetype == "date") {
+                exact.style.display;
+                d1.style.display;
+                d2.style.hidden;
+                if (exact.value != "")
+                    t1.style.display;
+                else
+                    t1.style.hidden;
+                t2.style.hidden;
+            }
+            if (datetype == "period") {
+                exact.style.display;
+                d1.style.display;
+                d2.style.display;
+                if (exact.value != "") {
+                    t1.style.display;
+                    t2.style.display;
+                }
+                else {
+                    t1.style.hidden;
+                    t2.style.hidden;
+                }
+            }
+        }
+    </script>
+}

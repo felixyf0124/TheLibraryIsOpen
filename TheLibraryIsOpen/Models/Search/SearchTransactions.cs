@@ -72,23 +72,25 @@ namespace TheLibraryIsOpen.Models.Search
             {
                 logs.Add(await lt);
             }
-            HashSet<Log> intersection = new HashSet<Log>(logs[0], new SearchTransactionComparer());
-            for (int i = 1; i < logs.Count; i++)
+            if (logs.Count > 0)
             {
+                HashSet<Log> intersection = new HashSet<Log>(logs[0], new SearchTransactionComparer());
+                for (int i = 1; i < logs.Count; i++)
+                {
 
-                intersection.IntersectWith(logs[i]);
+                    intersection.IntersectWith(logs[i]);
+                }
+
+                var lTasks = new List<Task<PrintedLog>>(intersection.Count);
+                lTasks.AddRange(intersection.Select(log => GetPLog(log)));
+
+                foreach (var lTask in lTasks)
+                {
+                    results.Add(await lTask);
+                }
             }
-
-            var lTasks = new List<Task<PrintedLog>>(intersection.Count);
-            lTasks.AddRange(intersection.Select(log => GetPLog(log)));
-
-            foreach (var lTask in lTasks)
-            {
-                results.Add(await lTask);
-            }
-
-            return results;
-
+                return results;
+            
             async Task<PrintedLog> GetPLog(Log log)
             {
                 ModelCopy modelCopy = await _im.FindModelCopy(log.ModelCopyID).ConfigureAwait(false);
