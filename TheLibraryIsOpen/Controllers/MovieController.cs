@@ -151,7 +151,6 @@ namespace TheLibraryIsOpen.Controllers
         public async Task<IActionResult> DeleteModelCopy(string id)
         {
             await _mc.DeleteFreeModelCopy(id);
-            await _mc.CommitAsync();
             return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
