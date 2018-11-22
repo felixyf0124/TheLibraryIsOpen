@@ -40,7 +40,6 @@
                                         break;
                                 }
                                 @Model[i].Title
-
                             </h3>
                         </div>
                         <div class="col-sm-1">
@@ -51,7 +50,24 @@
                             @Html.HiddenFor(model => model[i].ModelType)
                             @Html.CheckBoxFor(model => model[i].ToReturn, new { @class = "form-control" })
                         </div>
-                    </div><hr />
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Borrowed Date: @Model[i].BorrowDate
+                        </div>
+                        <div class="col">
+                            @if (@DateTime.Now > @Model[i].ReturnDate)
+                            {
+                                <p style="color:red;">Return Date: @Model[i].ReturnDate <b>OVERDUE</b></p>
+                            }
+                            else
+                            {
+                                <p>Return Date: @Model[i].ReturnDate</p>
+                            }
+
+                        </div>
+                    </div>
+                    <hr />
 
                 }
                 <div class="row">
