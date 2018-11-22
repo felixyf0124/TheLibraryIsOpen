@@ -23,7 +23,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: manage error if register return false
                     _unitOfWork.RegisterNew(modelCopy);
                     return IdentityResult.Success;
                 });

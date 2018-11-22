@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
-using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.db; 
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -13,15 +12,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
-        private readonly Db _db; // TODO: delete this when db code is removed
+       
 
-
-        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
+        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _im = im;
-            _db = db; // TODO: delete this when db code is removed
-
+          
         }
 
         /*
@@ -34,7 +31,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: manage errors if register returns false
                     _unitOfWork.RegisterNew(movie);
                     return IdentityResult.Success;
                 });
@@ -76,10 +72,8 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<List<Movie>> GetAllMoviesDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return _db.GetAllMovies();
-            });
+            return _im.GetAllMovies();
+         
         }
 
         public async Task<Movie> GetMovieByIdAsync(int movieId)
@@ -89,27 +83,19 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         
         public Task<List<Person>> GetAllPersonDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllPerson();
-            });
+            return _im.GetAllPerson();
+  
         }
         public Task<List<Person>> GetAllMovieProducerDataAsync(int movieID)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllMovieProducers(movieID);
-            });
+           
+                return _im.GetAllMovieProducers(movieID);
+ 
         }
         public Task<List<Person>> GetAllMovieActorDataAsync(int movieID)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllMovieActors(movieID);
-            });
+            return _im.GetAllMovieActors(movieID);
+           
         }
 
         public Task<bool> CommitAsync()
@@ -119,23 +105,14 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<int> GetNoOfAvailableModelCopies(Movie movie)
         {
-            return Task.Factory.StartNew(() =>
-            {
-
-                int AvailableCopies = _db.CountModelCopiesOfModel(movie.MovieId, (int)TypeEnum.Movie, BorrowType.NotBorrowed);
-
-                return AvailableCopies;
-
-            });
+            return _im.CountModelCopiesOfModel(movie.MovieId, (int)TypeEnum.Movie, BorrowType.NotBorrowed);
 
         }
         public Task<IdentityResult> AddModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
             {
-                // TODO: manage error if register returns false
-
-                _unitOfWork.RegisterNew(new ModelCopy
+               _unitOfWork.RegisterNew(new ModelCopy
                 {
                     modelID = Int32.Parse(id),
                     modelType = TypeEnum.Movie
@@ -148,7 +125,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return Task.Factory.StartNew(() =>
             {
-                // TODO: manage error if register returns false
+               
                 ModelCopy temp = new ModelCopy
                 {
                     modelID = Int32.Parse(id),

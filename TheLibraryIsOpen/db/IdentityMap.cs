@@ -786,6 +786,114 @@ namespace TheLibraryIsOpen.db
         // TODO: public List<SessionModel> TransactionUpdate() {}
 
 
+        public Task<List<Book>> GetAllBooks()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllBooks();
+            });
+        }
+
+        public Task<int> CountModelCopiesOfModel(int modelId, int mType, BorrowType borrowId)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(modelId, mType, borrowId);
+
+                return AvailableCopies;
+
+            });
+        }
+
+        //Get all Magazines
+        public Task<List<Magazine>> GetAllMagazines()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                // TODO: replace with _im
+                return _db.GetAllMagazines();
+            });
+        }
+
+        public Task<int> CountModelCopiesO(Magazine magazine)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(magazine.MagazineId, (int)TypeEnum.Magazine, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public Task<List<Movie>> GetAllMovies()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllMovies();
+            });
+        }
+
+        public Task<List<Person>> GetAllPerson()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllPerson();
+            });
+        }
+
+        public Task<List<Person>> GetAllMovieProducers(int movieID)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllMovieProducers(movieID);
+            });
+        }
+
+        public Task<List<Person>> GetAllMovieActors(int movieID)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+               return _db.GetAllMovieActors(movieID);
+            });
+        }
+
+        public Task<int> CountModelCopiesOfModel(Movie movie)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(movie.MovieId, (int)TypeEnum.Movie, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
+
+        public Task<List<Music>> GetAllMusic()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return _db.GetAllMusic();
+            });
+        }
+
+        public Task<int> CountModelCopiesOfModel(Music music)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+
+                int AvailableCopies = _db.CountModelCopiesOfModel(music.MusicId, (int)TypeEnum.Music, BorrowType.NotBorrowed);
+
+                return AvailableCopies;
+
+            });
+
+        }
 
     }
 }

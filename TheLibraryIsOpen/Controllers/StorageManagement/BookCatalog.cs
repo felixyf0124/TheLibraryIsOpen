@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -12,14 +12,12 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
-        private readonly Db _db; // TODO: delete this when db code is removed
 
 
-        public BookCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
+        public BookCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _im = im;
-            _db = db; // TODO: delete this when db code is removed
         }
 
         //Create Book
@@ -103,7 +101,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         //Get all Books
         public Task<List<Book>> GetAllBookDataAsync()
         {
-                return _im.GetAllBooks();
+            return _im.GetAllBooks();
         }
 
         public Task<bool> CommitAsync()
@@ -113,31 +111,22 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<int> GetNoOfAvailableModelCopies(Book book)
         {
-            return Task.Factory.StartNew(() =>
-            {
 
-                int AvailableCopies = _db.CountModelCopiesOfModel(book.BookId, (int)TypeEnum.Book, BorrowType.NotBorrowed);
+            return _im.CountModelCopiesOfModel(book.BookId, (int)TypeEnum.Book, BorrowType.NotBorrowed);
 
-                return AvailableCopies;
-
-            });
 
         }
 
-        public Task<IdentityResult> DeleteFreeModelCopy(string id)
+        public async Task<IdentityResult> DeleteFreeModelCopy(string id)
         {
-             return Task.Factory.StartNew(() =>
-                {
-                    // TODO: manage error if register returns false
-                    ModelCopy temp = new ModelCopy
-                    {
-                        modelID = Int32.Parse(id),
-                        modelType = TypeEnum.Book
-                    };
-                    _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
-                    return IdentityResult.Success;
-                });
-            
+            ModelCopy temp = new ModelCopy
+            {
+                modelID = Int32.Parse(id),
+                modelType = TypeEnum.Book
+            };
+            await _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+            return IdentityResult.Success;
+
         }
     }
 }
