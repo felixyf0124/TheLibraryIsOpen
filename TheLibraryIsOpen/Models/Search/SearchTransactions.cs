@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -11,98 +12,107 @@ namespace TheLibraryIsOpen.Models.Search
     public class SearchTransactions
     {
         private readonly IdentityMap _im;
-        private readonly Db _db;
-        public SearchTransactions(Db db, IdentityMap im)
+        private readonly ClientManager _clientManager;
+        public SearchTransactions(IdentityMap im, ClientManager clientManager)
         {
-            _db = db;
             _im = im;
+            _clientManager = clientManager;
         }
 
-        public async Task<List<PrintedLog>> SearchLogsAsync(string clientID, string CopyID,
-            string type, string ModelId, string dateTime1, string dateTime2, 
+        public async Task<List<PrintedLog>> SearchLogsAsync(string clientName, string CopyID,
+            string type, string ModelId, string dateTime1, string dateTime2,
             bool exactTime, string transac)
         {
             List<PrintedLog> results = new List<PrintedLog>();
 
-            List<List<Log>> Logs = new List<List<Log>>();
+            List<List<Log>> logs = new List<List<Log>>();
+
+            List<Task<List<Log>>> logsTasks = new List<Task<List<Log>>>();
 
 
-            if (clientID != "")
+            if (!string.IsNullOrEmpty(clientName))
             {
-                List<Log> temp = await SearchLogsByClientIDAsync(int.Parse(clientID));
-                if(temp != null)
-                    Logs.Add(temp);
+                var clients = await _clientManager.FindClientsByNameAsync(clientName);
+                foreach (var client in clients)
+                {
+                    logsTasks.Add(SearchLogsByClientIDAsync(client.clientId));
+                }
             }
 
-            if (CopyID != "")
+            if (!string.IsNullOrEmpty(CopyID))
             {
-                List<Log> temp = await SearchLogsByCopyIDAsync(int.Parse(CopyID));
-                if (temp != null)
-                    Logs.Add(temp);
+                logsTasks.Add(SearchLogsByCopyIDAsync(int.Parse(CopyID)));
             }
 
-            if (type != "" && ModelId != "")
+            if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(ModelId))
             {
                 Enum.TryParse(type, out TypeEnum m_type);
-                List<Log> temp = await SearchLogsByModelTypeAndIdAsync(m_type, int.Parse(ModelId));
-                if (temp != null)
-                    Logs.Add(temp);
+                logsTasks.Add(SearchLogsByModelTypeAndIdAsync(m_type, int.Parse(ModelId)));
             }
 
-            if (dateTime1 != "")
+            if (!string.IsNullOrEmpty(dateTime1))
             {
-                if(dateTime2 == "")
+                if (string.IsNullOrEmpty(dateTime2))
                 {
-                    List<Log> temp = await SearchLogsByDateAsync(DateTime.Parse(dateTime1), exactTime);
-                    if (temp != null)
-                        Logs.Add(temp);
+                    logsTasks.Add(SearchLogsByDateAsync(DateTime.Parse(dateTime1), exactTime));
                 }
                 else
                 {
-                    List<Log> temp = await SearchLogsByPeriodAsync(DateTime.Parse(dateTime1), DateTime.Parse(dateTime2), exactTime);
-                    if (temp != null)
-                        Logs.Add(temp);
+                    logsTasks.Add(SearchLogsByPeriodAsync(DateTime.Parse(dateTime1), DateTime.Parse(dateTime2), exactTime));
                 }
             }
 
-            if (transac != "")
+            if (!string.IsNullOrEmpty(transac))
             {
                 Enum.TryParse(transac, out TransactionType t_type);
-                List<Log> temp = await SearchLogsByTransactionAsync(t_type);
-                if (temp != null)
-                    Logs.Add(temp);
+                logsTasks.Add(SearchLogsByTransactionAsync(t_type));
             }
-            
-            IEnumerable<Log> intersection = Logs[0];
-            for(int i = 1; i < Logs.Count; i++)
+
+            foreach (var lt in logsTasks)
             {
-                List<Log> temp = Logs[i];
-                intersection = intersection.Intersect(Logs[i], new SearchTransactionComparer());
+                logs.Add(await lt);
             }
-            //results = intersection.ToList();
-            foreach (Log log in intersection.ToList())
+            HashSet<Log> intersection = new HashSet<Log>(logs[0], new SearchTransactionComparer());
+            for (int i = 1; i < logs.Count; i++)
             {
-                ModelCopy modelCopy = await _im.FindModelCopy(log.ModelCopyID);
+
+                intersection.IntersectWith(logs[i]);
+            }
+
+            var lTasks = new List<Task<PrintedLog>>(intersection.Count);
+            lTasks.AddRange(intersection.Select(log => GetPLog(log)));
+
+            foreach (var lTask in lTasks)
+            {
+                results.Add(await lTask);
+            }
+
+            return results;
+
+            async Task<PrintedLog> GetPLog(Log log)
+            {
+                ModelCopy modelCopy = await _im.FindModelCopy(log.ModelCopyID).ConfigureAwait(false);
                 string modelName = "";
                 switch (modelCopy.modelType)
                 {
-                    case Constants.TypeConstants.TypeEnum.Book:
-                        modelName = (await _im.FindBook(modelCopy.modelID)).Title;
+                    case TypeEnum.Book:
+                        modelName = (await _im.FindBook(modelCopy.modelID))?.Title;
                         break;
-                    case Constants.TypeConstants.TypeEnum.Magazine:
-                        modelName = (await _im.FindMagazine(modelCopy.modelID)).Title;
+                    case TypeEnum.Magazine:
+                        modelName = (await _im.FindMagazine(modelCopy.modelID))?.Title;
                         break;
-                    case Constants.TypeConstants.TypeEnum.Movie:
-                        modelName = (await _im.FindMovie(modelCopy.modelID)).Title;
+                    case TypeEnum.Movie:
+                        modelName = (await _im.FindMovie(modelCopy.modelID))?.Title;
                         break;
-                    case Constants.TypeConstants.TypeEnum.Music:
-                        modelName = (await _im.FindMusic(modelCopy.modelID)).Title;
+                    case TypeEnum.Music:
+                        modelName = (await _im.FindMusic(modelCopy.modelID))?.Title;
                         break;
                 }
-                Client client = _db.GetClientById(log.ClientID);
-                results.Add(new PrintedLog(client.FirstName + " " + client.LastName, log.Transaction, modelCopy.modelType, modelName, log.ModelCopyID, log.TransactionTime));
+
+                Client client = await _clientManager.FindByIdAsync(log.ClientID.ToString());
+                return new PrintedLog(client.FirstName + " " + client.LastName, log.Transaction,
+                    modelCopy.modelType, modelName, log.ModelCopyID, log.TransactionTime);
             }
-               return results;
         }
 
         private Task<List<Log>> SearchLogsByDateAsync(DateTime searchDate, bool exact)
@@ -146,7 +156,7 @@ namespace TheLibraryIsOpen.Models.Search
 
             public int GetHashCode(Log log)
             {
-                
+
                 return log.LogID.GetHashCode();
             }
         }

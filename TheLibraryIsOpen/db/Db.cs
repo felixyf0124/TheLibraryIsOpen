@@ -312,6 +312,42 @@ namespace TheLibraryIsOpen.db
             return client;
         }
 
+        public List<Client> GetClientsByName(string name)
+        {
+            string query = $"SELECT * FROM users WHERE CONCAT(firstName, ' ', lastName) = '{name}';";
+            List<Client> client = new List<Client>();
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    //Create Command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        //Read the data, create client object and store in list
+                        while (dr.Read())
+                        {
+                            int clientID = (int)dr["clientID"];
+                            string firstName = dr["firstName"] + "";
+                            string lastName = dr["lastName"] + "";
+                            string emailAddress = dr["emailAddress"] + "";
+                            string homeAddress = dr["homeAddress"] + "";
+                            string phoneNumber = dr["phoneNumber"] + "";
+                            string password = dr["password"] + "";
+                            bool isAdmin = (bool)dr["isAdmin"];
+
+                            client.Add(new Client(clientID, firstName, lastName, emailAddress, homeAddress, phoneNumber, password, isAdmin));
+                        }
+                    }
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            return client;
+        }
+
         // Inserts a new client into the db
         public void CreateClient(Client client)
         {
@@ -2870,7 +2906,7 @@ WHERE
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
                             TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
                         }
@@ -2909,13 +2945,13 @@ WHERE
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -2946,13 +2982,13 @@ WHERE
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime().ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -2982,13 +3018,13 @@ WHERE
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3018,13 +3054,13 @@ WHERE
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3054,13 +3090,13 @@ WHERE
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
@@ -3102,13 +3138,13 @@ WHERE
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data, create client object and store in list
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int logID = (int)dr["logID"];
                             int clientID = (int)dr["clientID"];
                             int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc);
+                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
+                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
                             list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));

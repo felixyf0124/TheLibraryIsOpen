@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using TheLibraryIsOpen.Models.Search;
-using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Controllers.StorageManagement;
+using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.Models.Search;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -14,7 +12,7 @@ namespace TheLibraryIsOpen.Controllers
     {
         private readonly TransactionCatalog _tc;
         private readonly SearchTransactions _st;
-        
+
 
         public TransactionController(TransactionCatalog tc, SearchTransactions st)
         {
@@ -24,22 +22,26 @@ namespace TheLibraryIsOpen.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _tc.GetLogs());
+            bool fromSearch = HttpContext.Session.GetObject<bool>("fromSearch");
+            HttpContext.Session.SetObject("fromSearch", false);
+            var logs = HttpContext.Session.GetObject<List<PrintedLog>>("logs");
+            HttpContext.Session.SetObject("logs", null);
+            return View(fromSearch ? logs : await _tc.GetLogs());
         }
 
-       [HttpPost]
-       public async Task<IActionResult> SearchTransactionHistory()
+        [HttpPost]
+        public async Task<IActionResult> SearchTransactionHistory()
         {
             var form = HttpContext.Request.Form;
-            string clientID = form["clientid"];
-            string copyID = form["copyid"];
+            string clientID = form["clientID"];
+            string copyID = form["copyID"];
             string modelType = form["modeltype"];
-            string modelID = form["modelid"];
+            string modelID = form["modelID"];
             string date1 = form["date1"];
             string date2 = form["date2"];
             string time1 = form["time1"];
             string time2 = form["time2"];
-            bool exactTime = (form["exacttime"] == "")? false:true;
+            bool exactTime = (form["exacttime"] != "");
             string transac = form["transc"];
 
             string dateTime1 = date1 + time1;
@@ -54,8 +56,10 @@ namespace TheLibraryIsOpen.Controllers
 
             List<PrintedLog> logs = await _st.SearchLogsAsync(clientID, copyID, modelType, modelID, dateTime1, dateTime2, exactTime, transac);
 
-            
-            return View(logs);
+            HttpContext.Session.SetObject("logs", logs);
+            HttpContext.Session.SetObject("fromSearch", true);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

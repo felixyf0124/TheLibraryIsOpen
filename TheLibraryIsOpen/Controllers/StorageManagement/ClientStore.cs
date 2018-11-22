@@ -190,5 +190,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 }
             });
         }
+
+        public Task<List<Client>> GetClientsByNameAsync(string name)
+        {
+            return Task.Factory.StartNew(() => _db.GetClientsByName(name));
+        }
     }
 }
