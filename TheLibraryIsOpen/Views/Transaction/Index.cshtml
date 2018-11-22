@@ -3,8 +3,97 @@
 @{
     ViewData["Title"] = "Index";
 }
+@{ 
+    string clientID = (string)TempData["ClientID"];
+    string copyID = (string)TempData["copyid"];
+    string modelType = (string)TempData["modeltype"];
+    string modelID = (string)TempData["modelid"];
+    string date1 = "";
+    string date2 = "";
+    string time1 = "";
+    string time2 = "";
+    date1 = (string)TempData["date1"];
+    date2 = (string)TempData["date2"];
+    time1 = (string)TempData["time1"];
+    time2 = (string)TempData["time2"];
+    bool exactTime = (TempData["exacttime"] == null) ? false : true;
+    string transac = (string)TempData["transc"];
+    string datefilter = (string)TempData["datefilter"];
+}
 
 <h2>Transaction Logs</h2>
+<div>
+    <form asp-action="SearchTransactionHistory" method="post">
+        <div>
+
+           
+            
+          
+            <div class="input-group stylish-input-group" style="margin-left:0.5em;">
+                <input name="clientID" type="text" class="form-control" placeholder="ClientID" value="@clientID">
+                <input name="copyID" type="text" class="form-control" placeholder="CopyID" value="@copyID">
+                <select class="form-control ">
+                    <!option value="all" @(modelType is null ? "selected" : "")>All</!option>
+                    <!option value="book" @(modelType == "book" ? "selected" : "")>Books</!option>
+                    <!option value="movie" @(modelType == "movie" ? "selected" : "")>Movies</!option>
+                    <!option value="music" @(modelType == "music" ? "selected" : "")>Music</!option>
+                    <!option value="magazine" @(modelType == "magazine" ? "selected" : "")>Magazine</!option>
+                </select>
+                @{
+                    if (modelType != "")
+                    {<input name="modelID" type="text" class="form-control " placeholder="ModelID" value="@modelID">}
+                    else
+                    {
+                        modelID = "";
+                    }
+                }
+                
+
+                <select class="form-control">
+                    <!option value="all" @(datefilter is null ? "selected" : "")>All</!option>
+                    <!option value="date" @(datefilter == "date" ? "selected" : "")>Date</!option>
+                    <!option value="period" @(datefilter == "period" ? "selected" : "")>Period</!option>
+                </select>
+
+                @{ 
+                    if (datefilter == "date")
+                    {
+                        <input type="checkbox" value="@exactTime" /><label>Exact Time</label>
+                        <input type="date" name="datetime1" value="@date1">
+                        if (exactTime != false)
+                        {
+                            <input type="time" value="@time1" />
+                        }
+                    }
+                    if (datefilter == "period")
+                    {
+                        <input type="checkbox" value="@exactTime" /><label>Exact Time</label>
+                        <input type="date" name="date1" value="@date1">
+                        <input type="date" name="date2" value="@date2">
+                        if (exactTime != false)
+                        {
+                            <input type="time" name="time1" value="@time1" />
+                            <input type="time" name="time2" value="@time2" />
+                        }
+                    }
+                }
+
+                            <select class="form-control ">
+                                <!option value="all" @(transac is null ? "selected" : "")>All</!option>
+                                <!option value="date" @(transac == "Borrow" ? "selected" : "")>Borrow</!option>
+                                <!option value="period" @(transac == "Return" ? "selected" : "")>Return</!option>
+                            </select>
+
+                <span class="input-group-addon rounded-right">
+                    <button type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+           
+        </div>
+    </form>
+</div>
 
 <table class="table">
     <thead>
