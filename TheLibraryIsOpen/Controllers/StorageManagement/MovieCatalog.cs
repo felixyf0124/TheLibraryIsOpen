@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
+using TheLibraryIsOpen.db; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -86,56 +86,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
         {
             return await _im.FindMovie(movieId);
         }
-
-
-        /*
-         * The following functions are made for the Person table
-         */
-
-        public Task<IdentityResult> CreatePersonAsync(Person person)
-        {
-            if (person != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _unitOfWork.RegisterNew(person);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Person object was null" });
-            });
-        }
-
-        public Task UpdatePersonAsync(Person person)
-        {
-            if (person != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _unitOfWork.RegisterDirty(person);
-                });
-            }
-            throw new ArgumentNullException("person");
-        }
-
-        public Task<IdentityResult> DeletePersonAsync(Person person)
-        {
-            if (person != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _unitOfWork.RegisterDeleted(person);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Person object was null" });
-            });
-        }
-
+        
         public Task<List<Person>> GetAllPersonDataAsync()
         {
             return Task.Factory.StartNew(() =>
@@ -144,16 +95,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return _db.GetAllPerson();
             });
         }
-
-        public async Task<Person> GetPersonByIdAsync(int personId)
-        {
-            return await _im.FindPerson(personId);
-        }
-
-        /*
-         * The following functions are made for the movie producer table
-         */
-
         public Task<List<Person>> GetAllMovieProducerDataAsync(int movieID)
         {
             return Task.Factory.StartNew(() =>
@@ -162,11 +103,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return _db.GetAllMovieProducers(movieID);
             });
         }
-
-        /*
-         * The following functions are made for the movie actor table
-         */
-
         public Task<List<Person>> GetAllMovieActorDataAsync(int movieID)
         {
             return Task.Factory.StartNew(() =>
@@ -175,12 +111,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
                 return _db.GetAllMovieActors(movieID);
             });
         }
+
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
         }
 
-        public Task<int> getNoOfAvailableModelCopies(Movie movie)
+        public Task<int> GetNoOfAvailableModelCopies(Movie movie)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -192,13 +129,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
 
         }
-
-        public async Task<List<ModelCopy>> getModelCopies(Movie movie)
-        {
-            return await _im.FindModelCopies(movie.MovieId, TypeEnum.Movie);
-        }
-
-        public Task<IdentityResult> addModelCopy(string id)
+        public Task<IdentityResult> AddModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -213,7 +144,7 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             });
             
         }
-        public Task<IdentityResult> deleteFreeModelCopy(string id)
+        public Task<IdentityResult> DeleteFreeModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
             {

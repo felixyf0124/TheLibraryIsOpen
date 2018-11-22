@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Constants;
-using TheLibraryIsOpen.Database;
+using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -440,7 +440,7 @@ namespace TheLibraryIsOpen.Models.Search
                         "ISBN-10: " , magazine.Isbn10,
                         "ISBN-13: " , magazine.Isbn13
                     };
-                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Magazine, magazine.MagazineId, magazine.Title, magazine.Date, description));
+                convertedResult.Add(new SearchResult(TypeEnum.Magazine, magazine.MagazineId, magazine.Title, magazine.Date, description));
             }
 
             return convertedResult;
@@ -461,7 +461,7 @@ namespace TheLibraryIsOpen.Models.Search
                     "Dubbed: " , movie.Dubbed,
                     "RunTime: " , movie.RunTime
                 };
-                convertedResult.Add(new SearchResult(TypeConstants.TypeEnum.Movie, movie.MovieId, movie.Title, movie.ReleaseDate, description));
+                convertedResult.Add(new SearchResult(TypeEnum.Movie, movie.MovieId, movie.Title, movie.ReleaseDate, description));
             }
 
             return convertedResult;

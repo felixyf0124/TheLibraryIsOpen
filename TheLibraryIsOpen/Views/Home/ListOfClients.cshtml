@@ -52,7 +52,7 @@
     @foreach (var client in Model)
     {
         <!--For displaying a different background color if isAdmin is true-->
-        if (client.IsAdmin == true)
+        if (client.IsAdmin)
         {
             style = "background-color: #99ccff";
         }

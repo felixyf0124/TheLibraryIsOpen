@@ -45,7 +45,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            TempData["AvailableCopies"] = await _bc.getNoOfAvailableModelCopies(book);
+            TempData["AvailableCopies"] = await _bc.GetNoOfAvailableModelCopies(book);
 
             return View(book);
         }
@@ -189,16 +189,16 @@ namespace TheLibraryIsOpen.Controllers
 
         public async Task<IActionResult> AddModelCopy(string id)
         {
-            await _bc.addModelCopy(id);
+            await _bc.AddModelCopy(id);
             await _bc.CommitAsync();
-            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+            return RedirectToAction(nameof(Details), new { id = id });
         }
 
         public async Task<IActionResult> DeleteModelCopy(string id)
         {
-            await _bc.deleteFreeModelCopy(id);
+            await _bc.DeleteFreeModelCopy(id);
             await _bc.CommitAsync();
-            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+            return RedirectToAction(nameof(Details), new { id = id });
         }
 
 

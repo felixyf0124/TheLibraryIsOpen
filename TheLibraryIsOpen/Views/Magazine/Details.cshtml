@@ -3,8 +3,6 @@
 @using TheLibraryIsOpen.Models.DBModels
 @inject ClientManager cm
 @{
-    bool signedIn = User.Identity.IsAuthenticated;
-    // get clientEmail
     string clientEmail = User.Identity.Name;
     Client client = await cm.FindByEmailAsync(clientEmail);
     bool isAdmin = client.IsAdmin;

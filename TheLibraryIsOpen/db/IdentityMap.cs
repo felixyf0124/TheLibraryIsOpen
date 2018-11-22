@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database;
-using TheLibraryIsOpen.Models.DBModels;
 using TheLibraryIsOpen.Models;
+using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.db
@@ -233,38 +232,38 @@ namespace TheLibraryIsOpen.db
                                 prevMovie.Producers = _db.GetAllMovieProducers(movie.MovieId);
 
                             var actorsToAdd = movie.Actors?
-                                                    .Select(a => a.PersonId)?
+                                                    .Select(a => a.PersonId)
                                                     .Except(prevMovie.Actors?
                                                         .Select(a => a.PersonId) ?? new List<int>())
                                                    .ToArray()
-                                                    ?? new int[0];
+                                                    ?? Array.Empty<int>();
 
                             _db.CreateMovieActors(movie.MovieId, actorsToAdd);
 
                             var actorsToRemove = prevMovie.Actors?
-                                                    .Select(a => a.PersonId)?
+                                                    .Select(a => a.PersonId)
                                                     .Except(movie.Actors?
                                                         .Select(a => a.PersonId) ?? new List<int>())
                                                     .ToArray()
-                                                    ?? new int[0];
+                                                    ?? Array.Empty<int>();
 
                             _db.DeleteMovieActors(movie.MovieId, actorsToRemove);
 
                             var producersToAdd = movie.Producers?
-                                                        .Select(a => a.PersonId)?
+                                                        .Select(a => a.PersonId)
                                                         .Except(prevMovie.Producers?
                                                             .Select(p => p.PersonId) ?? new List<int>())
                                                       .ToArray()
-                                                        ?? new int[0];
+                                                        ?? Array.Empty<int>();
 
                             _db.CreateMovieProducers(movie.MovieId, producersToAdd);
 
                             var producersToRemove = prevMovie.Producers?
-                                                        .Select(a => a.PersonId)?
+                                                        .Select(a => a.PersonId)
                                                         .Except(movie.Producers?
                                                             .Select(p => p.PersonId) ?? new List<int>())
                                                        .ToArray()
-                                                        ?? new int[0];
+                                                        ?? Array.Empty<int>();
 
                             _db.DeleteMovieProducers(movie.MovieId, producersToRemove);
 
@@ -587,21 +586,24 @@ namespace TheLibraryIsOpen.db
             });
         }
         public Task<ModelCopy> FindModelCopy(int id)
-         {return Task.Factory.StartNew(() => {
-            while (!_modelCopyLock.TryEnterReadLock(10)) ;
-            _modelCopy.TryGetValue(id, out ModelCopy mcToFind);
-            _modelCopyLock.ExitReadLock();
-            if (mcToFind == null)
+        {
+            return Task.Factory.StartNew(() =>
             {
-                mcToFind = _db.GetModelCopyById(id);
-                if (mcToFind != null)
+                while (!_modelCopyLock.TryEnterReadLock(10)) ;
+                _modelCopy.TryGetValue(id, out ModelCopy mcToFind);
+                _modelCopyLock.ExitReadLock();
+                if (mcToFind == null)
                 {
-                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
-                    _modelCopy.TryAdd(id, mcToFind);
-                    _modelCopyLock.ExitWriteLock();
+                    mcToFind = _db.GetModelCopyById(id);
+                    if (mcToFind != null)
+                    {
+                        while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                        _modelCopy.TryAdd(id, mcToFind);
+                        _modelCopyLock.ExitWriteLock();
+                    }
                 }
-            }
-             return mcToFind;});
+                return mcToFind;
+            });
         }
 
         /// <summary>
@@ -611,20 +613,24 @@ namespace TheLibraryIsOpen.db
         /// <param name="mType">Model type</param>
         /// <returns></returns>
         public Task<List<ModelCopy>> FindModelCopies(int mId, TypeEnum mType)
-         {return Task.Factory.StartNew(() => {
-            List<ModelCopy> mcToFind = _db.FindModelCopiesOfModel(mId, mType);
-            mcToFind.ForEach(mc =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_modelCopyLock.TryEnterWriteLock(10)) ;
-                _modelCopy.TryAdd(mc.id, mc);
-                _modelCopyLock.ExitWriteLock();
+                List<ModelCopy> mcToFind = _db.FindModelCopiesOfModel(mId, mType);
+                mcToFind.ForEach(mc =>
+                {
+                    while (!_modelCopyLock.TryEnterWriteLock(10)) ;
+                    _modelCopy.TryAdd(mc.id, mc);
+                    _modelCopyLock.ExitWriteLock();
+                });
+                return mcToFind;
             });
-             return mcToFind;});
         }
 
         public Task<bool> DeleteFreeModelCopy(ModelCopy mc, int id)
         {
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(() =>
+            {
                 _db.DeleteFreeModelCopy(mc, id);
                 return true;
             });
@@ -663,97 +669,118 @@ namespace TheLibraryIsOpen.db
         }
 
         public Task<List<Log>> GetAllLogs()
-         {return Task.Factory.StartNew(() => {
-
-            List<Log> logToFind = _db.GetAllLogs();
-
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
-            });
 
-             return logToFind;});
+                List<Log> logToFind = _db.GetAllLogs();
+
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
+
+                return logToFind;
+            });
         }
 
         public Task<List<Log>> FindLogsByDate(DateTime date, bool exact)
-         {return Task.Factory.StartNew(() => {
-            List<Log> logToFind =  _db.GetLogsByDate(date, exact);
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
+                List<Log> logToFind = _db.GetLogsByDate(date, exact);
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
+                return logToFind;
             });
-             return logToFind;});
         }
 
         public Task<List<Log>> FindLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
-         {return Task.Factory.StartNew(() => {
-            List<Log> logToFind = _db.GetLogsByPeriod(dateStart, dateEnd, exact);
-
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
+                List<Log> logToFind = _db.GetLogsByPeriod(dateStart, dateEnd, exact);
+
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
+                return logToFind;
             });
-             return logToFind;});
         }
 
         public Task<List<Log>> FindLogsByModelTypeAndId(TypeEnum type, int id)
-         {return Task.Factory.StartNew(() => {
-            List<Log> logToFind =  _db.GetLogsByModelTypeAndId(type, id);
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
-            });
+                List<Log> logToFind = _db.GetLogsByModelTypeAndId(type, id);
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
 
-             return logToFind;});
+                return logToFind;
+            });
         }
 
         public Task<List<Log>> FindLogsByClientID(int id)
-         {return Task.Factory.StartNew(() => {
-            List<Log> logToFind = _db.GetLogsByClientID(id);
-
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
-            });
+                List<Log> logToFind = _db.GetLogsByClientID(id);
 
-             return logToFind;});
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
+
+                return logToFind;
+            });
         }
 
         public Task<List<Log>> FindLogsByCopyID(int id)
-         {return Task.Factory.StartNew(() => {
-            List<Log> logToFind = _db.GetLogsByCopyID(id);
-
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
-            });
+                List<Log> logToFind = _db.GetLogsByCopyID(id);
 
-             return logToFind;});
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
+
+                return logToFind;
+            });
         }
 
         public Task<List<Log>> FindLogsByTransaction(TransactionType transac)
-         {return Task.Factory.StartNew(() => {
-            List<Log> logToFind =  _db.GetLogsByTransaction(transac);
-
-            logToFind.ForEach(log =>
+        {
+            return Task.Factory.StartNew(() =>
             {
-                while (!_logLock.TryEnterWriteLock(10)) ;
-                _log.TryAdd(log.LogID, log);
-                _logLock.ExitWriteLock();
+                List<Log> logToFind = _db.GetLogsByTransaction(transac);
+
+                logToFind.ForEach(log =>
+                {
+                    while (!_logLock.TryEnterWriteLock(10)) ;
+                    _log.TryAdd(log.LogID, log);
+                    _logLock.ExitWriteLock();
+                });
+                return logToFind;
             });
-             return logToFind;});
         }
 
         // TODO: public List<SessionModel> TransactionUpdate() {}
