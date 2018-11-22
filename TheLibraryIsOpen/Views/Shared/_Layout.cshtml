@@ -61,7 +61,7 @@
                             </li>
                         }
                         Client client = await cm.FindByEmailAsync(clientEmail);
-                        bool isAdmin = client.IsAdmin;
+                        bool isAdmin = client?.IsAdmin ?? false;
                         if (isAdmin)
                         {
                             <li class="dropdown">
@@ -82,7 +82,7 @@
                         }
                         else
                         {
-                            <li class="navbar-text">Welcome, @client.FirstName!</li>
+                            <li class="navbar-text">Welcome, @client?.FirstName!</li>
                         }
 
                         if (cartCount != 0)
@@ -94,6 +94,8 @@
                         {
                             <li><a asp-controller="Cart" asp-action="Index"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
                         }
+
+                        <li><a asp-controller="Return" asp-action="Index">Your Items <span class="glyphicon glyphicon-folder-open"></span></a></li>
 
                         <li><a asp-controller="Authentication" asp-action="LogOut">LogOut</a></li>
                     }

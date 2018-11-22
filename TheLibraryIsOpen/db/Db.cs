@@ -2606,13 +2606,12 @@ namespace TheLibraryIsOpen.db
 
         }
 
-        //update books information
         public void UpdateModelCopies(params ModelCopy[] mcs)
         {
-            StringBuilder sb = new StringBuilder("UPDATE modelcopies SET ");
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mcs.Length; ++i)
             {
-                sb.Append($"modelType = \"{mcs[i].modelType}\", modelID = \"{mcs[i].modelID}\", borrowerID = \"{mcs[i].borrowerID}\", borrowedDate = \"{mcs[i].borrowedDate}\", returnDate = \"{mcs[i].returnDate}\" WHERE (ID = \"{mcs[i].id}\"){(i + 1 < mcs.Length ? "," : ";")}");
+                sb.Append($"UPDATE modelcopies SET modelType = {(int)mcs[i].modelType}, modelID = {mcs[i].modelID}, borrowerID = {mcs[i].borrowerID?.ToString() ?? "NULL"}, borrowedDate = '{mcs[i].borrowedDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "NULL"}', returnDate = {mcs[i].returnDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "NULL"} WHERE (ID = {mcs[i].id});");
             }
 
             QuerySend(sb.ToString());
@@ -2685,7 +2684,7 @@ namespace TheLibraryIsOpen.db
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int id = (int)dr["id"];
                             int modelType = (int)dr["modelType"];
@@ -2732,10 +2731,10 @@ namespace TheLibraryIsOpen.db
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         //Read the data
-                        if (dr.Read())
+                        while (dr.Read())
                         {
                             int id = (int)dr["id"];
-                            int modelType = (int)dr["modelType"];
+                            int modelType = (int)(sbyte) dr["modelType"];
                             int modelID = (int)dr["modelID"];
                             int borrowerID = (int)dr["borrowerID"];
                             DateTime borrowedDate = (DateTime)dr["borrowedDate"];
@@ -2874,6 +2873,18 @@ WHERE
             //Check if all items selected by the Client have been successfully borrowed
             int numNowBorrowed = CountModelCopiesOfClient(clientId);
             return ((numNowBorrowed - numAlreadyBorrowed) == numToBorrow);
+        }
+
+
+        public void returnItems(params ModelCopy[] modelCopies)
+        {
+
+            StringBuilder sb = new StringBuilder("UPDATE modelcopies SET borrowerId = NULL WHERE id IN (");
+            for (int i = 0; i < modelCopies.Length; ++i)
+            {
+                sb.Append($"{modelCopies[i].id}{(i + 1 < modelCopies.Length ? ", " : ");")}");
+            }
+            QuerySend(sb.ToString());
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using TheLibraryIsOpen.Constants;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Models.DBModels

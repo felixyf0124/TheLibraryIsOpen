@@ -10,6 +10,7 @@ using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models;
 using TheLibraryIsOpen.Models.Cart;
 using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Models.Return;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
@@ -23,8 +24,9 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
+        private readonly ModelCopyCatalog _modelCopyCatalog;
 
-        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
+        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap, ModelCopyCatalog modelCopyCatalog)
         {
             _cm = cm;
             _bookc = bc;
@@ -32,6 +34,7 @@ namespace TheLibraryIsOpen.Controllers
             _musicc = muc;
             _magazinec = mac;
             _identityMap = imap;
+            _modelCopyCatalog = modelCopyCatalog;
         }
 
         public async Task<IActionResult> Index()
@@ -165,6 +168,33 @@ namespace TheLibraryIsOpen.Controllers
             HttpContext.Session.SetObject("Items", null);
             HttpContext.Session.SetInt32("ItemsCount", 0);
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Return(List<ReturnViewModel> mtr)
+        {
+            // do in a contract in preconditions 
+            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
+
+            List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
+            //
+
+            var modelsToReturn = mtr.Where(rvm => rvm.ToReturn).Select(rvm => new ModelCopy
+            {
+                id = rvm.ModelCopyId,
+                modelType = rvm.ModelType,
+                borrowedDate = rvm.BorrowDate,
+                borrowerID = null,
+                returnDate = rvm.ReturnDate,
+                modelID = rvm.ModelId
+            });
+            foreach (var item in modelsToReturn)
+            {
+                await _modelCopyCatalog.UpdateAsync(item);
+            }
+
+            await _modelCopyCatalog.CommitAsync();
+
+            return RedirectToAction("Index", "Return");
         }
 
 
