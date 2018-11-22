@@ -43,6 +43,7 @@ namespace TheLibraryIsOpen
 
             services.AddSingleton(typeof(Db));
             services.AddSingleton(typeof(Search));
+            services.AddScoped(typeof(SearchTransactions));
             services.AddScoped(typeof(UnitOfWork));
             services.AddScoped(typeof(IdentityMap));
 

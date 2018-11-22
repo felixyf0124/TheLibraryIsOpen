@@ -41,5 +41,10 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return await Store.UpdateAsync(user, new System.Threading.CancellationToken(false));
         }
 
+        public async Task<List<Client>> FindClientsByNameAsync(string name)
+        {
+            return await ((ClientStore)Store).GetClientsByNameAsync(name);
+        }
+
     }
 }
