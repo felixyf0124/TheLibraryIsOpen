@@ -80,8 +80,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return modelCopy;
         }
 
-       
 
+        public async Task<bool> CommitAsync(){
+
+            return await _unitOfWork.CommitAsync();
+        }
 
 
 

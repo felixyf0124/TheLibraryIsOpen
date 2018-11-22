@@ -12,7 +12,7 @@ namespace TheLibraryIsOpen.Models.Return
         public string Title { get; set; }
         public TypeEnum Type { get; set; }
         public int ModelCopyId { get; set; }
-        public TypeEnum modelType { get; set; }
+        public TypeEnum ModelType { get; set; }
         public DateTime BorrowDate { get; set; }
         public DateTime ReturnDate { get; set; }
         public bool ToReturn { get; set; } = false;
