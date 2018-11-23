@@ -15,14 +15,14 @@ namespace TheLibraryIsOpen.Constants
             Person = 4,
             ModelCopy = 5,
             Log = 6
-        };
+        }
 
         public enum BorrowType
         {
             Borrowed = 0,
             NotBorrowed = 1,
             Any = 3
-        };
+        }
 
         public enum TransactionType
         {

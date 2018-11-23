@@ -1,0 +1,208 @@
+﻿@model IEnumerable<TheLibraryIsOpen.Models.PrintedLog>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@{
+    string clientID = (string)TempData["ClientID"];
+    string copyID = (string)TempData["copyid"];
+    string modelType = (string)TempData["modeltype"];
+    string modelID = (string)TempData["modelid"];
+    string date1 = "";
+    string date2 = "";
+    string time1 = "";
+    string time2 = "";
+    date1 = (string)TempData["date1"];
+    date2 = (string)TempData["date2"];
+    time1 = (string)TempData["time1"];
+    time2 = (string)TempData["time2"];
+    bool exactTime = TempData["exacttime"] as bool? ?? false;
+    string transac = (string)TempData["transc"];
+    string datefilter = (string)TempData["datefilter"];
+}
+
+<h2>Transaction Logs</h2>
+<div>
+    <form asp-action="SearchTransactionHistory" method="post">
+        <div class="form-group input-group stylish-input-group row form-horizontal table-bordered" style="margin-left: 0.5em; width: 100%; padding: 1em 1em 1em 1em;">
+            <div class="col-md-11 rounded-left" style="padding-left: 3em;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-5"><label class="control-label">Client Name</label></div>
+                        <div class="col-md-7"><input class="form-control col-md-7" name="clientID" type="text" placeholder="Client Name" value="@clientID" /></div>
+                    </div>
+                    <div class="col-md-8"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-5"><label class="control-label">Copy ID</label></div>
+                        <div class="col-md-7"><input class="form-control" name="copyID" type="text" placeholder="CopyID" value="@copyID" /></div>
+                    </div>
+                    <div class="col-md-8"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-5"><label class="control-label">Date/Period</label></div>
+                        <div class="col-md-7">
+                            <select name="datetype" id="_datetype" class="form-control" onchange="checkDatetype()">
+                                <!option value="all" @(datefilter is null ? "selected" : "")>All</!option>
+                                <!option value="date" @(datefilter == "date" ? "selected" : "")>Date</!option>
+                                <!option value="period" @(datefilter == "period" ? "selected" : "")>Period</!option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-8"></div>
+                </div>
+                <div id="d1" style="display: none;" class="row">
+                    <br/>
+                    <div class="row col-md-2">
+                        <div class="col-md-6"><label class="control-label">Exact Time</label></div>
+                        <div class="col-md-6"><input class="form-control" name="exacttime" type="checkbox" id="_exact" value="true"/></div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-md-6 form-inline">
+                                    <label class="control-label">Date 1</label>
+                                    <input class="form-control" type="date" id="d1" name="date1" value="@date1">
+                                </div>
+                                <div id="t1" display="none" class="col-md-6 form-inline">
+                                    <label class="control-label">Time 1</label>
+                                    <input class="form-control" type="time" name="time1" value="@time1"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="d2" display="none" class="col-md-6 form-inline">
+                                    <label class="control-label">Date 2</label>
+                                    <input class="form-control" type="date" name="date2" value="@date2">
+                                </div>
+                                <div id="t2" display="none" class="col-md-6 form-inline">
+                                    <label class="control-label">Time 2</label>
+                                    <input class="form-control" type="time" name="time2" value="@time2"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-6">
+                            <label class="control-label">Transaction Type</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <select name="transc" class="form-control">
+                                <!option value="" @(transac is null ? "selected" : "")>All</!option>
+                                <!option value="Borrow" @(transac == "Borrow" ? "selected" : "")>Borrow</!option>
+                                <!option value="Return" @(transac == "Return" ? "selected" : "")>Return</!option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-8"></div>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <span>
+                    <button type="submit" class="btn btn-lg" style="padding-top: 5em; padding-bottom: 5em;">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Client
+            </th>
+            <th>
+                Transaction
+            </th>
+            <th>
+                Item Type
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Physical Copy ID
+            </th>
+            <th>
+                Date of Transaction
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClientName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Transaction)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModelType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModelName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModelCopyID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionTime)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function checkDatetype() {
+            var datetype = document.getElementById("_datetype").value;
+            var exact = document.getElementById("_exact");
+            var d1 = document.getElementById("d1");
+            var d2 = document.getElementById("d2");
+            var t1 = document.getElementById("t1");
+            var t2 = document.getElementById("t2");
+            if (datetype === "all") {
+                exact.style.display = "none";
+                d1.style.display = "none";
+                d2.style.display = "none";
+                t1.style.display = "none";
+                t2.style.display = "none";
+
+            }
+            if (datetype === "date") {
+                exact.style.display = "block";
+                d1.style.display = "block";
+                d2.style.display = "none";
+                if (exact.value !== "")
+                    t1.style.display = "block";
+                else
+                    t1.style.display = "none";
+                t2.style.display = "none";
+            }
+            if (datetype === "period") {
+                exact.style.display = "block";
+                d1.style.display = "block";
+                d2.style.display = "block";
+                if (exact.value !== "") {
+                    t1.style.display = "block";
+                    t2.style.display = "block";
+                }
+                else {
+                    t1.style.display = "none";
+                    t2.style.display = "none";
+                }
+            }
+        }
+    </script>
+}

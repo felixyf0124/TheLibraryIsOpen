@@ -45,7 +45,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            TempData["AvailableCopies"] = await _bc.getNoOfAvailableModelCopies(book);
+            TempData["AvailableCopies"] = await _bc.GetNoOfAvailableModelCopies(book);
 
             return View(book);
         }
@@ -185,5 +185,21 @@ namespace TheLibraryIsOpen.Controllers
         {
             return (_bc.FindByIdAsync(id) != null);
         }
+        
+
+        public async Task<IActionResult> AddModelCopy(string id)
+        {
+            await _bc.AddModelCopy(id);
+            await _bc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+        public async Task<IActionResult> DeleteModelCopy(string id)
+        {
+            await _bc.DeleteFreeModelCopy(id);
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+
     }
 }

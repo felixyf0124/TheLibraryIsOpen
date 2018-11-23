@@ -44,7 +44,7 @@ namespace TheLibraryIsOpen.Controllers
                 return NotFound();
             }
 
-            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(music);
+            TempData["AvailableCopies"] = await _mc.GetNoOfAvailableModelCopies(music);
 
             return View(music);
         }
@@ -175,6 +175,19 @@ namespace TheLibraryIsOpen.Controllers
         private bool MusicExists(string id)
         {
             return (_mc.FindMusicByIdAsync(id) != null);
+        }
+
+        public async Task<IActionResult> AddModelCopy(string id)
+        {
+            await _mc.AddModelCopy(id);
+            await _mc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
+        public async Task<IActionResult> DeleteModelCopy(string id)
+        {
+            await _mc.DeleteFreeModelCopy(id);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
     }

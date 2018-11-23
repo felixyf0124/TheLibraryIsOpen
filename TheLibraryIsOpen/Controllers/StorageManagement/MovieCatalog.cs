@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
-using TheLibraryIsOpen.db;
+using TheLibraryIsOpen.db; 
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
 
@@ -13,15 +12,13 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
-        private readonly Db _db; // TODO: delete this when db code is removed
+       
 
-
-        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
+        public MovieCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _im = im;
-            _db = db; // TODO: delete this when db code is removed
-
+          
         }
 
         /*
@@ -34,7 +31,6 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             {
                 return Task.Factory.StartNew(() =>
                 {
-                    // TODO: manage errors if register returns false
                     _unitOfWork.RegisterNew(movie);
                     return IdentityResult.Success;
                 });
@@ -76,126 +72,70 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<List<Movie>> GetAllMoviesDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return _db.GetAllMovies();
-            });
+            return _im.GetAllMovies();
+         
         }
 
         public async Task<Movie> GetMovieByIdAsync(int movieId)
         {
             return await _im.FindMovie(movieId);
         }
-
-
-        /*
-         * The following functions are made for the Person table
-         */
-
-        public Task<IdentityResult> CreatePersonAsync(Person person)
-        {
-            if (person != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _unitOfWork.RegisterNew(person);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Person object was null" });
-            });
-        }
-
-        public Task UpdatePersonAsync(Person person)
-        {
-            if (person != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _unitOfWork.RegisterDirty(person);
-                });
-            }
-            throw new ArgumentNullException("person");
-        }
-
-        public Task<IdentityResult> DeletePersonAsync(Person person)
-        {
-            if (person != null)
-            {
-                return Task.Factory.StartNew(() =>
-                {
-                    _unitOfWork.RegisterDeleted(person);
-                    return IdentityResult.Success;
-                });
-            }
-            return Task.Factory.StartNew(() =>
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Person object was null" });
-            });
-        }
-
+        
         public Task<List<Person>> GetAllPersonDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllPerson();
-            });
+            return _im.GetAllPerson();
+  
         }
-
-        public async Task<Person> GetPersonByIdAsync(int personId)
-        {
-            return await _im.FindPerson(personId);
-        }
-
-        /*
-         * The following functions are made for the movie producer table
-         */
-
         public Task<List<Person>> GetAllMovieProducerDataAsync(int movieID)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllMovieProducers(movieID);
-            });
+           
+                return _im.GetAllMovieProducers(movieID);
+ 
         }
-
-        /*
-         * The following functions are made for the movie actor table
-         */
-
         public Task<List<Person>> GetAllMovieActorDataAsync(int movieID)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                // TODO: replace with _im
-                return _db.GetAllMovieActors(movieID);
-            });
+            return _im.GetAllMovieActors(movieID);
+           
         }
+
         public Task<bool> CommitAsync()
         {
             return _unitOfWork.CommitAsync();
         }
 
-        public Task<int> getNoOfAvailableModelCopies(Movie movie)
+        public Task<int> GetNoOfAvailableModelCopies(Movie movie)
+        {
+            return _im.CountModelCopiesOfModel(movie.MovieId, (int)TypeEnum.Movie, BorrowType.NotBorrowed);
+
+        }
+        public Task<IdentityResult> AddModelCopy(string id)
         {
             return Task.Factory.StartNew(() =>
             {
-
-                int AvailableCopies = _db.CountModelCopiesOfModel(movie.MovieId, (int)TypeEnum.Movie, BorrowType.NotBorrowed);
-
-                return AvailableCopies;
-
+               _unitOfWork.RegisterNew(new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Movie
+                });
+                return IdentityResult.Success;
             });
-
+            
         }
-
-        public async Task<List<ModelCopy>> getModelCopies(Movie movie)
+        public Task<IdentityResult> DeleteFreeModelCopy(string id)
         {
-            return await _im.FindModelCopies(movie.MovieId, TypeEnum.Movie);
+            return Task.Factory.StartNew(() =>
+            {
+               
+                ModelCopy temp = new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Movie
+                };
+                _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                return IdentityResult.Success;
+            });
+           
         }
     }
 }
+

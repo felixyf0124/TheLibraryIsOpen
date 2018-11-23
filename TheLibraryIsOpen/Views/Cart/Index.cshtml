@@ -53,10 +53,24 @@
             </div><hr />
         }
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-2">
+                Total: @totalBorrowed (@(totalBorrowed-Model.Count) already in account) / @borrowMax
+            </div>
+            <div class="col-md-8">
             </div>
             <div class="col-md-2">
-                <!a class="btn btn-primary" @(canBorrow ? "" : "disabled")><label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Checkout</!a>
+                @if (canBorrow)
+                {
+                    <a asp-controller="Cart" asp-action="Borrow" class="btn btn-primary">
+                        <label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Checkout
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Cart" asp-action="Borrow" class="btn btn-primary" disabled>
+                        <label class="glyphicon glyphicon-shopping-cart"></label>&nbsp; Checkout
+                    </a>
+                }
             </div>
         </div>
 

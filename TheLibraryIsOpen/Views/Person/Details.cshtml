@@ -1,0 +1,41 @@
+﻿@model TheLibraryIsOpen.Models.DBModels.Person
+@using TheLibraryIsOpen.Controllers.StorageManagement
+@using TheLibraryIsOpen.Models.DBModels
+@inject ClientManager cm
+@{
+    string clientEmail = User.Identity.Name;
+    Client client = await cm.FindByEmailAsync(clientEmail);
+    bool isAdmin = client.IsAdmin;
+}
+
+@{
+    ViewData["Title"] = "Details";
+}
+<h2>Details</h2>
+<div>
+    <h4>Person</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" class="btn btn-sm btn-success" asp-route-id="@Model.PersonId"><label class="glyphicon glyphicon-edit"></label>&nbsp; Edit</a>
+        <a asp-action="Delete" class="btn btn-sm btn-danger" asp-route-id="@Model.PersonId"><label class="glyphicon glyphicon-trash"></label>&nbsp; Delete</a>
+    }
+
+</div>

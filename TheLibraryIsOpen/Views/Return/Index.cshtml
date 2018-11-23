@@ -1,0 +1,84 @@
+﻿@model List<TheLibraryIsOpen.Models.Return.ReturnViewModel>
+@using static TheLibraryIsOpen.Constants.TypeConstants
+@{
+    ViewData["Title"] = "Return Page";
+    bool canBorrow = (bool)TempData["canBorrow"];
+    int borrowedItems = (int)TempData["totalBorrowed"];
+    int borrowMax = (int)TempData["borrowMax"];
+}
+
+<h2>Items Borrowed</h2><hr />
+<div class="row table-bordered rounded-left rounded-right" style="        padding: 1em 1em 1em 1em;">
+    <div class="row" style="        padding: 2em 2em 2em 2em;">
+
+        @if (borrowedItems == 0)
+        {
+            <h3>Sorry! You haven't borrowed any items yet!</h3>
+        }
+        else
+        {
+            <form method="post" action="/Cart/Return">
+                @for (int i = 0; i < Model.Count; ++i)
+                {
+
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h3>
+                                @switch (Model[i].ModelType)
+                                {
+                                    case TypeEnum.Book:
+                                        <label class="glyphicon glyphicon-book"></label>
+                                        break;
+                                    case TypeEnum.Magazine:
+                                        <label class="glyphicon glyphicon-file"></label>
+                                        break;
+                                    case TypeEnum.Movie:
+                                        <label class="glyphicon glyphicon-film"></label>
+                                        break;
+                                    case TypeEnum.Music:
+                                        <label class="glyphicon glyphicon-music"></label>
+                                        break;
+                                }
+                                @Model[i].Title
+                            </h3>
+                        </div>
+                        <div class="col-sm-1">
+                            @Html.HiddenFor(model => model[i].Title)
+                            @Html.HiddenFor(model => model[i].BorrowDate)
+                            @Html.HiddenFor(model => model[i].ModelCopyId)
+                            @Html.HiddenFor(model => model[i].ModelId)
+                            @Html.HiddenFor(model => model[i].ModelType)
+                            @Html.CheckBoxFor(model => model[i].ToReturn, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Borrowed Date: @Model[i].BorrowDate
+                        </div>
+                        <div class="col">
+                            @if (@DateTime.Now > @Model[i].ReturnDate)
+                            {
+                                <p style="color:red;">Return Date: @Model[i].ReturnDate <b>OVERDUE</b></p>
+                            }
+                            else
+                            {
+                                <p>Return Date: @Model[i].ReturnDate</p>
+                            }
+
+                        </div>
+                    </div>
+                    <hr />
+
+                }
+                <div class="row">
+                    <div class="col-md-10"></div>
+                    <div class="col-md-2">
+                        <input type="submit" class="btn btn-primary" value="Submit" />
+                    </div>
+                </div>
+            </form>
+        }
+
+    </div>
+</div>
+

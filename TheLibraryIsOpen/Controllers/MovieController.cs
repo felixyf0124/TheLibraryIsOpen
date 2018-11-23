@@ -93,7 +93,7 @@ namespace TheLibraryIsOpen.Controllers
             toDetails.Producers = await _mc.GetAllMovieProducerDataAsync(id);
             toDetails.Actors = await _mc.GetAllMovieActorDataAsync(id);
 
-            TempData["AvailableCopies"] = await _mc.getNoOfAvailableModelCopies(toDetails);
+            TempData["AvailableCopies"] = await _mc.GetNoOfAvailableModelCopies(toDetails);
 
             return View(toDetails);
 
@@ -127,7 +127,7 @@ namespace TheLibraryIsOpen.Controllers
             }
             catch
             {
-                return RedirectToAction("Home", "Index");
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -139,6 +139,19 @@ namespace TheLibraryIsOpen.Controllers
             HttpContext.Session.SetObject("Items", Items);
             HttpContext.Session.SetInt32("ItemsCount", Items.Count);
             return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+        public async Task<IActionResult> AddModelCopy(string id)
+        {
+            await _mc.AddModelCopy(id);
+            await _mc.CommitAsync();
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
+        }
+
+        public async Task<IActionResult> DeleteModelCopy(string id)
+        {
+            await _mc.DeleteFreeModelCopy(id);
+            return RedirectToAction(nameof(Details), new { id = id.ToString() });
         }
 
     }

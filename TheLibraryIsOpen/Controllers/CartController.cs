@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TheLibraryIsOpen.Constants;
 using TheLibraryIsOpen.Controllers.StorageManagement;
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models;
-using TheLibraryIsOpen.Models.DBModels;
-using TheLibraryIsOpen.Models.Search;
-using static TheLibraryIsOpen.Constants.TypeConstants;
 using TheLibraryIsOpen.Models.Cart;
+using TheLibraryIsOpen.Models.DBModels;
+using TheLibraryIsOpen.Models.Return;
+using static TheLibraryIsOpen.Constants.TypeConstants;
 
 namespace TheLibraryIsOpen.Controllers
 {
@@ -25,10 +24,9 @@ namespace TheLibraryIsOpen.Controllers
         private readonly MovieCatalog _moviec;
         private readonly MagazineCatalog _magazinec;
         private readonly IdentityMap _identityMap;
-       
+        private readonly ModelCopyCatalog _modelCopyCatalog;
 
-
-        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap)
+        public CartController(ClientManager cm, BookCatalog bc, MusicCatalog muc, MovieCatalog moc, MagazineCatalog mac, IdentityMap imap, ModelCopyCatalog modelCopyCatalog)
         {
             _cm = cm;
             _bookc = bc;
@@ -36,7 +34,7 @@ namespace TheLibraryIsOpen.Controllers
             _musicc = muc;
             _magazinec = mac;
             _identityMap = imap;
-
+            _modelCopyCatalog = modelCopyCatalog;
         }
 
         public async Task<IActionResult> Index()
@@ -83,7 +81,7 @@ namespace TheLibraryIsOpen.Controllers
             }
 
             List<CartViewModel> result = new List<CartViewModel>(Items.Count);
-            
+
             result.AddRange(bookTasks.Select(t =>
             {
                 t.Wait();
@@ -132,9 +130,73 @@ namespace TheLibraryIsOpen.Controllers
             cartCount = cartCount - 1;
 
             HttpContext.Session.SetInt32("ItemsCount", cartCount);
-          
+
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        //registers modelcopies of selected items to the client
+        public async Task<IActionResult> Borrow()
+        {
+            List<SessionModel> modelsToBorrow = HttpContext.Session.GetObject<List<SessionModel>>("Items") ?? new List<SessionModel>();
+
+            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
+            List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
+
+            //Borrow all available copies of selected items
+            Boolean successfulReservation = await _identityMap.ReserveModelCopiesToClient(modelsToBorrow, client.clientId);
+
+            //if not all items were borrowed, determine which ones were not borrowed and display them to the client
+            if (!successfulReservation)
+            {
+                List<ModelCopy> nowBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
+                HashSet<ModelCopy> borrowed = nowBorrowed.Except(alreadyBorrowed).ToHashSet();
+                List<SessionModel> notBorrowed = modelsToBorrow
+                                                    .Select(m => new { Id = m.Id, MT = m.ModelType })
+                                                    .Except(borrowed
+                                                            .Select(m => new { Id = m.modelID, MT = m.modelType }))
+                                                    .Select(c => new SessionModel { Id = c.Id, ModelType = c.MT })
+                                                    .ToList();
+
+                HttpContext.Session.SetObject("Items", notBorrowed);
+                HttpContext.Session.SetInt32("ItemsCount", notBorrowed.Count);
+                return RedirectToAction(nameof(Index));
+            }
+
+            //TODO Return to Home?
+            HttpContext.Session.SetObject("Items", null);
+            HttpContext.Session.SetInt32("ItemsCount", 0);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Return(List<ReturnViewModel> mtr)
+        {
+            // do in a contract in preconditions 
+            Client client = await _cm.FindByEmailAsync(User.Identity.Name);
+
+            List<ModelCopy> alreadyBorrowed = await _identityMap.FindModelCopiesByClient(client.clientId);
+            //
+
+            var modelsToReturn = mtr.Where(rvm => rvm.ToReturn).Select(rvm => new ModelCopy
+            {
+                id = rvm.ModelCopyId,
+                modelType = rvm.ModelType,
+                borrowedDate = rvm.BorrowDate,
+                borrowerID = null,
+                returnDate = rvm.ReturnDate,
+                modelID = rvm.ModelId
+            });
+            foreach (var item in modelsToReturn)
+            {
+                await _modelCopyCatalog.UpdateAsync(item);
+            }
+
+            await _modelCopyCatalog.CommitAsync();
+
+            return RedirectToAction("Index", "Return");
+        }
+
+
     }
 }

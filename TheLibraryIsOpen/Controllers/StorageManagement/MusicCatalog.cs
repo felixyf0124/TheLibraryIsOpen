@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TheLibraryIsOpen.Database; // TODO: delete this when db code is removed
 using TheLibraryIsOpen.db;
 using TheLibraryIsOpen.Models.DBModels;
 using static TheLibraryIsOpen.Constants.TypeConstants;
@@ -13,14 +13,11 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IdentityMap _im;
-        private readonly Db _db; // TODO: delete this when db code is removed
-
-
-        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im, Db db)
+       
+        public MusicCatalog(UnitOfWork unitOfWork, IdentityMap im)
         {
             _unitOfWork = unitOfWork;
             _im = im;
-            _db = db; // TODO: delete this when db code is removed
 
         }
 
@@ -83,11 +80,9 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
 
         public Task<List<Music>> GetAllMusicDataAsync()
         {
-            return Task.Factory.StartNew(() =>
-            {
-                //TODO: replace with_im
-                return _db.GetAllMusic();
-            });
+
+          return _im.GetAllMusic();
+         
         }
 
         public Task<bool> CommitAsync()
@@ -95,22 +90,47 @@ namespace TheLibraryIsOpen.Controllers.StorageManagement
             return _unitOfWork.CommitAsync();
         }
 
-        public Task<int> getNoOfAvailableModelCopies(Music music)
+
+
+        public Task<int> GetNoOfAvailableModelCopies(Music music)
         {
-            return Task.Factory.StartNew(() =>
-            {
 
-                int AvailableCopies = _db.CountModelCopiesOfModel(music.MusicId, (int)TypeEnum.Music, BorrowType.NotBorrowed);
-
-                return AvailableCopies;
-
-            });
+           return _im.CountModelCopiesOfModel(music.MusicId, (int)TypeEnum.Music, BorrowType.NotBorrowed);
 
         }
 
-        public async Task<List<ModelCopy>> getModelCopies(Music music)
+
+        public async Task<List<ModelCopy>> GetModelCopies(Music music)
         {
             return await _im.FindModelCopies(music.MusicId, TypeEnum.Music);
+        }
+
+        public Task<IdentityResult> AddModelCopy(string id)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                _unitOfWork.RegisterNew(new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Music
+                });
+                return IdentityResult.Success;
+            });
+            
+        }
+        public Task<IdentityResult> DeleteFreeModelCopy(string id)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+               
+                ModelCopy temp = new ModelCopy
+                {
+                    modelID = Int32.Parse(id),
+                    modelType = TypeEnum.Music
+                };
+                _im.DeleteFreeModelCopy(temp, Int32.Parse(id));
+                return IdentityResult.Success;
+            });
         }
     }
 }
