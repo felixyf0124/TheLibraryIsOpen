@@ -410,7 +410,7 @@ namespace TheLibraryIsOpen.db
             // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
-        
+
         public List<Magazine> GetAllMagazines()
         {
             string query = "SELECT * FROM magazines;";
@@ -812,7 +812,7 @@ namespace TheLibraryIsOpen.db
             string query = $"SELECT * FROM cds WHERE cdID = \" { id } \";";
             return QueryRetrieveMusic(query);
         }
-        
+
         /*
          * For retrieving ONE object ONLY
          * Method to retrieve music information by id or asin
@@ -1256,7 +1256,7 @@ namespace TheLibraryIsOpen.db
 
             List<int> list = new List<int>();
             string query = $"SELECT movieID FROM movieactor WHERE personID = \"{ movieActorID }\";";
-            
+
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 try
@@ -1271,7 +1271,7 @@ namespace TheLibraryIsOpen.db
                         while (dr.Read())
                         {
                             int movieId = (int)dr["movieID"];
-                            
+
                             list.Add(movieId);
                         }
                     }
@@ -1781,7 +1781,7 @@ namespace TheLibraryIsOpen.db
             {
                 sb.Append($"firstname = \"{people[i].FirstName}\", lastname = \"{people[i].LastName}\" WHERE personID = \"{people[i].PersonId}\"{(i + 1 < people.Length ? "," : ";")}");
             }
-           // Console.WriteLine(sb.ToString());
+            // Console.WriteLine(sb.ToString());
             QuerySend(sb.ToString());
         }
 
@@ -1789,16 +1789,16 @@ namespace TheLibraryIsOpen.db
         {
             StringBuilder sb = new StringBuilder("DELETE FROM person ");
             for (int i = 0; i < people.Length; ++i)
-            { 
+            {
                 List<int> movieIDByActor = GetMoviesIDByMovieActor(people[i].PersonId);
                 List<int> movieIDByProducer = GetMoviesIDByMovieProducer(people[i].PersonId);
-              //  Console.WriteLine(movieIDByActor.Count);
+                //  Console.WriteLine(movieIDByActor.Count);
                 //Console.WriteLine(movieIDByProducer.Count);
                 for (int j = 0; j < movieIDByActor.Count; j++)
                 {
-                   //Console.WriteLine("**********************");
-                   //Console.WriteLine(movieID[j]);
-                    DeleteMovieActor(movieIDByActor[j],people[i].PersonId);
+                    //Console.WriteLine("**********************");
+                    //Console.WriteLine(movieID[j]);
+                    DeleteMovieActor(movieIDByActor[j], people[i].PersonId);
                 }
                 for (int k = 0; k < movieIDByProducer.Count; k++)
                 {
@@ -1901,7 +1901,7 @@ namespace TheLibraryIsOpen.db
         public void DeleteMovieActor(int mid, int pid)
         {
             string query = $"DELETE FROM movieactor WHERE movieID = \"{mid}\" AND personID = \"{pid}\";";
-           // Console.WriteLine("666666666666666666666666666666666"+query);
+            // Console.WriteLine("666666666666666666666666666666666"+query);
             QuerySend(query);
         }
 
@@ -2913,13 +2913,22 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
+                            try
+                            {
+                                int logID = (int)dr["logID"];
+                                int clientID = (int)dr["clientID"];
+                                int modelCopyID = (int)dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType),
+                                    ((int)(sbyte)dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
                         }
                     }
                 }
@@ -2933,14 +2942,13 @@ WHERE
         {
             List<Log> list = new List<Log>();
             string query = "";
+            string dateTimeString = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
             if (!exact)
             {
-                string dateString = dateTime.ToShortDateString();
-                query = $"SELECT * FROM logs WHERE DATE(transactionTime) = '{dateString}';";
+                query = $"SELECT * FROM logs WHERE DATE(ADDTIME(transactionTime, '{DateTimeOffset.Now.Offset:g}')) = '{dateTime.ToShortDateString()}';";
             }
             else
             {
-                string dateTimeString = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 query = $"SELECT * FROM logs WHERE transactionTime = '{dateTimeString}';";
             }
 
@@ -2958,14 +2966,20 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
+                            try
+                            {
+                                int logID = (int)dr["logID"];
+                                int clientID = (int)dr["clientID"];
+                                int modelCopyID = (int)dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType),
+                                    ((int)(sbyte)dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch { }
                         }
                     }
 
@@ -2995,14 +3009,21 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime().ToLocalTime();
+                            try
+                            {
+                                int logID = (int)dr["logID"];
+                                int clientID = (int)dr["clientID"];
+                                int modelCopyID = (int)dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType),
+                                    ((int)(sbyte)dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime()
+                                    .ToLocalTime();
 
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch { }
                         }
                     }
 
@@ -3031,14 +3052,22 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
+                            try
+                            {
+                                int logID = (int)dr["logID"];
+                                int clientID = (int)dr["clientID"];
+                                int modelCopyID = (int)dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType),
+                                    ((int)(sbyte)dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
 
@@ -3067,14 +3096,20 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
+                            try
+                            {
+                                int logID = (int) dr["logID"];
+                                int clientID = (int) dr["clientID"];
+                                int modelCopyID = (int) dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType) Enum.Parse(typeof(TransactionType),
+                                    ((int) (sbyte) dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime) dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch { }
                         }
                     }
 
@@ -3103,14 +3138,20 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
+                            try
+                            {
+                                int logID = (int) dr["logID"];
+                                int clientID = (int) dr["clientID"];
+                                int modelCopyID = (int) dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType) Enum.Parse(typeof(TransactionType),
+                                    ((int) (sbyte) dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime) dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch { }
                         }
                     }
 
@@ -3128,13 +3169,13 @@ WHERE
             {
                 String dateStartString = dateStart.ToShortDateString();
                 String dateEndString = dateEnd.ToShortDateString();
-                query = $"SELECT * FROM logs WHERE DATE(transactionTime) BETWEEN '{dateStartString}' AND '{dateEndString}';";
+                query = $"SELECT * FROM logs WHERE DATE(ADDTIME(transactionTime, '{DateTimeOffset.Now.Offset:g}')) BETWEEN '{dateStartString}' AND '{dateEndString}';";
             }
             else
             {
                 String dateStartString = dateStart.ToString("yyyy-MM-dd HH:mm:ss");
                 String dateEndString = dateEnd.ToString("yyyy-MM-dd HH:mm:ss");
-                query = $"SELECT * FROM logs WHERE transactionTime BETWEEN '{dateStartString}' AND '{dateEndString}';";
+                query = $"SELECT * FROM logs WHERE DATE(ADDTIME(transactionTime, '{DateTimeOffset.Now.Offset:g}')) BETWEEN '{dateStartString}' AND '{dateEndString}';";
             }
 
             //Open connection
@@ -3151,14 +3192,20 @@ WHERE
                         //Read the data, create client object and store in list
                         while (dr.Read())
                         {
-                            int logID = (int)dr["logID"];
-                            int clientID = (int)dr["clientID"];
-                            int modelCopyID = (int)dr["modelCopyID"];
-                            TransactionType transaction = (TransactionType)Enum.Parse(typeof(TransactionType), ((int)(sbyte)dr["transaction"]).ToString());
-                            DateTime transactionTime = DateTime.SpecifyKind((DateTime)dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
+                            try
+                            {
+                                int logID = (int) dr["logID"];
+                                int clientID = (int) dr["clientID"];
+                                int modelCopyID = (int) dr["modelCopyID"];
+                                TransactionType transaction = (TransactionType) Enum.Parse(typeof(TransactionType),
+                                    ((int) (sbyte) dr["transaction"]).ToString());
+                                DateTime transactionTime = DateTime
+                                    .SpecifyKind((DateTime) dr["transactionTime"], DateTimeKind.Utc).ToLocalTime();
 
 
-                            list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                                list.Add(new Log(logID, clientID, modelCopyID, transaction, transactionTime));
+                            }
+                            catch { }
                         }
                     }
 

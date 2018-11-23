@@ -39,9 +39,9 @@ namespace TheLibraryIsOpen.Controllers
             string modelID = form["modelID"];
             string date1 = form["date1"];
             string date2 = form["date2"];
-            string time1 = form["time1"];
-            string time2 = form["time2"];
-            bool exactTime = (form["exacttime"] != "");
+            string time1 = string.IsNullOrEmpty(form["time1"]) ? "" : $" {form["time1"]}";
+            string time2 = string.IsNullOrEmpty(form["time2"]) ? "" : $" {form["time2"]}";
+            bool exactTime = form["exacttime"] == "true";
             string transac = form["transc"];
 
             string dateTime1 = date1 + time1;
