@@ -3163,6 +3163,12 @@ WHERE
 
         public List<Log> GetLogsByPeriod(DateTime dateStart, DateTime dateEnd, bool exact)
         {
+            if(dateStart > dateEnd)
+            {
+                var temp = new DateTime(dateStart.Ticks);
+                dateStart = new DateTime(dateEnd.Ticks);
+                dateEnd = temp;
+            }
             List<Log> list = new List<Log>();
             string query = "";
             if (!exact)
