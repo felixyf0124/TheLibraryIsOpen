@@ -51,7 +51,7 @@
                             @Html.CheckBoxFor(model => model[i].ToReturn, new { @class = "form-control" })
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" style="color:gray; padding-left: 3em;">
                         <div class="col">
                             Borrowed Date: @Model[i].BorrowDate
                         </div>
@@ -73,7 +73,7 @@
                 <div class="row">
                     <div class="col-md-10"></div>
                     <div class="col-md-2">
-                        <input type="submit" class="btn btn-primary" value="Submit" />
+                        <input type="submit" class="btn btn-primary" value="Return Selected" />
                     </div>
                 </div>
             </form>
