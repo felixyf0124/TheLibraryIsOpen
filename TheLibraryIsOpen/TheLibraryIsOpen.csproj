@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="bootstrap" Version="3.3.7" />
+    <PackageReference Include="bootstrap" Version="3.4.1" />
     <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="MySql.Data" Version="8.0.13" />
